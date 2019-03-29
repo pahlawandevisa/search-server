@@ -21,6 +21,7 @@ use Apisearch\Server\Domain\Event\DomainEventWithRepositoryReference;
 use Apisearch\Server\Domain\Event\QueryWasMade;
 use Apisearch\Server\Domain\Query\Query;
 use Apisearch\Server\Domain\WithRepositoryAndEventPublisher;
+use Ramsey\Uuid\Uuid;
 
 /**
  * Class QueryHandler.
@@ -39,6 +40,8 @@ class QueryHandler extends WithRepositoryAndEventPublisher
         $repositoryReference = $query->getRepositoryReference();
         $searchQuery = $query->getQuery();
         $from = microtime(true);
+
+        $this->assignUUIDIfNeeded($query);
 
         $this
             ->repository
@@ -65,5 +68,18 @@ class QueryHandler extends WithRepositoryAndEventPublisher
             ));
 
         return $result;
+    }
+
+    /**
+     * Add UUID into query if needed.
+     *
+     * @param Query $query
+     */
+    private function assignUUIDIfNeeded(Query $query)
+    {
+        $queryModel = $query->getQuery();
+        if (empty($queryModel->getUUID())) {
+            $queryModel->identifyWith(Uuid::uuid4()->toString());
+        }
     }
 }

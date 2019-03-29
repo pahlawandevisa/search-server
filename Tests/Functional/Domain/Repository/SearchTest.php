@@ -19,7 +19,6 @@ use Apisearch\Config\Config;
 use Apisearch\Config\Synonym;
 use Apisearch\Model\Item;
 use Apisearch\Model\ItemUUID;
-use Apisearch\Model\User;
 use Apisearch\Query\Query;
 
 /**
@@ -109,31 +108,6 @@ trait SearchTest
         ]));
         $this->assertCount(1, $result->getItems());
         $this->assertSame('5', $result->getItems()[0]->getUUID()->getId());
-    }
-
-    /**
-     * Test query user.
-     */
-    public function testQueryUser()
-    {
-        $result = $this->query(Query::createByUUIDs([
-            new ItemUUID('5', 'gum'),
-            new ItemUUID('3', 'book'),
-        ])->byUser(new User('123')));
-        $this->assertCount(2, $result->getItems());
-        $this->assertEquals(
-            '123',
-            $result->getQuery()->getUser()->getId()
-        );
-
-        $result = $this->query(Query::createByUUIDs([
-            new ItemUUID('5', 'gum'),
-            new ItemUUID('3', 'book'),
-        ])->byUser(new User('123'))->anonymously());
-        $this->assertCount(2, $result->getItems());
-        $this->assertNull(
-            $result->getQuery()->getUser()
-        );
     }
 
     /**

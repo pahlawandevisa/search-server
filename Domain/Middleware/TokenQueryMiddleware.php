@@ -55,6 +55,7 @@ class TokenQueryMiddleware implements Middleware
         if ($isQuery) {
             $token = $command->getToken();
             $parameters = $command->getParameters();
+
             $queryAsArray = $command
                 ->getQuery()
                 ->toArray();

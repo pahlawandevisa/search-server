@@ -168,6 +168,7 @@ class QueryRepository extends ElasticaWrapperWithRepositoryReference implements 
     ): Result {
         $resultAggregations = [];
         $elasticaResultAggregations = $resultSet->getAggregations();
+        $resultsCount = 0;
 
         /*
          * Build Result instance
@@ -178,19 +179,14 @@ class QueryRepository extends ElasticaWrapperWithRepositoryReference implements 
         ) {
             $resultAggregations = $elasticaResultAggregations['all']['universe'];
             unset($resultAggregations['common']);
-
-            $result = new Result(
-                $query,
-                $resultAggregations['doc_count'],
-                $resultSet->getTotalHits()
-            );
-        } else {
-            $result = new Result(
-                $query,
-                0,
-                $resultSet->getTotalHits()
-            );
+            $resultsCount = $resultAggregations['doc_count'];
         }
+
+        $result = new Result(
+            $query->getUUID(),
+            $resultsCount,
+            $resultSet->getTotalHits()
+        );
 
         /*
          * @var ElasticaResult
@@ -269,10 +265,7 @@ class QueryRepository extends ElasticaWrapperWithRepositoryReference implements 
             $subresults[$name] = $this->elasticaResultSetToResult($subqueries[$name], $resultSet);
         }
 
-        return Result::createMultiResult(
-            $query,
-            $subresults
-        );
+        return Result::createMultiResult($subresults);
     }
 
     /**
