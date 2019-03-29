@@ -80,10 +80,6 @@ class QueryController extends ControllerWithBus
             ))
             ->toArray();
 
-        if ($query->has(Http::PURGE_QUERY_FROM_RESPONSE_FIELD)) {
-            unset($responseAsArray[Http::QUERY_FIELD]);
-        }
-
         return new JsonResponse(
             $responseAsArray,
             200,

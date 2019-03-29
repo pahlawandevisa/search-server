@@ -29,8 +29,8 @@ trait MultiqueryTest
     public function testSimpleMultiQuery()
     {
         $query = Query::createMultiquery([
-            'q1' => Query::create('alfaguarra'),
-            'q2' => Query::create('boosting'),
+            'q1' => Query::create('alfaguarra')->identifyWith('123'),
+            'q2' => Query::create('boosting')->identifyWith('456'),
         ]);
 
         /**
@@ -39,9 +39,9 @@ trait MultiqueryTest
         $result = $this->query($query);
         $subresults = $result->getSubresults();
         $this->assertCount(2, $subresults);
-        $this->assertEquals('alfaguarra', $subresults['q1']->getQuery()->getQueryText());
+        $this->assertEquals('123', $subresults['q1']->getQueryUUID());
         $this->assertEquals(1, $subresults['q1']->getTotalHits());
-        $this->assertEquals('boosting', $subresults['q2']->getQuery()->getQueryText());
+        $this->assertEquals('456', $subresults['q2']->getQueryUUID());
         $this->assertEquals(3, $subresults['q2']->getTotalHits());
     }
 }
