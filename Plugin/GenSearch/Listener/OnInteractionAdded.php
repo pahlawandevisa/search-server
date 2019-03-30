@@ -11,7 +11,7 @@
  * @author Marc Morera <yuhu@mmoreram.com>
  */
 
-namespace Apisearch\Plugin\GenQuery\Domain;
+namespace Apisearch\Plugin\GenSearch\Domain;
 
 use Apisearch\Server\Domain\Event\InteractionWasAdded;
 
