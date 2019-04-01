@@ -122,6 +122,7 @@ abstract class ApisearchServerBundleFunctionalTest extends BaseFunctionalTest
             ApisearchPluginsBundle::class,
         ];
 
+        $composedIndex = self::$index.','.self::$anotherIndex;
         $configuration = [
             'imports' => $imports,
             'parameters' => [
@@ -178,6 +179,9 @@ abstract class ApisearchServerBundleFunctionalTest extends BaseFunctionalTest
                         'indices' => [
                             self::$index => self::$index,
                             self::$anotherIndex => self::$anotherIndex,
+                            $composedIndex => $composedIndex,
+                            '*' => '*',
+                            self::$yetAnotherIndex => self::$yetAnotherIndex,
                         ],
                     ],
                     'search_http' => [
@@ -189,6 +193,9 @@ abstract class ApisearchServerBundleFunctionalTest extends BaseFunctionalTest
                         'indices' => [
                             self::$index => self::$index,
                             self::$anotherIndex => self::$anotherIndex,
+                            $composedIndex => $composedIndex,
+                            '*' => '*',
+                            self::$yetAnotherIndex => self::$yetAnotherIndex,
                         ],
                     ],
                     'search_socket' => [
@@ -200,6 +207,9 @@ abstract class ApisearchServerBundleFunctionalTest extends BaseFunctionalTest
                         'indices' => [
                             self::$index => self::$index,
                             self::$anotherIndex => self::$anotherIndex,
+                            $composedIndex => $composedIndex,
+                            '*' => '*',
+                            self::$yetAnotherIndex => self::$yetAnotherIndex,
                         ],
                     ],
                     'search_inaccessible' => [
@@ -211,6 +221,9 @@ abstract class ApisearchServerBundleFunctionalTest extends BaseFunctionalTest
                         'indices' => [
                             self::$index => self::$index,
                             self::$anotherIndex => self::$anotherIndex,
+                            $composedIndex => $composedIndex,
+                            '*' => '*',
+                            self::$yetAnotherIndex => self::$yetAnotherIndex,
                         ],
                     ],
                 ],
@@ -371,23 +384,30 @@ abstract class ApisearchServerBundleFunctionalTest extends BaseFunctionalTest
     /**
      * @var string
      *
-     * App id
+     * Another App id
      */
     public static $anotherAppId = '26178621testanother';
 
     /**
      * @var string
      *
-     * App id
+     * Another not created App id
      */
     public static $anotherInexistentAppId = '26178621testnotexists';
 
     /**
      * @var string
      *
-     * App id
+     * Another index
      */
     public static $anotherIndex = 'anotherindex';
+
+    /**
+     * @var string
+     *
+     * Yet another index
+     */
+    public static $yetAnotherIndex = 'yetanotherindex';
 
     /**
      * Sets up the fixture, for example, open a network connection.

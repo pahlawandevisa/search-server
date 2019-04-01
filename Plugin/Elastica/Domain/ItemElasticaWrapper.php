@@ -711,7 +711,7 @@ class ItemElasticaWrapper
         $elasticsearchMultiSearch = new ElasticaMultiSearch($client);
         foreach ($searches as $search) {
             $elasticsearchSearch = new ElasticaSearch($this->client);
-            $elasticsearchSearch->addIndex($index);
+            $elasticsearchSearch->addIndices(explode(',', $index->getName()));
             $elasticsearchSearch->setOptionsAndQuery([
                 'from' => $search->getFrom(),
                 'size' => $search->getSize(),

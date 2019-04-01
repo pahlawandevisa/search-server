@@ -17,6 +17,7 @@ namespace Apisearch\Server\Tests\Functional\Domain\Repository;
 
 use Apisearch\Config\Config;
 use Apisearch\Config\Synonym;
+use Apisearch\Exception\ResourceNotAvailableException;
 use Apisearch\Model\Item;
 use Apisearch\Model\ItemUUID;
 use Apisearch\Query\Query;
@@ -438,5 +439,31 @@ trait SearchTest
         $this->assertNotEmpty($firstItem->getMetadata());
         $this->assertNotEmpty($firstItem->getIndexedMetadata());
         $this->assertNotEmpty($firstItem->getSearchableMetadata());
+    }
+
+    /**
+     * Test query on multiple indices.
+     */
+    public function testQueryOnMultipleIndices()
+    {
+        try {
+            $this->deleteIndex(self::$appId, self::$anotherIndex);
+        } catch (ResourceNotAvailableException $exception) {
+            // Silent pass
+        }
+
+        $this->createIndex(self::$appId, self::$anotherIndex);
+        $this->indexItems([Item::create(ItemUUID::createByComposedUUID('123~type2'), [], [], ['field1' => 'Engonga'])], self::$appId, self::$anotherIndex);
+        $result = $this->query(Query::createMatchAll(), self::$appId, self::$index.','.self::$anotherIndex);
+        $this->assertCount(6, $result->getItems());
+
+        $result = $this->query(Query::createMatchAll(), self::$appId, '*');
+        $this->assertCount(6, $result->getItems());
+
+        $result = $this->query(Query::create('Engonga'), self::$appId, self::$anotherIndex);
+        $this->assertCount(1, $result->getItems());
+        $result = $this->query(Query::create('Engonga'), self::$appId, self::$index.','.self::$anotherIndex);
+        $this->assertCount(2, $result->getItems());
+        $this->deleteIndex(self::$appId, self::$anotherIndex);
     }
 }
