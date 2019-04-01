@@ -65,12 +65,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/apisearch-io/php-client.git",
-                "reference": "26ddecc3a16de6c3feebd0aaf9c81f864ba4620f"
+                "reference": "587580ef26c8bc7a2bfab5f94413353737129c78"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/apisearch-io/php-client/zipball/26ddecc3a16de6c3feebd0aaf9c81f864ba4620f",
-                "reference": "26ddecc3a16de6c3feebd0aaf9c81f864ba4620f",
+                "url": "https://api.github.com/repos/apisearch-io/php-client/zipball/587580ef26c8bc7a2bfab5f94413353737129c78",
+                "reference": "587580ef26c8bc7a2bfab5f94413353737129c78",
                 "shasum": ""
             },
             "require": {
@@ -103,7 +103,7 @@
                     "email": "yuhu@mmoreram.com"
                 }
             ],
-            "time": "2019-03-29 17:09:14"
+            "time": "2019-04-01 14:45:19"
         },
         {
             "name": "ekino/newrelic-bundle",
@@ -1586,21 +1586,21 @@
         },
         {
             "name": "react/dns",
-            "version": "v0.4.16",
+            "version": "v0.4.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/reactphp/dns.git",
-                "reference": "0a0bedfec72b38406413c6ea01e1c015bd0bf72b"
+                "reference": "0f30c6ceb71504d359d51132a97e1703051f1589"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/reactphp/dns/zipball/0a0bedfec72b38406413c6ea01e1c015bd0bf72b",
-                "reference": "0a0bedfec72b38406413c6ea01e1c015bd0bf72b",
+                "url": "https://api.github.com/repos/reactphp/dns/zipball/0f30c6ceb71504d359d51132a97e1703051f1589",
+                "reference": "0f30c6ceb71504d359d51132a97e1703051f1589",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0",
-                "react/cache": "^0.5 || ^0.4 || ^0.3",
+                "react/cache": "^1.0 || ^0.6 || ^0.5 || ^0.4 || ^0.3",
                 "react/event-loop": "^1.0 || ^0.5 || ^0.4 || ^0.3.5",
                 "react/promise": "^2.1 || ^1.2.1",
                 "react/promise-timer": "^1.2",
@@ -1608,7 +1608,7 @@
             },
             "require-dev": {
                 "clue/block-react": "^1.2",
-                "phpunit/phpunit": "^6.4 || ^5.7 || ^4.8.35"
+                "phpunit/phpunit": "^7.0 || ^6.4 || ^5.7 || ^4.8.35"
             },
             "type": "library",
             "autoload": {
@@ -1627,7 +1627,7 @@
                 "dns-resolver",
                 "reactphp"
             ],
-            "time": "2018-11-11T11:21:13+00:00"
+            "time": "2019-04-01T07:31:55+00:00"
         },
         {
             "name": "react/event-loop",

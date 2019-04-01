@@ -15,6 +15,9 @@ declare(strict_types=1);
 
 namespace Apisearch\Server\Tests\Functional\Domain\Repository;
 
+use Apisearch\Exception\ResourceNotAvailableException;
+use Apisearch\Model\Item;
+use Apisearch\Model\ItemUUID;
 use Apisearch\Query\Query;
 use Apisearch\Result\Result;
 
@@ -43,5 +46,58 @@ trait MultiqueryTest
         $this->assertEquals(1, $subresults['q1']->getTotalHits());
         $this->assertEquals('456', $subresults['q2']->getQueryUUID());
         $this->assertEquals(3, $subresults['q2']->getTotalHits());
+    }
+
+    /**
+     * Test query on multiple indices.
+     *
+     * @group lele
+     */
+    public function testMultiQueryOnMultipleIndices()
+    {
+        try {
+            $this->deleteIndex(self::$appId, self::$anotherIndex);
+        } catch (ResourceNotAvailableException $exception) {
+            // Silent pass
+        }
+
+        try {
+            $this->deleteIndex(self::$appId, self::$yetAnotherIndex);
+        } catch (ResourceNotAvailableException $exception) {
+            // Silent pass
+        }
+
+        $this->createIndex(self::$appId, self::$anotherIndex);
+        $this->createIndex(self::$appId, self::$yetAnotherIndex);
+        $this->indexItems([Item::create(ItemUUID::createByComposedUUID('123~type2'), [], [], ['field1' => 'Engonga'])], self::$appId, self::$anotherIndex);
+        $this->indexItems([Item::create(ItemUUID::createByComposedUUID('123~type10'), [], [], ['field1' => 'Engonga troloro'])], self::$appId, self::$yetAnotherIndex);
+        $result = $this->query(Query::createMultiquery([
+            'q1' => Query::createMatchAll(),
+            'q2' => Query::create('Engonga'),
+        ]), self::$appId, self::$index.','.self::$anotherIndex);
+
+        $resultQ1 = $result->getSubresults()['q1'];
+        $this->assertCount(6, $resultQ1->getItems());
+        $resultQ2 = $result->getSubresults()['q2'];
+        $this->assertCount(2, $resultQ2->getItems());
+
+        $this->indexItems([Item::create(ItemUUID::createByComposedUUID('123~type2'), [], [], ['field1' => 'Engonga'])], self::$appId, self::$anotherIndex);
+        $result = $this->query(Query::createMultiquery([
+            'q1' => Query::createMatchAll(),
+            'q2' => Query::create('Engonga'),
+            'q3' => Query::create('troloro'),
+            'q4' => Query::createByUUID(ItemUUID::createByComposedUUID('123~type2')),
+        ]), self::$appId, '*');
+
+        $resultQ1 = $result->getSubresults()['q1'];
+        $this->assertCount(7, $resultQ1->getItems());
+        $resultQ2 = $result->getSubresults()['q2'];
+        $this->assertCount(3, $resultQ2->getItems());
+        $resultQ3 = $result->getSubresults()['q3'];
+        $this->assertCount(1, $resultQ3->getItems());
+        $resultQ4 = $result->getSubresults()['q4'];
+        $this->assertCount(1, $resultQ4->getItems());
+        $this->deleteIndex(self::$appId, self::$anotherIndex);
+        $this->deleteIndex(self::$appId, self::$yetAnotherIndex);
     }
 }
