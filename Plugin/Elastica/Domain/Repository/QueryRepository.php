@@ -11,7 +11,7 @@
  * @author Marc Morera <yuhu@mmoreram.com>
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Apisearch\Plugin\Elastica\Domain\Repository;
 
@@ -64,7 +64,8 @@ class QueryRepository extends ElasticaWrapperWithRepositoryReference implements 
         bool $refreshOnWrite,
         QueryBuilder $queryBuilder,
         ResultBuilder $resultBuilder
-    ) {
+    )
+    {
         parent::__construct(
             $elasticaWrapper,
             $refreshOnWrite
@@ -175,7 +176,8 @@ class QueryRepository extends ElasticaWrapperWithRepositoryReference implements 
     private function elasticaResultSetToResult(
         Query $query,
         ElasticaResultSet $resultSet
-    ): Result {
+    ): Result
+    {
         $resultAggregations = [];
         $elasticaResultAggregations = $resultSet->getAggregations();
         $resultsCount = 0;
@@ -268,7 +270,8 @@ class QueryRepository extends ElasticaWrapperWithRepositoryReference implements 
     private function elasticaMultiResultSetToResult(
         Query $query,
         ElasticaMultiResultSet $multiResultSet
-    ): Result {
+    ): Result
+    {
         $subqueries = $query->getSubqueries();
         $subresults = [];
         foreach ($multiResultSet->getResultSets() as $name => $resultSet) {
@@ -348,7 +351,8 @@ class QueryRepository extends ElasticaWrapperWithRepositoryReference implements 
     private function promoteUUIDs(
         ElasticaQuery\BoolQuery $boolQuery,
         array $itemsPriorized
-    ) {
+    )
+    {
         if (empty($itemsPriorized)) {
             return;
         }
@@ -374,7 +378,7 @@ class QueryRepository extends ElasticaWrapperWithRepositoryReference implements 
         $query->setHighlight([
             'fields' => [
                 '*' => [
-                    'fragment_size' => 100,
+                    'fragment_size'       => 100,
                     'number_of_fragments' => 3,
                 ],
             ],

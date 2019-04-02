@@ -11,7 +11,7 @@
  * @author Marc Morera <yuhu@mmoreram.com>
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Apisearch\Plugin\Elastica\Domain;
 
@@ -49,7 +49,8 @@ abstract class ElasticaWrapperWithRepositoryReference implements WithRepositoryR
     public function __construct(
         ItemElasticaWrapper $elasticaWrapper,
         bool $refreshOnWrite
-    ) {
+    )
+    {
         $this->elasticaWrapper = $elasticaWrapper;
         $this->refreshOnWrite = $refreshOnWrite;
     }

@@ -19,27 +19,40 @@ interface SpeciesRepository
     public function getAliveSpecies() : SpeciesCollection;
 
     /**
-     * Add new species
+     * Put species
      *
      * @param Species $species
      */
-    public function addNewSpecies(Species $species);
+    public function putSpecies(Species $species);
 
     /**
-     * Record Query
+     * Put species
      *
+     * @param string $UUID
+     *
+     * @return Species
+     */
+    public function findSpecies(string $UUID): ? Species;
+
+    /**
+     * Record Query for species
+     *
+     * @param Species $species
      * @param Query $query
      */
-    public function recordQuery(Query $query);
+    public function recordQueryForSpecies(
+        Species $species,
+        Query $query
+    );
 
     /**
      * Increase by 1 an event
      *
-     * @param Query $query
+     * @param string $queryUUID
      * @param string $eventName
      */
     public function increaseQueryEvent(
-        Query $query,
+        string $queryUUID,
         string $eventName
     );
 

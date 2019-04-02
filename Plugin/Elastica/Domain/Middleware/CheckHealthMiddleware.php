@@ -11,7 +11,7 @@
  * @author Marc Morera <yuhu@mmoreram.com>
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Apisearch\Plugin\Elastica\Domain\Middleware;
 
@@ -52,7 +52,8 @@ class CheckHealthMiddleware implements PluginMiddleware
     public function execute(
         $command,
         $next
-    ) {
+    )
+    {
         $data = $next($command);
         $elasticsearchStatus = $this
             ->client
@@ -61,9 +62,9 @@ class CheckHealthMiddleware implements PluginMiddleware
             ->getStatus();
         $data['status']['elasticsearch'] = $elasticsearchStatus;
         $data['healthy'] = $data['healthy'] && in_array(strtolower($elasticsearchStatus), [
-            'yellow',
-            'green',
-        ]);
+                'yellow',
+                'green',
+            ]);
 
         return $data;
     }

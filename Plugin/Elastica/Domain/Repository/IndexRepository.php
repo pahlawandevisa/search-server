@@ -11,7 +11,7 @@
  * @author Marc Morera <yuhu@mmoreram.com>
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Apisearch\Plugin\Elastica\Domain\Repository;
 
@@ -66,22 +66,22 @@ class IndexRepository extends ElasticaWrapperWithRepositoryReference implements 
     {
         $uuid = $item->getUUID();
         $itemDocument = [
-            'uuid' => [
-                'id' => $uuid->getId(),
+            'uuid'                    => [
+                'id'   => $uuid->getId(),
                 'type' => $uuid->getType(),
             ],
-            'coordinate' => $item->getCoordinate() instanceof Coordinate
+            'coordinate'              => $item->getCoordinate() instanceof Coordinate
                 ? $item
                     ->getCoordinate()
                     ->toArray()
                 : null,
-            'metadata' => $this->filterElementRecursively(
+            'metadata'                => $this->filterElementRecursively(
                 $item->getMetadata()
             ),
-            'indexed_metadata' => $this->filterElementRecursively(
+            'indexed_metadata'        => $this->filterElementRecursively(
                 $item->getIndexedMetadata()
             ),
-            'searchable_metadata' => $this->filterSearchableElementRecursively(
+            'searchable_metadata'     => $this->filterSearchableElementRecursively(
                 $item->getSearchableMetadata(),
                 false
             ),
@@ -91,7 +91,7 @@ class IndexRepository extends ElasticaWrapperWithRepositoryReference implements 
                     false
                 )
             ),
-            'suggest' => array_values(
+            'suggest'                 => array_values(
                 $this->filterSearchableElementRecursively(
                     $item->getSuggest(),
                     false
@@ -151,7 +151,8 @@ class IndexRepository extends ElasticaWrapperWithRepositoryReference implements 
     private function filterSearchableElementRecursively(
         array $elements,
         bool $asList
-    ) {
+    )
+    {
         foreach ($elements as $key => $element) {
             if (is_array($element)) {
                 $elements[$key] = $this->filterSearchableElementRecursively($element, true);

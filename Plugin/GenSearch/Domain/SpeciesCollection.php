@@ -32,9 +32,9 @@ class SpeciesCollection
     /**
      * Get random valid species
      *
-     * @return Species
+     * @return Species|null
      */
-    public function getRandomSpecies() : Species
+    public function getRandomSpecies() : ? Species
     {
         $speciesTable = [];
         $maxSecondsActive = 0;
@@ -49,6 +49,10 @@ class SpeciesCollection
                 'punct' => $this->calculateSpeciesPunctuation($species),
                 'seconds_active' => $secondsActive
             ];
+        }
+
+        if (empty($speciesTable)) {
+            return null;
         }
 
         return $this->pickWeightedRandomSpecies($speciesTable);

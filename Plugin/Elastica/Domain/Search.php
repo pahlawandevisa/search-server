@@ -11,7 +11,7 @@
  * @author Marc Morera <yuhu@mmoreram.com>
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Apisearch\Plugin\Elastica\Domain;
 
@@ -63,7 +63,8 @@ class Search
         int $from,
         int $size,
         string $name = null
-    ) {
+    )
+    {
         $this->query = $query;
         $this->from = $from;
         $this->size = $size;

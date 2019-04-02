@@ -1,0 +1,27 @@
+services:
+
+
+    apisearch_plugin.gen_search.redis_config:
+        class: Apisearch\Plugin\Redis\Domain\RedisConfig
+        arguments:
+            - "%apisearch_plugin.gen_search.host%"
+            - "%apisearch_plugin.gen_search.port%"
+            - "%apisearch_plugin.gen_search.is_cluster%"
+            - "%apisearch_plugin.gen_search.database%"
+
+    apisearch_plugin.gen_search.redis_wrapper:
+        class: Apisearch\Plugin\Redis\Domain\RedisWrapper
+        public: true
+        factory:
+            - "@apisearch_plugin.redis.redis_wrapper_factory"
+            - "create"
+        arguments:
+            - "@apisearch_plugin.gen_search.redis_config"
+
+    apisearch_plugin.gen_search.redis_species_repository:
+        class: Apisearch\Plugin\GenSearch\Domain\Redis\RedisSpeciesRepository
+        arguments:
+            - "@apisearch_plugin.gen_search.redis_wrapper"
+
+    apisearch_plugin.gen_search.species_repository:
+        alias: apisearch_plugin.gen_search.redis_species_repository

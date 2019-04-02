@@ -11,7 +11,7 @@
  * @author Marc Morera <yuhu@mmoreram.com>
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Apisearch\Plugin\Elastica\DependencyInjection;
 
@@ -32,20 +32,20 @@ class ElasticaPluginConfiguration extends BaseConfiguration
     {
         $rootNode
             ->children()
-                ->booleanNode('refresh_on_write')
-                    ->defaultFalse()
-                ->end()
-                ->arrayNode('cluster')
-                    ->prototype('array')
-                        ->children()
-                            ->scalarNode('host')
-                                ->defaultTrue()
-                            ->end()
-                            ->scalarNode('port')
-                                ->defaultNull()
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end();
+            ->booleanNode('refresh_on_write')
+            ->defaultFalse()
+            ->end()
+            ->arrayNode('cluster')
+            ->prototype('array')
+            ->children()
+            ->scalarNode('host')
+            ->defaultTrue()
+            ->end()
+            ->scalarNode('port')
+            ->defaultNull()
+            ->end()
+            ->end()
+            ->end()
+            ->end();
     }
 }

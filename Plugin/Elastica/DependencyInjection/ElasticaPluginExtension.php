@@ -11,7 +11,7 @@
  * @author Marc Morera <yuhu@mmoreram.com>
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Apisearch\Plugin\Elastica\DependencyInjection;
 
@@ -43,7 +43,7 @@ class ElasticaPluginExtension extends BaseExtension
      */
     protected function getConfigFilesLocation(): string
     {
-        return __DIR__.'/../Resources/config';
+        return __DIR__ . '/../Resources/config';
     }
 
     /**
@@ -91,8 +91,8 @@ class ElasticaPluginExtension extends BaseExtension
     protected function getParametrizationValues(array $config): array
     {
         return [
-            'apisearch_plugin.elastica.cluster' => ['servers' => $config['cluster']],
-            'apisearch_plugin.elastica.refresh_on_write' => (bool) Env::get('ELASTICSEARCH_REFRESH_ON_WRITE', $config['refresh_on_write']),
+            'apisearch_plugin.elastica.cluster'          => ['servers' => $config['cluster']],
+            'apisearch_plugin.elastica.refresh_on_write' => (bool)Env::get('ELASTICSEARCH_REFRESH_ON_WRITE', $config['refresh_on_write']),
         ];
     }
 

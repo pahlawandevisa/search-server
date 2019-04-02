@@ -11,7 +11,7 @@
  * @author Marc Morera <yuhu@mmoreram.com>
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Apisearch\Plugin\Elastica\Domain;
 
@@ -146,38 +146,38 @@ class ItemElasticaWrapper
         $language = $config->getLanguage();
 
         $defaultAnalyzerFilter = [
-            5 => 'lowercase',
+            5  => 'lowercase',
             20 => 'asciifolding',
             50 => 'ngram_filter',
         ];
 
         $searchAnalyzerFilter = [
-            5 => 'lowercase',
+            5  => 'lowercase',
             50 => 'asciifolding',
         ];
 
         $indexConfiguration = [
-            'number_of_shards' => $config->getShards(),
+            'number_of_shards'   => $config->getShards(),
             'number_of_replicas' => $config->getReplicas(),
-            'max_result_window' => 50000,
-            'analysis' => [
-                'analyzer' => [
-                    'default' => [
-                        'type' => 'custom',
+            'max_result_window'  => 50000,
+            'analysis'           => [
+                'analyzer'   => [
+                    'default'         => [
+                        'type'      => 'custom',
                         'tokenizer' => 'standard',
-                        'filter' => [],
+                        'filter'    => [],
                     ],
                     'search_analyzer' => [
-                        'type' => 'custom',
+                        'type'      => 'custom',
                         'tokenizer' => 'standard',
-                        'filter' => [],
+                        'filter'    => [],
                     ],
                 ],
-                'filter' => [
+                'filter'     => [
                     'ngram_filter' => [
-                        'type' => 'edge_ngram',
-                        'min_gram' => 1,
-                        'max_gram' => 20,
+                        'type'        => 'edge_ngram',
+                        'min_gram'    => 1,
+                        'max_gram'    => 20,
                         'token_chars' => [
                             'letter',
                         ],
@@ -185,7 +185,7 @@ class ItemElasticaWrapper
                 ],
                 'normalizer' => [
                     'exact_matching_normalizer' => [
-                        'type' => 'custom',
+                        'type'   => 'custom',
                         'filter' => [
                             'lowercase',
                             'asciifolding',
@@ -200,7 +200,7 @@ class ItemElasticaWrapper
             $defaultAnalyzerFilter[30] = 'stop_words';
             $searchAnalyzerFilter[30] = 'stop_words';
             $indexConfiguration['analysis']['filter']['stop_words'] = [
-                'type' => 'stop',
+                'type'      => 'stop',
                 'stopwords' => $stopWordsLanguage,
             ];
         }
@@ -218,7 +218,7 @@ class ItemElasticaWrapper
         if (!empty($synonyms)) {
             $defaultAnalyzerFilter[40] = 'synonym';
             $indexConfiguration['analysis']['filter']['synonym'] = [
-                'type' => 'synonym',
+                'type'     => 'synonym',
                 'synonyms' => array_map(function (Synonym $synonym) {
                     return strtolower($synonym->expand());
                 }, $synonyms),
@@ -242,13 +242,14 @@ class ItemElasticaWrapper
     public function buildIndexMapping(
         Type\Mapping $mapping,
         Config $config
-    ) {
+    )
+    {
         $mapping->setParam('dynamic_templates', [
             [
                 'dynamic_metadata_as_keywords' => [
-                    'path_match' => 'indexed_metadata.*',
+                    'path_match'         => 'indexed_metadata.*',
                     'match_mapping_type' => 'string',
-                    'mapping' => [
+                    'mapping'            => [
                         'type' => 'keyword',
                     ],
                 ],
@@ -256,18 +257,18 @@ class ItemElasticaWrapper
             [
                 'dynamic_searchable_metadata_as_text' => [
                     'path_match' => 'searchable_metadata.*',
-                    'mapping' => [
-                        'type' => 'text',
-                        'analyzer' => 'default',
+                    'mapping'    => [
+                        'type'            => 'text',
+                        'analyzer'        => 'default',
                         'search_analyzer' => 'search_analyzer',
                     ],
                 ],
             ],
             [
                 'dynamic_arrays_as_nested' => [
-                    'path_match' => 'indexed_metadata.*',
+                    'path_match'         => 'indexed_metadata.*',
                     'match_mapping_type' => 'object',
-                    'mapping' => [
+                    'mapping'            => [
                         'type' => 'nested',
                     ],
                 ],
@@ -275,7 +276,7 @@ class ItemElasticaWrapper
             [
                 'metadata_as_non_indexed' => [
                     'path_match' => 'metadata.*',
-                    'mapping' => [
+                    'mapping'    => [
                         'index' => false,
                     ],
                 ],
@@ -293,11 +294,11 @@ class ItemElasticaWrapper
         $mapping->setSource(['excludes' => $sourceExcludes]);
 
         $mapping->setProperties([
-            'uuid' => [
-                'type' => 'object',
-                'dynamic' => 'strict',
+            'uuid'                    => [
+                'type'       => 'object',
+                'dynamic'    => 'strict',
                 'properties' => [
-                    'id' => [
+                    'id'   => [
                         'type' => 'keyword',
                     ],
                     'type' => [
@@ -305,26 +306,26 @@ class ItemElasticaWrapper
                     ],
                 ],
             ],
-            'coordinate' => ['type' => 'geo_point'],
-            'metadata' => [
-                'type' => 'object',
+            'coordinate'              => ['type' => 'geo_point'],
+            'metadata'                => [
+                'type'    => 'object',
                 'dynamic' => true,
             ],
-            'indexed_metadata' => [
-                'type' => 'object',
+            'indexed_metadata'        => [
+                'type'    => 'object',
                 'dynamic' => true,
             ],
-            'searchable_metadata' => [
-                'type' => 'object',
+            'searchable_metadata'     => [
+                'type'    => 'object',
                 'dynamic' => true,
             ],
             'exact_matching_metadata' => [
-                'type' => 'keyword',
+                'type'       => 'keyword',
                 'normalizer' => 'exact_matching_normalizer',
             ],
-            'suggest' => [
-                'type' => 'completion',
-                'analyzer' => 'search_analyzer',
+            'suggest'                 => [
+                'type'            => 'completion',
+                'analyzer'        => 'search_analyzer',
                 'search_analyzer' => 'search_analyzer',
             ],
         ]);
@@ -369,15 +370,15 @@ class ItemElasticaWrapper
 
         $indexPrefix = $this->getAliasPrefix();
 
-        $indexSearchKeyword = $indexPrefix.'_'.(
-                empty($appUUIDComposed)
+        $indexSearchKeyword = $indexPrefix . '_' . (
+            empty($appUUIDComposed)
+                ? '*'
+                : $appUUIDComposed . '_' . (
+                empty($indexUUIDComposed)
                     ? '*'
-                    : $appUUIDComposed.'_'.(
-                        empty($indexUUIDComposed)
-                            ? '*'
-                            : $indexUUIDComposed
-                    )
-        );
+                    : $indexUUIDComposed
+                )
+            );
 
         $elasticaResponse = $this->client->requestEndpoint((new Indices())->setIndex($indexSearchKeyword));
         $elasticaMappingResponse = $this->client->requestEndpoint((new MappingEndpoint\Get())->setIndex($indexSearchKeyword));
@@ -387,17 +388,17 @@ class ItemElasticaWrapper
             return [];
         }
 
-        $regexToParse = '/^'.
-            '(?P<color>[^\ ]+)\s+'.
-            '(?P<status>[^\ ]+)\s+'.
-            '(?P<fullname>apisearch_\d+_item_(?P<app_id>[^_]+)_(?P<id>[^\ ]+))\s+'.
-            '(?P<uuid>[^\ ]+)\s+'.
-            '(?P<primary_shards>[^\ ]+)\s+'.
-            '(?P<replica_shards>[^\ ]+)\s+'.
-            '(?P<doc_count>[^\ ]+)\s+'.
-            '(?P<doc_deleted>[^\ ]+)\s+'.
-            '(?P<index_size>[^\ ]+)\s+'.
-            '(?P<storage_size>[^\ ]+)'.
+        $regexToParse = '/^' .
+            '(?P<color>[^\ ]+)\s+' .
+            '(?P<status>[^\ ]+)\s+' .
+            '(?P<fullname>apisearch_\d+_item_(?P<app_id>[^_]+)_(?P<id>[^\ ]+))\s+' .
+            '(?P<uuid>[^\ ]+)\s+' .
+            '(?P<primary_shards>[^\ ]+)\s+' .
+            '(?P<replica_shards>[^\ ]+)\s+' .
+            '(?P<doc_count>[^\ ]+)\s+' .
+            '(?P<doc_deleted>[^\ ]+)\s+' .
+            '(?P<index_size>[^\ ]+)\s+' .
+            '(?P<storage_size>[^\ ]+)' .
             '$/im';
 
         $indices = [];
@@ -411,14 +412,14 @@ class ItemElasticaWrapper
                         'open' === $metaData['status'] &&
                         in_array($metaData['color'], ['green', 'yellow'])
                     ),
-                    (int) $metaData['doc_count'],
-                    (string) $metaData['index_size'],
-                    (int) $metaData['primary_shards'],
-                    (int) $metaData['replica_shards'],
+                    (int)$metaData['doc_count'],
+                    (string)$metaData['index_size'],
+                    (int)$metaData['primary_shards'],
+                    (int)$metaData['replica_shards'],
                     $mappingData[$metaData['fullname']] ?? [],
                     [
-                        'allocated' => ('green' === $metaData['color']),
-                        'doc_deleted' => (int) $metaData['doc_deleted'],
+                        'allocated'   => ('green' === $metaData['color']),
+                        'doc_deleted' => (int)$metaData['doc_deleted'],
                     ]
                 );
             }
@@ -465,7 +466,8 @@ class ItemElasticaWrapper
         array &$metadataBucket,
         string $field,
         array $data
-    ): void {
+    ): void
+    {
         if (
             isset($data['type']) &&
             'nested' !== $data['type']
@@ -495,7 +497,8 @@ class ItemElasticaWrapper
     public function createIndex(
         RepositoryReference $repositoryReference,
         Config $config
-    ) {
+    )
+    {
         if (!is_null($this->getOriginalIndexName($repositoryReference))) {
             throw ResourceExistsException::indexExists();
         }
@@ -585,7 +588,8 @@ class ItemElasticaWrapper
     public function configureIndex(
         RepositoryReference $repositoryReference,
         Config $config
-    ) {
+    )
+    {
         $indexAliasName = $this->getIndexAliasName($repositoryReference);
         $indexOriginalOldName = $this->getOriginalIndexName($repositoryReference);
         $indexOriginalNewName = $this->getRandomIndexName($repositoryReference);
@@ -615,7 +619,7 @@ class ItemElasticaWrapper
             'source' => [
                 'index' => $indexOriginalOldName,
             ],
-            'dest' => [
+            'dest'   => [
                 'index' => $indexOriginalNewName,
             ],
         ]);
@@ -670,7 +674,8 @@ class ItemElasticaWrapper
     public function simpleSearch(
         RepositoryReference $repositoryReference,
         Search $search
-    ): ElasticaResultSet {
+    ): ElasticaResultSet
+    {
         $index = $this->getIndex($repositoryReference);
         $client = $index->getClient();
 
@@ -743,7 +748,8 @@ class ItemElasticaWrapper
     public function createIndexMapping(
         RepositoryReference $repositoryReference,
         Config $config
-    ) {
+    )
+    {
         $this->createIndexMappingByIndexName(
             $this->getIndexAliasName($repositoryReference),
             $config
@@ -761,7 +767,8 @@ class ItemElasticaWrapper
     public function createIndexMappingByIndexName(
         string $indexName,
         Config $config
-    ) {
+    )
+    {
         try {
             $itemMapping = new Type\Mapping();
             $itemMapping->setType($this->getItemTypeByIndexName($indexName));
@@ -787,7 +794,8 @@ class ItemElasticaWrapper
     public function addDocuments(
         RepositoryReference $repositoryReference,
         array $documents
-    ) {
+    )
+    {
         try {
             $this
                 ->getItemTypeByRepositoryReference($repositoryReference)
@@ -812,7 +820,8 @@ class ItemElasticaWrapper
     public function deleteDocumentsByIds(
         RepositoryReference $repositoryReference,
         array $documentsId
-    ) {
+    )
+    {
         try {
             $this
                 ->getItemTypeByRepositoryReference($repositoryReference)
@@ -837,7 +846,8 @@ class ItemElasticaWrapper
     protected function buildIndexReference(
         RepositoryReference $repositoryReference,
         string $prefix
-    ) {
+    )
+    {
         if (is_null($repositoryReference->getAppUUID())) {
             return '';
         }

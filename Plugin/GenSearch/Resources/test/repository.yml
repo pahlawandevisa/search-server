@@ -1,0 +1,4 @@
+services:
+
+    apisearch_plugin.gen_search.species_repository:
+        alias: apisearch_plugin.gen_search.in_memory_species_repository

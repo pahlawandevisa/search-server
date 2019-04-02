@@ -16,10 +16,39 @@ namespace Apisearch\Plugin\GenSearch\Domain;
 use Apisearch\Server\Domain\Event\InteractionWasAdded;
 
 /**
- * Class OnInteractionAdded
+ * Class AddClickInteraction
  */
-class OnInteractionAdded
+class AddClickInteraction
 {
+    /**
+     * @var int
+     *
+     * Max position
+     */
+    private $maxPosition;
+
+    /**
+     * @var SpeciesRepository
+     *
+     * Species Repository
+     */
+    private $speciesRepository;
+
+    /**
+     * OnInteractionAdded constructor.
+     *
+     * @param int $maxPosition
+     * @param SpeciesRepository $speciesRepository
+     */
+    public function __construct(
+        int $maxPosition,
+        SpeciesRepository $speciesRepository
+    )
+    {
+        $this->maxPosition = $maxPosition;
+        $this->speciesRepository = $speciesRepository;
+    }
+
     /**
      * Add interaction
      *
@@ -43,6 +72,14 @@ class OnInteractionAdded
 
         $queryUUID = $metadata['query_uuid'];
         $position = $metadata['position'];
-        
+        $position = max($position, $this->maxPosition);
+        $eventName = 'click_position_' . $position;
+
+        $this
+            ->speciesRepository
+            ->increaseQueryEvent(
+                $queryUUID,
+                $eventName
+            );
     }
 }

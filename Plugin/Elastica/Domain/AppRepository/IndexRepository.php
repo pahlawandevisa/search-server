@@ -11,7 +11,7 @@
  * @author Marc Morera <yuhu@mmoreram.com>
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Apisearch\Plugin\Elastica\Domain\AppRepository;
 
@@ -58,7 +58,8 @@ class IndexRepository extends ElasticaWrapperWithRepositoryReference implements 
     public function createIndex(
         IndexUUID $indexUUID,
         Config $config
-    ) {
+    )
+    {
         $newRepositoryReference = $this
             ->getRepositoryReference()
             ->changeIndex($indexUUID);

@@ -11,7 +11,7 @@
  * @author Marc Morera <yuhu@mmoreram.com>
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Apisearch\Plugin\Elastica\Domain\Builder;
 
@@ -36,7 +36,8 @@ class ResultBuilder
     public function buildResultAggregations(
         Query $query,
         array $resultAggregations
-    ): ResultAggregations {
+    ): ResultAggregations
+    {
         $aggregations = new ResultAggregations($resultAggregations['doc_count']);
         unset($resultAggregations['doc_count']);
         unset($resultAggregations['meta']);
@@ -70,8 +71,8 @@ class ResultBuilder
                     in_array($usedKey, $queryAggregation->getSubgroup())
                 ) {
                     $aggregation->addCounter(
-                        (string) $usedKey,
-                        (int) $bucket['doc_count']
+                        (string)$usedKey,
+                        (int)$bucket['doc_count']
                     );
                 }
             }

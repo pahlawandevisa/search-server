@@ -49,33 +49,38 @@ class InMemorySpeciesRepository implements SpeciesRepository
     }
 
     /**
-     * Add new species
+     * Put species
      *
      * @param Species $species
      */
-    public function addNewSpecies(Species $species)
+    public function putSpecies(Species $species)
     {
         $this->species[$species->getUUID()] = $species;
     }
 
     /**
-     * Record Query
+     * Record Query for species
      *
+     * @param Species $species
      * @param Query $query
      */
-    public function recordQuery(Query $query)
+    public function recordQueryForSpecies(
+        Species $species,
+        Query $query
+    )
     {
-        $this->queries[$query->getUUID()] = $query;
+        $this->queries[$query->getUUID()] = $species->getUUID();
     }
+
 
     /**
      * Increase by 1 an event
      *
-     * @param Query  $query
+     * @param string $queryUUID
      * @param string $eventName
      */
     public function increaseQueryEvent(
-        Query $query,
+        string $queryUUID,
         string $eventName
     )
     {
@@ -90,5 +95,17 @@ class InMemorySpeciesRepository implements SpeciesRepository
     public function exterminateSpecies(Species $species)
     {
         // TODO: Implement exterminateSpecies() method.
+    }
+
+    /**
+     * Put species
+     *
+     * @param string $UUID
+     *
+     * @return Species
+     */
+    public function findSpecies(string $UUID): ? Species
+    {
+        return $this->species[$UUID] ?? null;
     }
 }

@@ -1,0 +1,6 @@
+services:
+
+    apisearch_plugin.gen_search.add_click_interaction:
+        class: Apisearch\Plugin\GenSearch\Listener\AddClickInteraction
+        arguments:
+            - "@apisearch_plugin.gen_search.species_repository"

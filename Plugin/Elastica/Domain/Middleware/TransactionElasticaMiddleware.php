@@ -11,7 +11,7 @@
  * @author Marc Morera <yuhu@mmoreram.com>
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Apisearch\Plugin\Elastica\Domain\Middleware;
 
@@ -52,7 +52,8 @@ class TransactionElasticaMiddleware implements PluginMiddleware
     public function execute(
         $command,
         $next
-    ) {
+    )
+    {
         $result = $next($command);
 
         $this

@@ -1,0 +1,20 @@
+services:
+
+    apisearch_plugin.gen_search.in_memory_species_repository:
+        class: Apisearch\Plugin\GenSearch\Domain\InMemorySpeciesRepository
+
+    apisearch_plugin.gen_search.species_manager:
+        class: Apisearch\Plugin\GenSearch\Domain\SpeciesManager
+        arguments:
+            - "@apisearch_plugin.gen_search.species_repository"
+
+    apisearch_plugin.gen_search.species_mutator:
+        class: Apisearch\Plugin\GenSearch\Domain\SpeciesMutator
+
+    apisearch_plugin.gen_search.generate_mutation_handler:
+        class: Apisearch\Plugin\GenSearch\Domain\CommandHandler\GenerateMutationHandler
+        arguments:
+            - "@apisearch_plugin.gen_search.species_manager"
+            - "@apisearch_plugin.gen_search.species_mutator"
+        tags:
+            - { name: tactician.handler, command: Apisearch\Plugin\GenSearch\Domain\Command\GenerateMutation }

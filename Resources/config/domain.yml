@@ -167,6 +167,11 @@ services:
         tags:
             - { name: tactician.handler, command: Apisearch\Server\Domain\Query\Ping }
 
+    apisearch_server.query_handler.get_crontab:
+        class: Apisearch\Server\Domain\QueryHandler\GetCrontabHandler
+        tags:
+            - { name: tactician.handler, command: Apisearch\Server\Domain\Query\GetCrontab }
+
     #
     # Command bus
     #

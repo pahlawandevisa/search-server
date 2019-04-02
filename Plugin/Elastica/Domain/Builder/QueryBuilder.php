@@ -11,7 +11,7 @@
  * @author Marc Morera <yuhu@mmoreram.com>
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Apisearch\Plugin\Elastica\Domain\Builder;
 
@@ -47,7 +47,8 @@ class QueryBuilder
         Query $query,
         ElasticaQuery &$mainQuery,
         ElasticaQuery\BoolQuery $boolQuery
-    ) {
+    )
+    {
         $this->selectFields(
             $query,
             $mainQuery
@@ -104,7 +105,8 @@ class QueryBuilder
     private function selectFields(
         Query $query,
         ElasticaQuery $mainQuery
-    ) {
+    )
+    {
         if (empty($query->getFields())) {
             return;
         }
@@ -150,7 +152,8 @@ class QueryBuilder
         array $searchableFields,
         ? string $filterToIgnore,
         bool $takeInAccountDefinedTermFilter
-    ) {
+    )
+    {
         foreach ($filters as $filterName => $filter) {
             $onlyAddDefinedTermFilter = (
                 empty($filter->getValues()) ||
@@ -185,7 +188,8 @@ class QueryBuilder
         array $searchableFields,
         bool $onlyAddDefinedTermFilter,
         bool $takeInAccountDefinedTermFilter
-    ) {
+    )
+    {
         if (Filter::TYPE_QUERY === $filter->getFilterType()) {
             $queryString = $filter->getValues()[0];
             $match = $this->createMainQueryObject(
@@ -230,7 +234,8 @@ class QueryBuilder
         bool $onlyAddDefinedTermFilter,
         bool $takeInAccountDefinedTermFilter,
         bool $checkNested = true
-    ) {
+    )
+    {
         $verb = 'addMust';
         switch ($filter->getApplicationType()) {
             case Filter::AT_LEAST_ONE:
@@ -267,7 +272,8 @@ class QueryBuilder
         bool $onlyAddDefinedTermFilter,
         bool $takeInAccountDefinedTermFilter,
         bool $checkNested = true
-    ) {
+    )
+    {
         $boolQueryFilter = new ElasticaQuery\BoolQuery();
         if (!$onlyAddDefinedTermFilter) {
             foreach ($filter->getValues() as $value) {
@@ -321,7 +327,8 @@ class QueryBuilder
         Filter $filter,
         $value,
         bool $checkNested = true
-    ): ? ElasticaQuery\AbstractQuery {
+    ): ? ElasticaQuery\AbstractQuery
+    {
         switch ($filter->getFilterType()) {
             case Filter::TYPE_FIELD:
                 return $this->createTermFilter(
@@ -355,7 +362,8 @@ class QueryBuilder
         Filter $filter,
         $value,
         bool $checkNested = true
-    ): ? ElasticaQuery\AbstractQuery {
+    ): ? ElasticaQuery\AbstractQuery
+    {
         return $this->createMultipleTermFilter(
             $filter->getField(),
             $value,
@@ -376,7 +384,8 @@ class QueryBuilder
         string $field,
         $value,
         bool $checkNested
-    ): ElasticaQuery\AbstractQuery {
+    ): ElasticaQuery\AbstractQuery
+    {
         if (!is_array($value)) {
             return $this->createTermFilterOrNestedFilterDependingOnTheField(
                 $field,
@@ -412,12 +421,13 @@ class QueryBuilder
         string $field,
         $value,
         bool $checkNested
-    ): ElasticaQuery\AbstractQuery {
+    ): ElasticaQuery\AbstractQuery
+    {
         $termFilter = new ElasticaQuery\Term([$field => $value]);
         $fieldParts = explode('.', $field, 3);
         if ($checkNested && 3 === count($fieldParts)) {
             $nested = new ElasticaQuery\Nested();
-            $nested->setPath($fieldParts[0].'.'.$fieldParts[1]);
+            $nested->setPath($fieldParts[0] . '.' . $fieldParts[1]);
             $nested->setQuery($termFilter);
 
             return $nested;
@@ -437,7 +447,8 @@ class QueryBuilder
     private function createRangeFilter(
         Filter $filter,
         string $value
-    ): ? ElasticaQuery\AbstractQuery {
+    ): ? ElasticaQuery\AbstractQuery
+    {
         list($from, $to) = Range::stringToArray($value);
         $rangeData = [];
         if ($from > Range::ZERO) {
@@ -665,7 +676,8 @@ class QueryBuilder
         string $queryString,
         array $searchableFields,
         $fuzziness
-    ): ElasticaQuery\AbstractQuery {
+    ): ElasticaQuery\AbstractQuery
+    {
         $match = new ElasticaQuery\MultiMatch();
         $match
             ->setFields($searchableFields)
@@ -691,7 +703,8 @@ class QueryBuilder
         string $queryString,
         array $searchableFields,
         array $fuzziness
-    ): ElasticaQuery\AbstractQuery {
+    ): ElasticaQuery\AbstractQuery
+    {
         $boolQuery = new ElasticaQuery\BoolQuery();
         foreach ($searchableFields as $filterField) {
             $filterFieldParts = explode('^', $filterField, 2);
@@ -707,7 +720,7 @@ class QueryBuilder
             if (isset($filterFieldParts[1])) {
                 $match->setFieldBoost(
                     $filterFieldWithoutWeight,
-                    (float) ($filterFieldParts[1])
+                    (float)($filterFieldParts[1])
                 );
             }
 
@@ -735,7 +748,8 @@ class QueryBuilder
     private function setScoreStrategies(
         Query $query,
         ElasticaQuery\AbstractQuery $elasticaQuery
-    ): ElasticaQuery\AbstractQuery {
+    ): ElasticaQuery\AbstractQuery
+    {
         $scoreStrategies = $query->getScoreStrategies();
         if (
             !($scoreStrategies instanceof ScoreStrategies) ||
@@ -757,15 +771,15 @@ class QueryBuilder
         foreach ($scoreStrategies->getScoreStrategies() as $scoreStrategy) {
             $filter = $scoreStrategy->getFilter() instanceof Filter
                 ? $this->createQueryFilterByApplicationType(
-                        $scoreStrategy->getFilter(),
-                        false,
-                        false,
-                        false
-                    )
+                    $scoreStrategy->getFilter(),
+                    false,
+                    false,
+                    false
+                )
                 : null;
 
             $field = Item::getPathByField(
-                (string) $scoreStrategy->getConfigurationValue('field')
+                (string)$scoreStrategy->getConfigurationValue('field')
             );
             $fieldParts = explode('.', $field);
             $nestedFunctionQuery = null;
@@ -823,7 +837,8 @@ class QueryBuilder
         ScoreStrategy $scoreStrategy,
         ElasticaQuery\FunctionScore $functionScore,
         ?ElasticaQuery\AbstractQuery $filter
-    ) {
+    )
+    {
         $functionScore->addScriptScoreFunction(
             new Script($scoreStrategy->getConfigurationValue('function')),
             $filter,
@@ -842,14 +857,15 @@ class QueryBuilder
         ScoreStrategy $scoreStrategy,
         ElasticaQuery\FunctionScore $functionScore,
         ?ElasticaQuery\AbstractQuery $filter
-    ) {
+    )
+    {
         $functionScore->addFieldValueFactorFunction(
             Item::getPathByField(
-                (string) $scoreStrategy->getConfigurationValue('field')
+                (string)$scoreStrategy->getConfigurationValue('field')
             ),
-            (float) $scoreStrategy->getConfigurationValue('factor'),
-            (string) $scoreStrategy->getConfigurationValue('modifier'),
-            (float) $scoreStrategy->getConfigurationValue('missing'),
+            (float)$scoreStrategy->getConfigurationValue('factor'),
+            (string)$scoreStrategy->getConfigurationValue('modifier'),
+            (float)$scoreStrategy->getConfigurationValue('missing'),
             $scoreStrategy->getWeight(),
             $filter
         );
@@ -866,16 +882,17 @@ class QueryBuilder
         ScoreStrategy $scoreStrategy,
         ElasticaQuery\FunctionScore $functionScore,
         ?ElasticaQuery\AbstractQuery $filter
-    ) {
+    )
+    {
         $functionScore->addDecayFunction(
-            (string) $scoreStrategy->getConfigurationValue('type'),
+            (string)$scoreStrategy->getConfigurationValue('type'),
             Item::getPathByField(
-                (string) $scoreStrategy->getConfigurationValue('field')
+                (string)$scoreStrategy->getConfigurationValue('field')
             ),
-            (string) $scoreStrategy->getConfigurationValue('origin'),
-            (string) $scoreStrategy->getConfigurationValue('scale'),
-            (string) $scoreStrategy->getConfigurationValue('offset'),
-            (float) $scoreStrategy->getConfigurationValue('decay'),
+            (string)$scoreStrategy->getConfigurationValue('origin'),
+            (string)$scoreStrategy->getConfigurationValue('scale'),
+            (string)$scoreStrategy->getConfigurationValue('offset'),
+            (float)$scoreStrategy->getConfigurationValue('decay'),
             $scoreStrategy->getWeight(),
             $filter
         );
@@ -894,7 +911,8 @@ class QueryBuilder
         Query $query,
         ElasticaQuery $mainQuery,
         ElasticaQuery\BoolQuery $boolQuery
-    ): ElasticaQuery {
+    ): ElasticaQuery
+    {
         $sortBy = $query->getSortBy();
         if ($sortBy->hasRandomSort()) {
             /**
@@ -937,12 +955,12 @@ class QueryBuilder
                 case SortBy::TYPE_FUNCTION:
                     return [
                         '_script' => [
-                            'type' => 'number',
+                            'type'   => 'number',
                             'script' => [
-                                'lang' => 'painless',
+                                'lang'   => 'painless',
                                 'source' => $sortBy['function'],
                             ],
-                            'order' => $order,
+                            'order'  => $order,
                         ],
                     ];
 
@@ -957,8 +975,8 @@ class QueryBuilder
                     return [
                         '_geo_distance' => [
                             'coordinate' => $sortBy['coordinate']->toArray(),
-                            'order' => SortBy::ASC,
-                            'unit' => $sortBy['unit'],
+                            'order'      => SortBy::ASC,
+                            'unit'       => $sortBy['unit'],
                         ],
                     ];
 
@@ -970,18 +988,18 @@ class QueryBuilder
 
                     return [
                         $key => [
-                            'mode' => $mode,
-                            'order' => $order,
+                            'mode'   => $mode,
+                            'order'  => $order,
                             'nested' => array_filter([
-                                'path' => implode('.', $path),
+                                'path'   => implode('.', $path),
                                 'filter' => (
-                                    isset($sortBy['filter'])
-                                        ? $this->createQueryFilterByApplicationType(
-                                            $sortBy['filter'],
-                                            false,
-                                            false,
-                                            false
-                                        ) : false
+                                isset($sortBy['filter'])
+                                    ? $this->createQueryFilterByApplicationType(
+                                    $sortBy['filter'],
+                                    false,
+                                    false,
+                                    false
+                                ) : false
                                 ),
                             ]),
                         ],

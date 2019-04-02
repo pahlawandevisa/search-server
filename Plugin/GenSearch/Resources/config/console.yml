@@ -1,0 +1,7 @@
+services:
+
+    apisearch_server.generate_mutation_command:
+        class: Apisearch\Plugin\GenSearch\Console\GenerateMutationCommand
+        parent: apisearch_server.command_with_command_bus_and_god_token
+        tags:
+            -  { name: console.command, command: apisearch-plugin:gen-search:generate-mutation }

@@ -11,7 +11,7 @@
  * @author Marc Morera <yuhu@mmoreram.com>
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Apisearch\Plugin\Elastica\Domain\Repository;
 
@@ -48,7 +48,8 @@ class UpdateRepository extends ElasticaWrapperWithRepositoryReference implements
         ItemElasticaWrapper $elasticaWrapper,
         bool $refreshOnWrite,
         QueryBuilder $queryBuilder
-    ) {
+    )
+    {
         parent::__construct(
             $elasticaWrapper,
             $refreshOnWrite
@@ -66,7 +67,8 @@ class UpdateRepository extends ElasticaWrapperWithRepositoryReference implements
     public function updateItems(
         Query $query,
         Changes $changes
-    ) {
+    )
+    {
         $mainQuery = new ElasticaQuery();
         $boolQuery = new ElasticaQuery\BoolQuery();
         $this
@@ -117,7 +119,7 @@ class UpdateRepository extends ElasticaWrapperWithRepositoryReference implements
             $type = $change['type'];
 
             if ($type & Changes::TYPE_VALUE) {
-                $fieldName = 'param_'.str_replace('.', '_', $field).'_'.rand(0, 99999999999);
+                $fieldName = 'param_' . str_replace('.', '_', $field) . '_' . rand(0, 99999999999);
                 $currentValue = "params.$fieldName";
                 $currentScript = "$internalField = $currentValue;";
                 $params[$fieldName] = $change['value'];
@@ -174,21 +176,21 @@ class UpdateRepository extends ElasticaWrapperWithRepositoryReference implements
         }
 
         $finalScript = 'def item = ctx._source;
-def element;'.PHP_EOL;
+def element;' . PHP_EOL;
 
-        $finalScript .= implode(PHP_EOL, $singleScripts).PHP_EOL;
+        $finalScript .= implode(PHP_EOL, $singleScripts) . PHP_EOL;
         foreach ($bucleScripts as $bucleInternalField => $bucleScriptElements) {
             $rand = rand(0, 100000000000000);
             $finalScript .= "def field_{$rand} = $bucleInternalField;
 if (field_$rand != null && field_$rand instanceof Collection) {
     for (int i = 0; i < field_$rand.length; i++) {
-        element = field_{$rand}[i];".PHP_EOL;
+        element = field_{$rand}[i];" . PHP_EOL;
 
             foreach ($bucleScriptElements as $bucleScriptElement) {
-                $finalScript .= $bucleScriptElement.PHP_EOL;
+                $finalScript .= $bucleScriptElement . PHP_EOL;
             }
 
-            $finalScript .= '}}'.PHP_EOL;
+            $finalScript .= '}}' . PHP_EOL;
         }
 
         $finalScript = trim($finalScript);

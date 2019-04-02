@@ -17,6 +17,7 @@ namespace Apisearch\Server;
 
 use Apisearch\Plugin\Elastica\ElasticaPluginBundle;
 use Apisearch\Plugin\ELK\ELKPluginBundle;
+use Apisearch\Plugin\GenSearch\GenSearchPluginBundle;
 use Apisearch\Plugin\MostRelevantWords\MostRelevantWordsPluginBundle;
 use Apisearch\Plugin\NewRelic\NewRelicPluginBundle;
 use Apisearch\Plugin\QueryMapper\QueryMapperPluginBundle;
@@ -86,7 +87,7 @@ class ApisearchPluginsBundle extends BaseBundle
             'static_tokens' => StaticTokensPluginBundle::class,
             'rabbitmq' => RabbitMQPluginBundle::class,
             'security' => SecurityPluginBundle::class,
-            'query_mapper' => QueryMapperPluginBundle::class,
+            'gen_search' => GenSearchPluginBundle::class,
         ];
 
         $combined = array_combine(

@@ -49,6 +49,27 @@ class Species
     private $events;
 
     /**
+     * Species constructor.
+     *
+     * @param string   $UUID
+     * @param string   $parentUUID
+     * @param Query    $query
+     * @param DateTime $createdAt
+     */
+    public function __construct(
+        string $UUID,
+        string $parentUUID,
+        Query $query,
+        DateTime $createdAt
+    )
+    {
+        $this->UUID = $UUID;
+        $this->parentUUID = $parentUUID;
+        $this->query = $query;
+        $this->createdAt = $createdAt;
+    }
+
+    /**
      * Get Uuid
      *
      * @return string

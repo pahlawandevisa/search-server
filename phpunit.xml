@@ -47,5 +47,8 @@
 
         <env name="REDIS_METADATA_FIELDS_HOST" value="apisearch.redis" force="true" />
         <env name="REDIS_METADATA_FIELDS_PORT" value="6379" force="true" />
+
+        <env name="REDIS_GEN_SEARCH_HOST" value="apisearch.redis" force="true" />
+        <env name="REDIS_GEN_SEARCH_PORT" value="6379" force="true" />
     </php>
 </phpunit>
