@@ -91,12 +91,16 @@ trait MultiqueryTest
 
         $resultQ1 = $result->getSubresults()['q1'];
         $this->assertCount(7, $resultQ1->getItems());
+        $this->assertNotEmpty($resultQ1->getQueryUUID());
         $resultQ2 = $result->getSubresults()['q2'];
         $this->assertCount(3, $resultQ2->getItems());
+        $this->assertNotEmpty($resultQ2->getQueryUUID());
         $resultQ3 = $result->getSubresults()['q3'];
         $this->assertCount(1, $resultQ3->getItems());
+        $this->assertNotEmpty($resultQ3->getQueryUUID());
         $resultQ4 = $result->getSubresults()['q4'];
         $this->assertCount(1, $resultQ4->getItems());
+        $this->assertNotEmpty($resultQ4->getQueryUUID());
         $this->deleteIndex(self::$appId, self::$anotherIndex);
         $this->deleteIndex(self::$appId, self::$yetAnotherIndex);
     }

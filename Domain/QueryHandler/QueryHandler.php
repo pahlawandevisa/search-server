@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Apisearch\Server\Domain\QueryHandler;
 
 use Apisearch\Model\Item;
+use Apisearch\Query\Query as ModelQuery;
 use Apisearch\Result\Result;
 use Apisearch\Server\Domain\Event\DomainEventWithRepositoryReference;
 use Apisearch\Server\Domain\Event\QueryWasMade;
@@ -41,7 +42,7 @@ class QueryHandler extends WithRepositoryAndEventPublisher
         $searchQuery = $query->getQuery();
         $from = microtime(true);
 
-        $this->assignUUIDIfNeeded($query);
+        $this->assignUUIDIfNeeded($query->getQuery());
 
         $this
             ->repository
@@ -73,13 +74,16 @@ class QueryHandler extends WithRepositoryAndEventPublisher
     /**
      * Add UUID into query if needed.
      *
-     * @param Query $query
+     * @param ModelQuery $query
      */
-    private function assignUUIDIfNeeded(Query $query)
+    private function assignUUIDIfNeeded(ModelQuery $query)
     {
-        $queryModel = $query->getQuery();
-        if (empty($queryModel->getUUID())) {
-            $queryModel->identifyWith(Uuid::uuid4()->toString());
+        if (empty($query->getUUID())) {
+            $query->identifyWith(Uuid::uuid4()->toString());
+        }
+
+        foreach ($query->getSubqueries() as $subquery) {
+            $this->assignUUIDIfNeeded($subquery);
         }
     }
 }
