@@ -4,7 +4,10 @@
  */
 
 namespace Apisearch\Plugin\GenSearch\Domain;
+use Apisearch\Model\Index;
 use Apisearch\Query\Query;
+use Apisearch\Repository\RepositoryReference;
+use Apisearch\Server\Domain\Repository\AppRepository\IndexRepository;
 
 /**
  * Class SpeciesManager
@@ -19,13 +22,25 @@ class SpeciesManager
     private $speciesRepository;
 
     /**
-     * SpeciesChooser constructor.
+     * @var IndexRepository
+     *
+     * Index repository
+     */
+    private $indexRepository;
+
+    /**
+     * SpeciesManager constructor.
      *
      * @param SpeciesRepository $speciesRepository
+     * @param IndexRepository $indexRepository
      */
-    public function __construct(SpeciesRepository $speciesRepository)
+    public function __construct(
+        SpeciesRepository $speciesRepository,
+        IndexRepository $indexRepository
+    )
     {
         $this->speciesRepository = $speciesRepository;
+        $this->indexRepository = $indexRepository;
     }
 
     /**
@@ -96,5 +111,42 @@ class SpeciesManager
         $query->setFilterFields($patternQuery->getFilterFields());
         $query->setFuzziness($patternQuery->getFuzziness());
         $query->setScoreStrategies($patternQuery->getScoreStrategies());
+    }
+
+    /**
+     * Load all valid searchable fields given a Species, and filter by these
+     * fields that still exists and these that are willing to be used
+     *
+     * @param Query $query
+     */
+    public function setValidSearchableFieldsFromQuery(Query $query)
+    {
+        $fields = $query->getFilterFields();
+    }
+
+    /**
+     * Load all existing searchable fields
+     *
+     * @return string[]
+     */
+    public function getAllSearchableFields() : array
+    {
+        $indices = $this
+            ->indexRepository
+            ->getIndices();
+
+        return array_reduce($indices, function(array $fields, Index $index) {
+            return array_merge(
+                $fields,
+                array_filter(
+                    $index->getFields(),
+                    function(string $field) {
+                        return strpos('searchable_metadata.', $field) === 0;
+                    }
+                )
+            );
+        }, [
+            'exact_matching_metadata'
+        ]);
     }
 }
