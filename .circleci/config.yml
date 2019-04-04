@@ -91,7 +91,7 @@ jobs:
                 command: |
                     docker run -d \
                         --name="apisearch.rabbitmq" \
-                        rabbitmq:3-alpine
+                        rabbitmq:3-management-alpine
 
             - run:
                 name: Build Apisearch

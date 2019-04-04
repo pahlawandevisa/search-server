@@ -91,24 +91,36 @@ class RabbitMQChannel
     /**
      * Get channel.
      *
+     * @param bool $forceNew
+     *
      * @return AMQPChannel
      */
-    public function getChannel(): AMQPChannel
+    public function getChannel($forceNew = false): AMQPChannel
     {
-        if ($this->channel instanceof AMQPChannel) {
+        if (
+            !$forceNew &&
+            $this->channel instanceof AMQPChannel &&
+            $this->channel->is_open()
+        ) {
             return $this->channel;
         }
 
-        $connection = new AMQPStreamConnection(
+        $this->channel = $this->getFreshNewConnection();
+
+        return $this->channel;
+    }
+
+    /**
+     * Get a fresh new channel connection.
+     */
+    private function getFreshNewConnection()
+    {
+        return (new AMQPStreamConnection(
             $this->host,
             $this->port,
             $this->user,
             $this->password,
             $this->vhost
-        );
-
-        $this->channel = $connection->channel();
-
-        return $this->channel;
+        ))->channel();
     }
 }

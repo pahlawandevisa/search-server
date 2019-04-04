@@ -23,6 +23,8 @@ use Apisearch\Server\Domain\Consumer\ConsumerManager;
  */
 class RedisQueueConsumerManager extends ConsumerManager
 {
+    use RedisQueueTrierTrait;
+
     /**
      * @var RedisWrapper
      *
@@ -55,13 +57,16 @@ class RedisQueueConsumerManager extends ConsumerManager
         string $type,
         $data
     ) {
-        $this
-            ->redisWrapper
-            ->getClient()
-            ->rPush(
-                $this->queues['queues'][$type],
-                json_encode($data)
-            );
+        $this->tryActionNTimes(
+            $this->redisWrapper,
+            function ($client) use ($type, $data) {
+                $client->rPush(
+                    $this->queues['queues'][$type],
+                    json_encode($data)
+                );
+            },
+            3
+        );
     }
 
     /**
@@ -79,10 +84,13 @@ class RedisQueueConsumerManager extends ConsumerManager
             return false;
         }
 
-        return (int) $this
-            ->redisWrapper
-            ->getClient()
-            ->lLen($queueName);
+        return (int) $this->tryActionNTimes(
+            $this->redisWrapper,
+            function ($client) use ($queueName) {
+                return $client->lLen($queueName);
+            },
+            3
+        );
     }
 
     /**
@@ -95,13 +103,16 @@ class RedisQueueConsumerManager extends ConsumerManager
         string $queue,
         array $payload
     ) {
-        $this
-            ->redisWrapper
-            ->getClient()
-            ->lPush(
-                $queue,
-                json_encode($payload)
-            );
+        $this->tryActionNTimes(
+            $this->redisWrapper,
+            function ($client) use ($queue, $payload) {
+                $client->lPush(
+                    $queue,
+                    json_encode($payload)
+                );
+            },
+            3
+        );
     }
 
     /**
@@ -113,15 +124,18 @@ class RedisQueueConsumerManager extends ConsumerManager
      */
     public function consume(string $queueName): array
     {
-        list($queueName, $payload) = $this
-            ->redisWrapper
-            ->getClient()
-            ->blPop(
-                [
-                    $this->queues['busy_queues'][$queueName],
-                    $this->queues['queues'][$queueName],
-                ], 0
-            );
+        list($queueName, $payload) = $this->tryActionNTimes(
+            $this->redisWrapper,
+            function ($client) use ($queueName) {
+                return $client->blPop(
+                    [
+                        $this->queues['busy_queues'][$queueName],
+                        $this->queues['queues'][$queueName],
+                    ], 0
+                );
+            },
+            3
+        );
 
         return [$queueName, json_decode($payload, true)];
     }
@@ -137,13 +151,16 @@ class RedisQueueConsumerManager extends ConsumerManager
         bool $value
     ) {
         foreach ($queues as $queue) {
-            $this
-                ->redisWrapper
-                ->getClient()
-                ->rPush(
-                    $queue,
-                    json_encode($value)
-                );
+            $this->tryActionNTimes(
+                $this->redisWrapper,
+                function ($client) use ($queue, $value) {
+                    return $client->rPush(
+                        $queue,
+                        json_encode($value)
+                    );
+                },
+                3
+            );
         }
     }
 }

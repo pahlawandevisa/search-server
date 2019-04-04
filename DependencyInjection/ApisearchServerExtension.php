@@ -100,7 +100,6 @@ class ApisearchServerExtension extends BaseExtension
                 'enqueue' => 'apisearch_server.middleware.enqueue_events',
                 'ignore' => 'apisearch_server.middleware.ignore_events',
             ][$domainEventsAdapter],
-
             'apisearch_server.command_bus_service' => [
                 'inline' => 'apisearch_server.command_bus.inline',
                 'enqueue' => 'apisearch_server.command_bus.asynchronous',

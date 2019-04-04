@@ -50,8 +50,6 @@ trait MultiqueryTest
 
     /**
      * Test query on multiple indices.
-     *
-     * @group lele
      */
     public function testMultiQueryOnMultipleIndices()
     {

@@ -24,13 +24,6 @@ use RedisCluster;
 class RedisWrapper
 {
     /**
-     * @var Redis|RedisCluster
-     *
-     * redis client
-     */
-    private $redisClient;
-
-    /**
      * @var RedisFactory
      *
      * Redis Factory
@@ -61,16 +54,17 @@ class RedisWrapper
     /**
      * Get client.
      *
+     * @param bool $forceNew
+     *
      * @return Redis|RedisCluster
      */
-    public function getClient()
+    public function getClient(bool $forceNew = false)
     {
-        if (is_null($this->redisClient)) {
-            $this->redisClient = $this
-                ->redisFactory
-                ->create($this->redisConfig);
-        }
-
-        return $this->redisClient;
+        return $this
+            ->redisFactory
+            ->create(
+                $this->redisConfig,
+                $forceNew
+            );
     }
 }

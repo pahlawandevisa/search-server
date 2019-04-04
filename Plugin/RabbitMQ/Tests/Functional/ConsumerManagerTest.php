@@ -15,7 +15,6 @@ declare(strict_types=1);
 
 namespace Apisearch\Plugin\RabbitMQ\Tests\Functional;
 
-use Apisearch\Plugin\RabbitMQ\RabbitMQPluginBundle;
 use Apisearch\Server\Tests\Functional\Consumer\ConsumerManagerTest as BaseTest;
 
 /**
@@ -23,20 +22,7 @@ use Apisearch\Server\Tests\Functional\Consumer\ConsumerManagerTest as BaseTest;
  */
 class ConsumerManagerTest extends BaseTest
 {
-    /**
-     * Decorate bundles.
-     *
-     * @param array $bundles
-     *
-     * @return array
-     */
-    protected static function decorateBundles(array $bundles): array
-    {
-        $bundles = parent::decorateBundles($bundles);
-        $bundles[] = RabbitMQPluginBundle::class;
-
-        return $bundles;
-    }
+    use RabbitMQTestTrait;
 
     /**
      * Decorate configuration.

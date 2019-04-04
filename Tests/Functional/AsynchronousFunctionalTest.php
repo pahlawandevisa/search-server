@@ -57,4 +57,9 @@ abstract class AsynchronousFunctionalTest extends ServiceFunctionalTest
     {
         usleep(600000);
     }
+
+    /**
+     * Force all connections to be dropped.
+     */
+    abstract protected function dropConnections();
 }
