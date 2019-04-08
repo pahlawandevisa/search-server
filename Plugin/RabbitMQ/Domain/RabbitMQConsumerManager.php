@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Apisearch\Plugin\RabbitMQ\Domain;
 
 use Apisearch\Server\Domain\Consumer\ConsumerManager;
+use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
 
 /**
@@ -23,6 +24,8 @@ use PhpAmqpLib\Message\AMQPMessage;
  */
 class RabbitMQConsumerManager extends ConsumerManager
 {
+    use RabbitMQTrierTrait;
+
     /**
      * @var RabbitMQChannel
      *
@@ -59,10 +62,12 @@ class RabbitMQConsumerManager extends ConsumerManager
             return false;
         }
 
-        $this
-            ->channel
-            ->getChannel()
-            ->queue_declare($queueName, false, false, false, false);
+        $this->tryActionNTimes(
+            $this->channel,
+            function (AMQPChannel $channel) use ($queueName) {
+                $channel->queue_declare($queueName, false, false, false, false);
+            }, 3
+        );
 
         return true;
     }
@@ -81,12 +86,17 @@ class RabbitMQConsumerManager extends ConsumerManager
             return null;
         }
 
-        $channel = $this
-            ->channel
-            ->getChannel();
-        $channel->exchange_declare($busyQueueName, 'fanout', false, false, false);
-        list($createdBusyQueueName) = $channel->queue_declare('', false, false, true, false);
-        $channel->queue_bind($createdBusyQueueName, $busyQueueName);
+        $createdBusyQueueName = $this->tryActionNTimes(
+            $this->channel,
+            function (AMQPChannel $channel) use ($busyQueueName) {
+                $channel->exchange_declare($busyQueueName, 'fanout', false, false, false);
+                list($createdBusyQueueName) = $channel->queue_declare('', false, false, true, false);
+                $channel->queue_bind($createdBusyQueueName, $busyQueueName);
+
+                return $createdBusyQueueName;
+            },
+            3
+        );
 
         return $createdBusyQueueName;
     }
@@ -105,12 +115,15 @@ class RabbitMQConsumerManager extends ConsumerManager
             return;
         }
 
-        $this
-            ->channel
-            ->getChannel()
-            ->basic_publish(new AMQPMessage(json_encode($data), [
-                'delivery_mode' => 2,
-            ]), '', $this->queues['queues'][$type]);
+        $this->tryActionNTimes(
+            $this->channel,
+            function (AMQPChannel $channel) use ($type, $data) {
+                $channel->basic_publish(new AMQPMessage(json_encode($data), [
+                    'delivery_mode' => 2,
+                ]), '', $this->queues['queues'][$type]);
+            },
+            3
+        );
     }
 
     /**
@@ -128,10 +141,13 @@ class RabbitMQConsumerManager extends ConsumerManager
             return false;
         }
 
-        $data = $this
-            ->channel
-            ->getChannel()
-            ->queue_declare($queueName, true);
+        $data = $this->tryActionNTimes(
+            $this->channel,
+            function (AMQPChannel $channel) use ($queueName) {
+                return $channel->queue_declare($queueName, true);
+            },
+            3
+        );
 
         return \intval($data[1]);
     }
@@ -146,11 +162,14 @@ class RabbitMQConsumerManager extends ConsumerManager
         array $queues,
         bool $value
     ) {
-        foreach ($queues as $queue) {
-            $this
-                ->channel
-                ->getChannel()
-                ->basic_publish(new AMQPMessage($value), $queue);
-        }
+        $this->tryActionNTimes(
+            $this->channel,
+            function (AMQPChannel $channel) use ($queues, $value) {
+                foreach ($queues as $queue) {
+                    $channel->basic_publish(new AMQPMessage($value), $queue);
+                }
+            },
+            3
+        );
     }
 }

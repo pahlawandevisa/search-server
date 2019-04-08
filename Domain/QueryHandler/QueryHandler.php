@@ -22,6 +22,7 @@ use Apisearch\Server\Domain\Event\DomainEventWithRepositoryReference;
 use Apisearch\Server\Domain\Event\QueryWasMade;
 use Apisearch\Server\Domain\Query\Query;
 use Apisearch\Server\Domain\WithRepositoryAndEventPublisher;
+use Apisearch\Server\Exception\ExternalResourceException;
 use Ramsey\Uuid\Uuid;
 
 /**
@@ -52,21 +53,28 @@ class QueryHandler extends WithRepositoryAndEventPublisher
             ->repository
             ->query($searchQuery);
 
-        $this
-            ->eventPublisher
-            ->publish(new DomainEventWithRepositoryReference(
-                $repositoryReference,
-                new QueryWasMade(
-                    $searchQuery->getQueryText(),
-                    $searchQuery->getSize(),
-                    array_map(function (Item $item) {
-                        return $item->getUUID();
-                    }, $result->getItems()),
-                    $searchQuery->getUser(),
-                    json_encode($query->getQuery()->toArray())
-                ),
-                (int) ((microtime(true) - $from) * 1000)
-            ));
+        try {
+            $this
+                ->eventPublisher
+                ->publish(new DomainEventWithRepositoryReference(
+                    $repositoryReference,
+                    new QueryWasMade(
+                        $searchQuery->getQueryText(),
+                        $searchQuery->getSize(),
+                        array_map(function (Item $item) {
+                            return $item->getUUID();
+                        }, $result->getItems()),
+                        $searchQuery->getUser(),
+                        json_encode($query->getQuery()->toArray())
+                    ),
+                    (int) ((microtime(true) - $from) * 1000)
+                ));
+        } catch (ExternalResourceException $exception) {
+            // We should ignore external resources exceptions, as they are
+            // commonly related to connections. These exceptions should be
+            // transparent when making queries in order to always provide the
+            // best response time.
+        }
 
         return $result;
     }

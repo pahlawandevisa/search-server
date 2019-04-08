@@ -46,4 +46,11 @@ class AsynchronousCommandNoBundleTest extends AsynchronousFunctionalTest
     {
         $this->assertTrue(true);
     }
+
+    /**
+     * Force all connections to be dropped.
+     */
+    protected function dropConnections()
+    {
+    }
 }

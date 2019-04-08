@@ -15,7 +15,6 @@ declare(strict_types=1);
 
 namespace Apisearch\Plugin\RedisQueue\Tests\Functional;
 
-use Apisearch\Plugin\RedisQueue\RedisQueuePluginBundle;
 use Apisearch\Server\Tests\Functional\Domain\Repository\AsynchronousCommandsTest as BaseAsynchronousCommandsTest;
 
 /**
@@ -23,18 +22,5 @@ use Apisearch\Server\Tests\Functional\Domain\Repository\AsynchronousCommandsTest
  */
 class AsynchronousCommandsTest extends BaseAsynchronousCommandsTest
 {
-    /**
-     * Decorate bundles.
-     *
-     * @param array $bundles
-     *
-     * @return array
-     */
-    protected static function decorateBundles(array $bundles): array
-    {
-        $bundles = parent::decorateBundles($bundles);
-        $bundles[] = RedisQueuePluginBundle::class;
-
-        return $bundles;
-    }
+    use RedisQueueTestTrait;
 }
