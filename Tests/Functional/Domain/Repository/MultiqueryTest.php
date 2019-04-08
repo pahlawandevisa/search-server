@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Apisearch\Server\Tests\Functional\Domain\Repository;
 
 use Apisearch\Exception\ResourceNotAvailableException;
+use Apisearch\Model\IndexUUID;
 use Apisearch\Model\Item;
 use Apisearch\Model\ItemUUID;
 use Apisearch\Query\Query;
@@ -79,7 +80,7 @@ trait MultiqueryTest
         $resultQ2 = $result->getSubresults()['q2'];
         $this->assertCount(2, $resultQ2->getItems());
 
-        $this->indexItems([Item::create(ItemUUID::createByComposedUUID('123~type2'), [], [], ['field1' => 'Engonga'])], self::$appId, self::$anotherIndex);
+        //$this->indexItems([Item::create(ItemUUID::createByComposedUUID('123~type2'), [], [], ['field1' => 'Engonga'])], self::$appId, self::$anotherIndex);
         $result = $this->query(Query::createMultiquery([
             'q1' => Query::createMatchAll(),
             'q2' => Query::create('Engonga'),
@@ -99,6 +100,26 @@ trait MultiqueryTest
         $resultQ4 = $result->getSubresults()['q4'];
         $this->assertCount(1, $resultQ4->getItems());
         $this->assertNotEmpty($resultQ4->getQueryUUID());
+
+        /*
+         * Test multiquery with forced indices each
+         */
+        $result = $this->query(Query::createMultiquery([
+            'q1' => Query::createMatchAll()->forceIndexUUID(IndexUUID::createById(static::$index)),
+            'q2' => Query::createMatchAll()->forceIndexUUID(IndexUUID::createById(static::$anotherIndex)),
+            'q3' => Query::createMatchAll()->forceIndexUUID(IndexUUID::createById(static::$index.','.static::$anotherIndex)),
+            'q4' => Query::createMatchAll()->forceIndexUUID(IndexUUID::createById(static::$yetAnotherIndex.','.static::$anotherIndex)),
+        ]), self::$appId, '*');
+
+        $resultQ1 = $result->getSubresults()['q1'];
+        $this->assertCount(5, $resultQ1->getItems());
+        $resultQ2 = $result->getSubresults()['q2'];
+        $this->assertCount(1, $resultQ2->getItems());
+        $resultQ3 = $result->getSubresults()['q3'];
+        $this->assertCount(6, $resultQ3->getItems());
+        $resultQ4 = $result->getSubresults()['q4'];
+        $this->assertCount(2, $resultQ4->getItems());
+
         $this->deleteIndex(self::$appId, self::$anotherIndex);
         $this->deleteIndex(self::$appId, self::$yetAnotherIndex);
     }

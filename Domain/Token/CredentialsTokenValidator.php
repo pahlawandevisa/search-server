@@ -47,6 +47,8 @@ class CredentialsTokenValidator implements TokenValidator
         string $verb
     ): bool {
         $endpoint = strtolower($verb.'~~'.trim($path, '/'));
+        $indexUUIDAsStringArray = $this->indexUUIDArrayToStringArray([$indexUUID]);
+        $tokenIndexUUIDAsStringArray = $this->indexUUIDArrayToStringArray($token->getIndices());
 
         return
             ($token instanceof Token) &&
@@ -54,16 +56,41 @@ class CredentialsTokenValidator implements TokenValidator
                 $appUUID->composeUUID() === $token->getAppUUID()->composeUUID()
             ) &&
             (
-                empty($indexUUID->composeUUID()) ||
                 empty($token->getIndices()) ||
-                array_reduce($token->getIndices(), function (bool $carry, IndexUUID $iterationIndexUUID) use ($indexUUID) {
-                    return $carry && $iterationIndexUUID->composeUUID() === $indexUUID->composeUUID();
-                }, true)
+                empty(array_diff(
+                    $indexUUIDAsStringArray,
+                    $tokenIndexUUIDAsStringArray
+                ))
             ) &&
             (
                 empty($token->getEndpoints()) ||
                 in_array($endpoint, $token->getEndpoints())
             )
         ;
+    }
+
+    /**
+     * Given an array of indices, return all indexUUID as an array of strings.
+     *
+     * @param IndexUUID[] $indexUUIDs
+     *
+     * @return string[]
+     */
+    private function indexUUIDArrayToStringArray(array $indexUUIDs): array
+    {
+        $indexUUIDStrings = [];
+        foreach ($indexUUIDs as $indexUUID) {
+            $indexUUIDStrings = array_merge(
+                $indexUUIDStrings,
+                array_filter(
+                    explode(
+                        ',',
+                        trim($indexUUID->composeUUID(), ',* ')
+                    )
+                )
+            );
+        }
+
+        return $indexUUIDStrings;
     }
 }

@@ -15,6 +15,8 @@ declare(strict_types=1);
 
 namespace Apisearch\Plugin\Security\Domain\Middleware;
 
+use Apisearch\Model\Token;
+use Apisearch\Query\Query as ModelQuery;
 use Apisearch\Server\Domain\Plugin\PluginMiddleware;
 use Apisearch\Server\Domain\Query\Query;
 
@@ -40,6 +42,24 @@ class RestrictedFieldsMiddleware implements PluginMiddleware
          */
         $token = $command->getToken();
         $query = $command->getQuery();
+        $this->makeRestrictionsInQuery($query, $token);
+        foreach ($query->getSubqueries() as $subquery) {
+            $this->makeRestrictionsInQuery($subquery, $token);
+        }
+
+        return $next($command);
+    }
+
+    /**
+     * Make restrictions in query.
+     *
+     * @param ModelQuery $query
+     * @param Token      $token
+     */
+    private function makeRestrictionsInQuery(
+        ModelQuery $query,
+        Token $token
+    ) {
         $restrictedFields = $token->getMetadataValue('restricted_fields', []);
         $allowedFields = $token->getMetadataValue('allowed_fields', []);
         $fields = $query->getFields();
@@ -53,8 +73,6 @@ class RestrictedFieldsMiddleware implements PluginMiddleware
         }
 
         $query->setFields($fields);
-
-        return $next($command);
     }
 
     /**

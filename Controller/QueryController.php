@@ -19,8 +19,8 @@ use Apisearch\Exception\InvalidFormatException;
 use Apisearch\Http\Http;
 use Apisearch\Model\AppUUID;
 use Apisearch\Model\IndexUUID;
-use Apisearch\Query\Query as QueryModel;
 use Apisearch\Repository\RepositoryReference;
+use Apisearch\Server\Controller\Extractor\RequestContentExtractor;
 use Apisearch\Server\Domain\Query\Query;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,36 +41,19 @@ class QueryController extends ControllerWithBus
      */
     public function __invoke(Request $request): JsonResponse
     {
-        $query = $request->query;
-
-        $queryAsArray = $this->getRequestContentObject(
-            $request,
-            Http::QUERY_FIELD,
-            InvalidFormatException::queryFormatNotValid($request->getContent()),
-            []
-        );
-
-        /*
-         * We accept queries as well by GET in order to be able to cache them in
-         * CDNs by using Cache headers
-         */
-        if ([] === $queryAsArray) {
-            $possibleQuery = $request->query->get(Http::QUERY_FIELD);
-            if (is_string($possibleQuery)) {
-                $queryAsArray = $this->decodeQuery($possibleQuery);
-            }
-        }
+        $requestQuery = $request->query;
+        $queryModel = RequestContentExtractor::extractQuery($request);
 
         $responseAsArray = $this
             ->commandBus
             ->handle(new Query(
                 RepositoryReference::create(
-                    AppUUID::createById($query->get(Http::APP_ID_FIELD, '')),
-                    IndexUUID::createById($query->get(Http::INDEX_FIELD, '*'))
+                    AppUUID::createById($requestQuery->get(Http::APP_ID_FIELD, '')),
+                    IndexUUID::createById($requestQuery->get(Http::INDEX_FIELD, '*'))
                 ),
-                $query->get(Http::TOKEN_FIELD, ''),
-                QueryModel::createFromArray($queryAsArray),
-                array_filter($query->all(), function (string $key) {
+                $requestQuery->get(Http::TOKEN_FIELD, ''),
+                $queryModel,
+                array_filter($requestQuery->all(), function (string $key) {
                     return !in_array($key, [
                         Http::TOKEN_FIELD,
                         Http::APP_ID_FIELD,
@@ -87,22 +70,5 @@ class QueryController extends ControllerWithBus
                 'Access-Control-Allow-Origin' => '*',
             ]
         );
-    }
-
-    /**
-     * @param string $query
-     *
-     * @return array
-     *
-     * @throws InvalidFormatException
-     */
-    private function decodeQuery(string $query): array
-    {
-        $response = \json_decode($query, true);
-        if (JSON_ERROR_NONE !== \json_last_error()) {
-            throw InvalidFormatException::queryFormatNotValid($query);
-        }
-
-        return $response;
     }
 }
