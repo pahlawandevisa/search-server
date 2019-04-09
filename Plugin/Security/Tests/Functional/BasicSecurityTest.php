@@ -233,4 +233,27 @@ class BasicSecurityTest extends SecurityFunctionalTest
         $item = $this->query(Query::createMatchAll(), self::$appId, self::$index, $token)->getFirstItem();
         $this->assertCount(0, $item->getAllMetadata());
     }
+
+    /**
+     * Test plugin is working with subqueries as well.
+     *
+     * @group lolo
+     */
+    public function testRestrictedFieldsInSubqueries()
+    {
+        $token = new Token(
+            TokenUUID::createById('12345'),
+            AppUUID::createById(self::$appId)
+        );
+        $token->setMetadataValue('restricted_fields', [
+            'metadata.stored_field_boolean_false',
+        ]);
+        $this->addToken($token, self::$appId);
+
+        $item = $this->query(Query::createMultiquery([
+            'q1' => Query::createMatchAll(),
+            'q2' => Query::createMatchAll(),
+        ]), self::$appId, self::$index, $token)->getSubresults()['q1']->getFirstItem();
+        $this->assertFalse(isset($item->getMetadata()['stored_field_boolean_false']));
+    }
 }

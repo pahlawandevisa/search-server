@@ -15,13 +15,16 @@ declare(strict_types=1);
 
 namespace Apisearch\Server\Controller\Listener;
 
+use Apisearch\Exception\InvalidFormatException;
 use Apisearch\Exception\InvalidTokenException;
 use Apisearch\Http\Http;
 use Apisearch\Model\AppUUID;
 use Apisearch\Model\IndexUUID;
 use Apisearch\Model\Token;
 use Apisearch\Model\TokenUUID;
+use Apisearch\Server\Controller\Extractor\RequestContentExtractor;
 use Apisearch\Server\Domain\Token\TokenManager;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 
 /**
@@ -67,12 +70,13 @@ class TokenCheckOverHTTP
         $origin = $request->headers->get('Referer', '');
         $urlParts = parse_url($origin);
         $origin = $urlParts['host'] ?? '';
+        $indices = $this->getIndices($request);
 
         $token = $this
             ->tokenManager
             ->checkToken(
                 AppUUID::createById($query->get(Http::APP_ID_FIELD, '')),
-                IndexUUID::createById($query->get(Http::INDEX_FIELD, '')),
+                $indices,
                 TokenUUID::createById($tokenString),
                 $origin,
                 $request->getPathInfo(),
@@ -82,5 +86,34 @@ class TokenCheckOverHTTP
         $request
             ->query
             ->set(Http::TOKEN_FIELD, $token);
+    }
+
+    /**
+     * Get index taking in account multiquery.
+     *
+     * @param Request $request
+     *
+     * @return IndexUUID
+     */
+    private function getIndices(Request $request): IndexUUID
+    {
+        $query = null;
+        $indices = [$request->query->get(Http::INDEX_FIELD, '')];
+
+        try {
+            $query = RequestContentExtractor::extractQuery($request);
+        } catch (InvalidFormatException $formatException) {
+            return IndexUUID::createById($indices[0]);
+        }
+
+        foreach ($query->getSubqueries() as $subquery) {
+            if ($subquery->getIndexUUID() instanceof IndexUUID) {
+                $indices[] = $subquery->getIndexUUID()->getId();
+            }
+        }
+
+        $indices = array_unique($indices);
+
+        return IndexUUID::createById(implode(',', $indices));
     }
 }

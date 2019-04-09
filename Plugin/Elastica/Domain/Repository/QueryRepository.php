@@ -15,6 +15,7 @@ declare(strict_types=1);
 
 namespace Apisearch\Plugin\Elastica\Domain\Repository;
 
+use Apisearch\Model\IndexUUID;
 use Apisearch\Model\Item;
 use Apisearch\Model\ItemUUID;
 use Apisearch\Plugin\Elastica\Domain\Builder\QueryBuilder;
@@ -23,6 +24,7 @@ use Apisearch\Plugin\Elastica\Domain\ElasticaWrapperWithRepositoryReference;
 use Apisearch\Plugin\Elastica\Domain\ItemElasticaWrapper;
 use Apisearch\Plugin\Elastica\Domain\Search;
 use Apisearch\Query\Query;
+use Apisearch\Repository\RepositoryReference;
 use Apisearch\Result\Result;
 use Apisearch\Server\Domain\Repository\Repository\QueryRepository as QueryRepositoryInterface;
 use Elastica\Multi\ResultSet as ElasticaMultiResultSet;
@@ -100,7 +102,10 @@ class QueryRepository extends ElasticaWrapperWithRepositoryReference implements 
         $resultSet = $this
             ->elasticaWrapper
             ->simpleSearch(
-                $this->getRepositoryReference(),
+                $this->getRepositoryReferenceIndexSpecific(
+                    $this->getRepositoryReference(),
+                    $query->getIndexUUID()
+                ),
                 new Search(
                     $this->createElasticaQueryByModelQuery($query),
                     $query->areResultsEnabled()
@@ -128,7 +133,12 @@ class QueryRepository extends ElasticaWrapperWithRepositoryReference implements 
     private function makeMultiQuery(Query $query)
     {
         $searches = [];
+        $repositoryReferencies = [];
         foreach ($query->getSubqueries() as $name => $subquery) {
+            $repositoryReferencies[] = $this->getRepositoryReferenceIndexSpecific(
+                $this->getRepositoryReference(),
+                $subquery->getIndexUUID()
+            );
             $searches[] = new Search(
                 $this->createElasticaQueryByModelQuery($subquery),
                 $subquery->areResultsEnabled()
@@ -144,7 +154,7 @@ class QueryRepository extends ElasticaWrapperWithRepositoryReference implements 
         $multiResultSet = $this
             ->elasticaWrapper
             ->multisearch(
-                $this->getRepositoryReference(),
+                $repositoryReferencies,
                 $searches
             );
 
@@ -369,5 +379,25 @@ class QueryRepository extends ElasticaWrapperWithRepositoryReference implements 
                 ],
             ],
         ]);
+    }
+
+    /**
+     * Create a new RepositoryReference instance given a possible Index UUID. If
+     * this given IndexUUID is null, then return the same value object.
+     *
+     * @param RepositoryReference $repositoryReference
+     * @param IndexUUID|null      $indexUUID
+     *
+     * @return RepositoryReference
+     */
+    private function getRepositoryReferenceIndexSpecific(
+        RepositoryReference $repositoryReference,
+        ?IndexUUID $indexUUID
+    ): RepositoryReference {
+        if (!$indexUUID instanceof IndexUUID) {
+            return $repositoryReference;
+        }
+
+        return $repositoryReference->changeIndex($indexUUID);
     }
 }

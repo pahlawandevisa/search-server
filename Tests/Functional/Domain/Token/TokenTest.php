@@ -229,4 +229,76 @@ abstract class TokenTest extends HttpFunctionalTest
         $this->deleteTokens();
         $this->assertCount(3, $this->getTokens());
     }
+
+    /**
+     * Permissions in multiquery for valid token.
+     */
+    public function testMultiqueryValidToken()
+    {
+        $token = new Token(
+            TokenUUID::createById('token-multiquery'),
+            AppUUID::createById(static::$appId),
+            [IndexUUID::createById(self::$index), IndexUUID::createById(self::$anotherIndex)]
+        );
+
+        $this->addToken($token);
+        $this->query(Query::createMultiquery([
+            'q1' => Query::createMatchAll(),
+            'q2' => Query::createMatchAll()->forceIndexUUID(IndexUUID::createById(self::$anotherIndex)),
+        ]), static::$appId, self::$index, $token);
+
+        $this->query(Query::createMultiquery([
+            'q1' => Query::createMatchAll()->forceIndexUUID(IndexUUID::createById(self::$index)),
+            'q2' => Query::createMatchAll()->forceIndexUUID(IndexUUID::createById(self::$anotherIndex)),
+        ]), static::$appId, '*', $token);
+
+        /*
+         * Forcing an assertion. At this point, the test was good.
+         */
+        $this->assertTrue(true);
+    }
+
+    /**
+     * Permissions in multiquery for invalid token.
+     *
+     * @param Query $query
+     *
+     * @dataProvider dataMultiqueryInvalidToken
+     *
+     * @expectedException \Apisearch\Exception\InvalidTokenException
+     *
+     * @group lele
+     */
+    public function testMultiqueryInvalidToken(Query $query)
+    {
+        $token = new Token(
+            TokenUUID::createById('token-multiquery'),
+            AppUUID::createById(static::$appId),
+            [IndexUUID::createById(self::$index)]
+        );
+
+        $this->addToken($token);
+        $this->query($query, static::$appId, '*', $token);
+    }
+
+    /**
+     * Data for invalid multiquery queries.
+     */
+    public function dataMultiqueryInvalidToken(): array
+    {
+        return [
+            [
+                Query::createMultiquery([
+                    'q1' => Query::createMatchAll(),
+                    'q2' => Query::createMatchAll()->forceIndexUUID(IndexUUID::createById(self::$anotherIndex)),
+                ]),
+            ],
+            [
+                Query::createMultiquery([
+                    'q1' => Query::createMatchAll()->forceIndexUUID(IndexUUID::createById(self::$index)),
+                    'q2' => Query::createMatchAll()->forceIndexUUID(IndexUUID::createById(self::$anotherIndex)),
+                ]),
+            ],
+        ];
+    }
 }

@@ -696,20 +696,18 @@ class ItemElasticaWrapper
     /**
      * Multi search.
      *
-     * @param RepositoryReference $repositoryReference
-     * @param Search[]            $searches
+     * @param RepositoryReference[] $repositoryReferences
+     * @param Search[]              $searches
      *
      * @return ElasticaMultiResultSet
      */
     public function multisearch(
-        RepositoryReference $repositoryReference,
+        array $repositoryReferences,
         array $searches
     ): ElasticaMultiResultSet {
-        $index = $this->getIndex($repositoryReference);
-        $client = $index->getClient();
-
-        $elasticsearchMultiSearch = new ElasticaMultiSearch($client);
-        foreach ($searches as $search) {
+        $elasticsearchMultiSearch = new ElasticaMultiSearch($this->client);
+        foreach ($searches as $position => $search) {
+            $index = $this->getIndex($repositoryReferences[$position]);
             $elasticsearchSearch = new ElasticaSearch($this->client);
             $elasticsearchSearch->addIndices(explode(',', $index->getName()));
             $elasticsearchSearch->setOptionsAndQuery([
