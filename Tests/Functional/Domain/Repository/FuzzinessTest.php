@@ -83,7 +83,7 @@ trait FuzzinessTest
         $items = $this
             ->query(
                 Query::create('matano')
-                    ->setFilterFields([
+                    ->setsearchableFields([
                         'searchable_metadata.editorial^10',
                         'searchable_metadata.specific^5',
                         'searchable_metadata.boosting^1',
@@ -104,7 +104,7 @@ trait FuzzinessTest
         $items = $this
             ->query(
                 Query::create('matano')
-                    ->setFilterFields([
+                    ->setsearchableFields([
                         'searchable_metadata.editorial^10',
                         'searchable_metadata.specific^5',
                         'searchable_metadata.boosting^1',
@@ -124,7 +124,7 @@ trait FuzzinessTest
         $items = $this
             ->query(
                 Query::create('nither matano')
-                    ->setFilterFields([
+                    ->setsearchableFields([
                         'searchable_metadata.editorial^10',
                         'searchable_metadata.specific^5',
                         'searchable_metadata.boosting^1',
@@ -149,7 +149,7 @@ trait FuzzinessTest
         $items = $this
             ->query(
                 Query::create('mattuano')
-                    ->setFilterFields([
+                    ->setsearchableFields([
                         'searchable_metadata.editorial',
                         'searchable_metadata.specific',
                     ])
@@ -166,7 +166,7 @@ trait FuzzinessTest
         $items = $this
             ->query(
                 Query::create('mattauno')
-                    ->setFilterFields([
+                    ->setsearchableFields([
                         'searchable_metadata.editorial',
                         'searchable_metadata.specific',
                     ])
@@ -183,7 +183,7 @@ trait FuzzinessTest
         $items = $this
             ->query(
                 Query::create('mattauno')
-                    ->setFilterFields([
+                    ->setsearchableFields([
                         'searchable_metadata.editorial',
                         'searchable_metadata.specific',
                     ])

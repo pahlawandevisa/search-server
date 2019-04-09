@@ -57,7 +57,7 @@ class QueryBuilder
             $query,
             $boolQuery,
             $query->getFilters(),
-            $query->getFilterFields(),
+            $query->getSearchableFields(),
             null,
             false
         );
@@ -66,7 +66,7 @@ class QueryBuilder
             $query,
             $boolQuery,
             $query->getUniverseFilters(),
-            $query->getFilterFields(),
+            $query->getSearchableFields(),
             null,
             false
         );
@@ -90,7 +90,7 @@ class QueryBuilder
                 $query->getAggregations(),
                 $query->getUniverseFilters(),
                 $query->getFilters(),
-                $query->getFilterFields()
+                $query->getSearchableFields()
             );
         }
     }
@@ -139,7 +139,7 @@ class QueryBuilder
      * @param Query                   $query
      * @param ElasticaQuery\BoolQuery $boolQuery
      * @param Filter[]                $filters
-     * @param string[]                $filterFields
+     * @param string[]                $searchableFields
      * @param string|null             $filterToIgnore
      * @param bool                    $takeInAccountDefinedTermFilter
      */
@@ -147,7 +147,7 @@ class QueryBuilder
         Query $query,
         ElasticaQuery\BoolQuery $boolQuery,
         array $filters,
-        array $filterFields,
+        array $searchableFields,
         ? string $filterToIgnore,
         bool $takeInAccountDefinedTermFilter
     ) {
@@ -161,7 +161,7 @@ class QueryBuilder
                 $query,
                 $boolQuery,
                 $filter,
-                $filterFields,
+                $searchableFields,
                 $onlyAddDefinedTermFilter,
                 $takeInAccountDefinedTermFilter
             );
@@ -174,7 +174,7 @@ class QueryBuilder
      * @param Query                   $query
      * @param ElasticaQuery\BoolQuery $boolQuery
      * @param Filter                  $filter
-     * @param string[]                $filterFields
+     * @param string[]                $searchableFields
      * @param bool                    $onlyAddDefinedTermFilter
      * @param bool                    $takeInAccountDefinedTermFilter
      */
@@ -182,7 +182,7 @@ class QueryBuilder
         Query $query,
         ElasticaQuery\BoolQuery $boolQuery,
         Filter $filter,
-        array $filterFields,
+        array $searchableFields,
         bool $onlyAddDefinedTermFilter,
         bool $takeInAccountDefinedTermFilter
     ) {
@@ -191,7 +191,7 @@ class QueryBuilder
             $match = $this->createMainQueryObject(
                 $query,
                 $queryString,
-                $filterFields
+                $searchableFields
             );
             $boolQuery->addMust($match);
 
@@ -503,7 +503,7 @@ class QueryBuilder
      * @param QueryAggregation[] $aggregations
      * @param Filter[]           $universeFilters
      * @param Filter[]           $filters
-     * @param string[]           $filterFields
+     * @param string[]           $searchableFields
      */
     private function addAggregations(
         Query $query,
@@ -511,7 +511,7 @@ class QueryBuilder
         array $aggregations,
         array $universeFilters,
         array $filters,
-        array $filterFields
+        array $searchableFields
     ) {
         $globalAggregation = new ElasticaAggregation\GlobalAggregation('all');
         $universeAggregation = new ElasticaAggregation\Filter('universe');
@@ -520,7 +520,7 @@ class QueryBuilder
             $query,
             $aggregationBoolQuery,
             $universeFilters,
-            $filterFields,
+            $searchableFields,
             null,
             true
         );
@@ -545,7 +545,7 @@ class QueryBuilder
                 $query,
                 $boolQuery,
                 $filters,
-                $filterFields,
+                $searchableFields,
                 $aggregation->getApplicationType() & Filter::AT_LEAST_ONE
                     ? $aggregation->getName()
                     : null,
@@ -611,35 +611,35 @@ class QueryBuilder
      *
      * @param Query  $query
      * @param string $queryString
-     * @param array  $filterFields
+     * @param array  $searchableFields
      *
      * @return ElasticaQuery\AbstractQuery
      */
     private function createMainQueryObject(
         Query $query,
         string $queryString,
-        array $filterFields
+        array $searchableFields
     ): ElasticaQuery\AbstractQuery {
         if (empty($queryString)) {
             $match = new ElasticaQuery\MatchAll();
         } else {
             $fuzziness = $query->getFuzziness();
-            $filterFields = empty($filterFields)
+            $searchableFields = empty($searchableFields)
                 ? [
                     'searchable_metadata.*',
                     'exact_matching_metadata^5',
                 ]
-                : $filterFields;
+                : $searchableFields;
 
             $match = is_array($fuzziness)
                 ? $this->createMainQueryObjectAsFuzzy(
                     $queryString,
-                    $filterFields,
+                    $searchableFields,
                     $fuzziness
                 )
                 : $this->createMainQueryObjectAsMatchAll(
                     $queryString,
-                    $filterFields,
+                    $searchableFields,
                     $fuzziness
                 );
         }
@@ -656,19 +656,19 @@ class QueryBuilder
      * Create main query object as a multimatch.
      *
      * @param string            $queryString
-     * @param array             $filterFields
+     * @param array             $searchableFields
      * @param float|string|null $fuzziness
      *
      * @return ElasticaQuery\AbstractQuery
      */
     private function createMainQueryObjectAsMatchAll(
         string $queryString,
-        array $filterFields,
+        array $searchableFields,
         $fuzziness
     ): ElasticaQuery\AbstractQuery {
         $match = new ElasticaQuery\MultiMatch();
         $match
-            ->setFields($filterFields)
+            ->setFields($searchableFields)
             ->setQuery($queryString);
 
         if (!is_null($fuzziness)) {
@@ -682,18 +682,18 @@ class QueryBuilder
      * Create main query object as a multimatch.
      *
      * @param string $queryString
-     * @param array  $filterFields
+     * @param array  $searchableFields
      * @param array  $fuzziness
      *
      * @return ElasticaQuery\AbstractQuery
      */
     private function createMainQueryObjectAsFuzzy(
         string $queryString,
-        array $filterFields,
+        array $searchableFields,
         array $fuzziness
     ): ElasticaQuery\AbstractQuery {
         $boolQuery = new ElasticaQuery\BoolQuery();
-        foreach ($filterFields as $filterField) {
+        foreach ($searchableFields as $filterField) {
             $filterFieldParts = explode('^', $filterField, 2);
             $filterFieldWithoutWeight = $filterFieldParts[0];
             $specificFuzziness = $fuzziness[$filterFieldWithoutWeight] ?? false;
