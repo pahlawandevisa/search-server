@@ -30,6 +30,7 @@ use Apisearch\Result\Result;
 use Apisearch\Server\ApisearchPluginsBundle;
 use Apisearch\Server\ApisearchServerBundle;
 use Apisearch\Server\Exception\ErrorException;
+use Apisearch\User\Interaction;
 use Mmoreram\BaseBundle\BaseBundle;
 use Mmoreram\BaseBundle\Kernel\BaseKernel;
 use Mmoreram\BaseBundle\Tests\BaseFunctionalTest;
@@ -701,18 +702,14 @@ abstract class ApisearchServerBundleFunctionalTest extends BaseFunctionalTest
     /**
      * Add interaction.
      *
-     * @param string $userId
-     * @param string $itemUUIDComposed
-     * @param int    $weight
-     * @param string $appId
-     * @param Token  $token
+     * @param Interaction $interaction
+     * @param string      $appId
+     * @param Token       $token
      */
     abstract public function addInteraction(
-        string $userId,
-        string $itemUUIDComposed,
-        int $weight,
-        string $appId,
-        Token $token
+        Interaction $interaction,
+        string $appId = null,
+        Token $token = null
     );
 
     /**

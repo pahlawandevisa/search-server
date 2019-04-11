@@ -44,7 +44,7 @@ class QueryController extends ControllerWithBus
         $requestQuery = $request->query;
         $queryModel = RequestContentExtractor::extractQuery($request);
 
-        $responseAsArray = $this
+        $result = $this
             ->commandBus
             ->handle(new Query(
                 RepositoryReference::create(
@@ -60,11 +60,17 @@ class QueryController extends ControllerWithBus
                         Http::INDEX_FIELD,
                     ]);
                 }, ARRAY_FILTER_USE_KEY)
-            ))
-            ->toArray();
+            ));
+
+        /*
+         * To allow result manipulation during the response returning, and in
+         * order to increase performance, we will save the Result instance as a
+         * query attribute
+         */
+        $requestQuery->set('result', $result);
 
         return new JsonResponse(
-            $responseAsArray,
+            $result->toArray(),
             200,
             [
                 'Access-Control-Allow-Origin' => '*',

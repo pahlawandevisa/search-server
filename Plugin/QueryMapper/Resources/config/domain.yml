@@ -1,0 +1,11 @@
+services:
+
+    apisearch_plugin.query_mapper.query_mapper_loader:
+        class: Apisearch\Plugin\QueryMapper\Domain\QueryMapperLoader
+        arguments:
+            - "%apisearch_plugin.query_mapper.query_mappers%"
+
+    apisearch_plugin.query_mapper.result_mapper_loader:
+        class: Apisearch\Plugin\QueryMapper\Domain\ResultMapperLoader
+        arguments:
+            - "%apisearch_plugin.query_mapper.result_mappers%"

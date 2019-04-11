@@ -24,7 +24,6 @@ use Apisearch\Model\Item;
 use Apisearch\Model\ItemUUID;
 use Apisearch\Model\Token;
 use Apisearch\Model\TokenUUID;
-use Apisearch\Model\User;
 use Apisearch\Query\Query as QueryModel;
 use Apisearch\Repository\RepositoryReference;
 use Apisearch\Result\Result;
@@ -506,18 +505,14 @@ abstract class ServiceFunctionalTest extends ApisearchServerBundleFunctionalTest
     /**
      * Add interaction.
      *
-     * @param string $userId
-     * @param string $itemUUIDComposed
-     * @param int    $weight
-     * @param string $appId
-     * @param Token  $token
+     * @param Interaction $interaction
+     * @param string      $appId
+     * @param Token       $token
      */
     public function addInteraction(
-        string $userId,
-        string $itemUUIDComposed,
-        int $weight,
-        string $appId,
-        Token $token
+        Interaction $interaction,
+        string $appId = null,
+        Token $token = null
     ) {
         $appUUID = AppUUID::createById($appId ?? self::$appId);
 
@@ -529,11 +524,7 @@ abstract class ServiceFunctionalTest extends ApisearchServerBundleFunctionalTest
                         TokenUUID::createById(self::getParameterStatic('apisearch_server.god_token')),
                         $appUUID
                     ),
-                new Interaction(
-                    new User($userId),
-                    ItemUUID::createByComposedUUID($itemUUIDComposed),
-                    $weight
-                )
+                $interaction
             ));
 
         static::waitAfterWriteCommand();

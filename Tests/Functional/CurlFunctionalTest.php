@@ -26,9 +26,9 @@ use Apisearch\Model\Item;
 use Apisearch\Model\ItemUUID;
 use Apisearch\Model\Token;
 use Apisearch\Model\TokenUUID;
-use Apisearch\Model\User;
 use Apisearch\Query\Query as QueryModel;
 use Apisearch\Result\Result;
+use Apisearch\User\Interaction;
 
 /**
  * Class CurlFunctionalTest.
@@ -381,7 +381,7 @@ abstract class CurlFunctionalTest extends ApisearchServerBundleFunctionalTest
 
         return array_map(function (array $tokenAsArray) {
             return Token::createFromArray($tokenAsArray);
-        }, $result['body']);
+        }, $response['body']);
     }
 
     /**
@@ -405,29 +405,21 @@ abstract class CurlFunctionalTest extends ApisearchServerBundleFunctionalTest
     /**
      * Add interaction.
      *
-     * @param string $userId
-     * @param string $itemUUIDComposed
-     * @param int    $weight
-     * @param string $appId
-     * @param Token  $token
+     * @param Interaction $interaction
+     * @param string      $appId
+     * @param Token       $token
      */
     public function addInteraction(
-        string $userId,
-        string $itemUUIDComposed,
-        int $weight,
-        string $appId,
-        Token $token
+        Interaction $interaction,
+        string $appId = null,
+        Token $token = null
     ) {
         self::$lastResponse = self::makeCurl(
             'v1-interactions',
             $appId,
             null,
             $token,
-            [
-                'user' => User::createFromArray(['id' => $userId]),
-                'item_uuid' => ItemUUID::createByComposedUUID($itemUUIDComposed),
-                'weight' => $weight,
-            ]
+            ['interaction' => $interaction->toArray()]
         );
     }
 
