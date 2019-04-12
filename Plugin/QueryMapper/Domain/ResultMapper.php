@@ -23,11 +23,11 @@ use Apisearch\Result\Result;
 interface ResultMapper
 {
     /**
-     * Get token.
+     * Get tokens.
      *
-     * @return string
+     * @return string[]
      */
-    public function getToken(): string;
+    public function getTokens(): array;
 
     /**
      * Build array.

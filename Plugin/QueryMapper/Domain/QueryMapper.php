@@ -25,11 +25,11 @@ use Symfony\Component\HttpFoundation\Request;
 interface QueryMapper
 {
     /**
-     * Get mapping token.
+     * Get mapping tokens.
      *
-     * @return string
+     * @return string[]
      */
-    public function getMappingToken(): string;
+    public function getMappingTokens(): array;
 
     /**
      * Get mapped credentials.
