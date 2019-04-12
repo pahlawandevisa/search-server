@@ -26,13 +26,13 @@ use Apisearch\Server\Tests\Functional\ApisearchServerBundleFunctionalTest;
 class SimpleResultMapper implements ResultMapper
 {
     /**
-     * Get token.
+     * Get tokens.
      *
-     * @return string
+     * @return string[]
      */
-    public function getToken(): string
+    public function getTokens(): array
     {
-        return ApisearchServerBundleFunctionalTest::$readonlyToken;
+        return [ApisearchServerBundleFunctionalTest::$readonlyToken];
     }
 
     /**

@@ -30,13 +30,13 @@ use Symfony\Component\HttpFoundation\Request;
 class SimpleQueryMapper implements QueryMapper
 {
     /**
-     * Get mapping token.
+     * Get mapping tokens.
      *
-     * @return string
+     * @return string[]
      */
-    public function getMappingToken(): string
+    public function getMappingTokens(): array
     {
-        return 'query-mapped-simple';
+        return ['query-mapped-simple'];
     }
 
     /**
