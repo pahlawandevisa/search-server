@@ -138,7 +138,7 @@ class StaticTokenLocator implements TokenLocator, TokenProvider
             TokenUUID::createById($this->readonlyToken),
             $appUUID,
             [],
-            Endpoints::compose(Endpoints::queryOnly()),
+            Endpoints::queryOnly(),
             [],
             Token::DEFAULT_TTL
         );
@@ -156,8 +156,8 @@ class StaticTokenLocator implements TokenLocator, TokenProvider
             AppUUID::createById(''),
             [],
             [
-                'head~~/', // Ping
-                'get~~/health', // Check health
+                'ping', // Ping
+                'check_health', // Check health
             ],
             [],
             Token::NO_CACHE

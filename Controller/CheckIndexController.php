@@ -15,9 +15,6 @@ declare(strict_types=1);
 
 namespace Apisearch\Server\Controller;
 
-use Apisearch\Http\Http;
-use Apisearch\Model\AppUUID;
-use Apisearch\Model\IndexUUID;
 use Apisearch\Repository\RepositoryReference;
 use Apisearch\Server\Domain\Query\CheckIndex;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,17 +34,16 @@ class CheckIndexController extends ControllerWithBus
      */
     public function __invoke(Request $request): Response
     {
-        $query = $request->query;
+        $indexUUID = RequestAccessor::getIndexUUIDFromRequest($request);
 
         $alive = $this
             ->commandBus
             ->handle(new CheckIndex(
                 RepositoryReference::create(
-                    AppUUID::createById($query->get(Http::APP_ID_FIELD, '')),
-                    IndexUUID::createById($query->get(Http::INDEX_FIELD, ''))
+                    RequestAccessor::getAppUUIDFromRequest($request)
                 ),
-                $query->get(Http::TOKEN_FIELD, ''),
-                IndexUUID::createById($query->get(Http::INDEX_FIELD, ''))
+                RequestAccessor::getTokenFromRequest($request),
+                $indexUUID
             ));
 
         return true === $alive

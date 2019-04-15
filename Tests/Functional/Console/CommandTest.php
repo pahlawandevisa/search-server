@@ -24,7 +24,7 @@ use Apisearch\Server\Tests\Functional\HttpFunctionalTest;
 use Exception;
 
 /**
- * File header placeholder.
+ * Class CommandTest.
  */
 abstract class CommandTest extends HttpFunctionalTest
 {

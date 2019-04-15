@@ -17,9 +17,6 @@ namespace Apisearch\Server\Controller;
 
 use Apisearch\Config\Config;
 use Apisearch\Exception\InvalidFormatException;
-use Apisearch\Http\Http;
-use Apisearch\Model\AppUUID;
-use Apisearch\Model\IndexUUID;
 use Apisearch\Repository\RepositoryReference;
 use Apisearch\Server\Domain\Command\ConfigureIndex;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -39,10 +36,10 @@ class ConfigureIndexController extends ControllerWithBus
      */
     public function __invoke(Request $request): JsonResponse
     {
-        $query = $request->query;
-        $configAsArray = $this->getRequestContentObject(
+        $indexUUID = RequestAccessor::getIndexUUIDFromRequest($request);
+        $configAsArray = RequestAccessor::extractRequestContentObject(
             $request,
-            Http::CONFIG_FIELD,
+            '',
             InvalidFormatException::configFormatNotValid($request->getContent())
         );
 
@@ -50,11 +47,11 @@ class ConfigureIndexController extends ControllerWithBus
             ->commandBus
             ->handle(new ConfigureIndex(
                 RepositoryReference::create(
-                    AppUUID::createById($query->get(Http::APP_ID_FIELD, '')),
-                    IndexUUID::createById($query->get(Http::INDEX_FIELD, ''))
+                    RequestAccessor::getAppUUIDFromRequest($request),
+                    $indexUUID
                 ),
-                $query->get(Http::TOKEN_FIELD, ''),
-                IndexUUID::createById($query->get(Http::INDEX_FIELD, '')),
+                RequestAccessor::getTokenFromRequest($request),
+                $indexUUID,
                 Config::createFromArray($configAsArray)
             ));
 

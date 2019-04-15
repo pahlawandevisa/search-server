@@ -28,6 +28,8 @@ class ResumeConsumersController extends ControllerWithBus
     /**
      * Ping.
      *
+     * @param Request $request
+     *
      * @return Response
      */
     public function __invoke(Request $request): Response
@@ -35,7 +37,7 @@ class ResumeConsumersController extends ControllerWithBus
         $this
             ->commandBus
             ->handle(new ResumeConsumers(
-                $this->getRequestContentObject(
+                RequestAccessor::extractRequestContentObject(
                     $request,
                     'type',
                     InvalidFormatException::queryFormatNotValid($request->getContent()),

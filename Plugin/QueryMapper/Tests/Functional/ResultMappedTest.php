@@ -28,7 +28,7 @@ class ResultMappedTest extends QueryMapperFunctionalTest
         $client = static::createClient();
         $client->request(
             'get',
-            sprintf('/v1?app_id=%s&index=%s&token=%s',
+            sprintf('/v1/%s/indices/%s?token=%s',
                 static::$appId,
                 static::$index,
                 static::$readonlyToken

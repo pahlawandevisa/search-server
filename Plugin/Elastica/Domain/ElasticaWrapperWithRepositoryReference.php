@@ -56,12 +56,14 @@ abstract class ElasticaWrapperWithRepositoryReference implements WithRepositoryR
 
     /**
      * Refresh.
+     *
+     * @param RepositoryReference $repositoryReference
      */
-    protected function refresh()
+    protected function refresh(RepositoryReference $repositoryReference)
     {
         $this
             ->elasticaWrapper
-            ->refresh($this->getRepositoryReference());
+            ->refresh($repositoryReference);
     }
 
     /**

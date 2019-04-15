@@ -53,7 +53,7 @@ class HealthTest extends HttpFunctionalTest
     public function testCheckHealth()
     {
         $client = $this->createClient();
-        $testRoute = static::get('router')->generate('search_server_api_check_health', [
+        $testRoute = static::get('router')->generate('apisearch_check_health', [
             'token' => static::$godToken,
         ]);
 

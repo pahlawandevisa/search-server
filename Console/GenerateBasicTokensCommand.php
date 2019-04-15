@@ -99,7 +99,7 @@ class GenerateBasicTokensCommand extends CommandWithBusAndGodToken
                     TokenUUID::createById($tokenId),
                     $appUUID,
                     [],
-                    Endpoints::compose($endpoints)
+                    $endpoints
                 )
             ));
 

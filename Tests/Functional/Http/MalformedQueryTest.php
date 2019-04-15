@@ -32,9 +32,11 @@ class MalformedQueryTest extends CurlFunctionalTest
     {
         try {
             self::makeCurl(
-                'v1-query',
-                self::$appId,
-                self::$index,
+                'v1_query',
+                [
+                    'app_id' => self::$appId,
+                    'index_id' => self::$index,
+                ],
                 null,
                 $query
             );
@@ -53,10 +55,10 @@ class MalformedQueryTest extends CurlFunctionalTest
     public function dataMalformedQuery(): array
     {
         return [
-            ['{"query":{}}}}'],
-            ['{"query":{"aggregations":{"undefined":{"field":"indexed_metadata.anon"}}}}'],
-            ['{"query":{"filters":{"bla":{"values":"string"}}}'],
-            ['{"query":{"filters":{"bla":{"filter_type": "date_range", "values":"a1..a2"}}}}'],
+            ['{}}}'],
+            ['{"aggregations":{"undefined":{"field":"indexed_metadata.anon"}}}'],
+            ['{"filters":{"bla":{"values":"string"}}'],
+            ['{"filters":{"bla":{"filter_type": "date_range", "values":"a1..a2"}}}'],
         ];
     }
 }

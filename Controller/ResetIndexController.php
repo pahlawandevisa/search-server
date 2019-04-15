@@ -15,9 +15,6 @@ declare(strict_types=1);
 
 namespace Apisearch\Server\Controller;
 
-use Apisearch\Http\Http;
-use Apisearch\Model\AppUUID;
-use Apisearch\Model\IndexUUID;
 use Apisearch\Repository\RepositoryReference;
 use Apisearch\Server\Domain\Command\ResetIndex;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -37,17 +34,17 @@ class ResetIndexController extends ControllerWithBus
      */
     public function __invoke(Request $request): JsonResponse
     {
-        $query = $request->query;
+        $indexUUID = RequestAccessor::getIndexUUIDFromRequest($request);
 
         $this
             ->commandBus
             ->handle(new ResetIndex(
                 RepositoryReference::create(
-                    AppUUID::createById($query->get(Http::APP_ID_FIELD, '')),
-                    IndexUUID::createById($query->get(Http::INDEX_FIELD, ''))
+                    RequestAccessor::getAppUUIDFromRequest($request),
+                    $indexUUID
                 ),
-                $query->get(Http::TOKEN_FIELD, ''),
-                IndexUUID::createById($query->get(Http::INDEX_FIELD, ''))
+                RequestAccessor::getTokenFromRequest($request),
+                $indexUUID
             ));
 
         return new JsonResponse('Index reset', 200);

@@ -60,7 +60,7 @@ abstract class StaticTokensFunctionalTest extends HttpFunctionalTest
             'onlyaddtoken' => [
                 'uuid' => 'onlyaddtoken',
                 'app_uuid' => self::$appId,
-                'endpoints' => Endpoints::compose(Endpoints::queryOnly()),
+                'endpoints' => Endpoints::queryOnly(),
             ],
             'base_filtered_token' => [
                 'uuid' => 'base_filtered_token',

@@ -39,7 +39,7 @@ trait GetIndicesTest
      */
     public function testGetIndices(): void
     {
-        $indices = array_values($this->getIndices(''));
+        $indices = array_values($this->getIndices('*'));
         $this->assertTrue(count($indices) >= 2);
     }
 

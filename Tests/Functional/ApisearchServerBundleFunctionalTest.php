@@ -713,17 +713,6 @@ abstract class ApisearchServerBundleFunctionalTest extends BaseFunctionalTest
     );
 
     /**
-     * Delete all interactions.
-     *
-     * @param string $appId
-     * @param Token  $token
-     */
-    abstract public static function deleteAllInteractions(
-        string $appId,
-        Token $token = null
-    );
-
-    /**
      * Ping.
      *
      * @param Token $token

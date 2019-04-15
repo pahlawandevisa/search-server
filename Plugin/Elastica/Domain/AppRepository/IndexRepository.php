@@ -77,7 +77,7 @@ class IndexRepository extends ElasticaWrapperWithRepositoryReference implements 
                 $config
             );
 
-        $this->refresh();
+        $this->refresh($newRepositoryReference);
     }
 
     /**
@@ -102,14 +102,15 @@ class IndexRepository extends ElasticaWrapperWithRepositoryReference implements 
      */
     public function resetIndex(IndexUUID $indexUUID)
     {
+        $repositoryReference = $this
+            ->getRepositoryReference()
+            ->changeIndex($indexUUID);
+
         $this
             ->elasticaWrapper
-            ->resetIndex($this
-                ->getRepositoryReference()
-                ->changeIndex($indexUUID)
-            );
+            ->resetIndex($repositoryReference);
 
-        $this->refresh();
+        $this->refresh($repositoryReference);
     }
 
     /**
@@ -124,15 +125,17 @@ class IndexRepository extends ElasticaWrapperWithRepositoryReference implements 
         IndexUUID $indexUUID,
         Config $config
     ) {
+        $repositoryReference = $this
+            ->getRepositoryReference()
+            ->changeIndex($indexUUID);
+
         $this
             ->elasticaWrapper
             ->configureIndex(
-                $this
-                    ->getRepositoryReference()
-                    ->changeIndex($indexUUID),
+                $repositoryReference,
                 $config
             );
 
-        $this->refresh();
+        $this->refresh($repositoryReference);
     }
 }

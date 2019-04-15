@@ -33,8 +33,7 @@ class CredentialsTokenValidator implements TokenValidator
      * @param IndexUUID $indexUUID
      * @param Token     $token
      * @param string    $referrer
-     * @param string    $path
-     * @param string    $verb
+     * @param string    $routeName
      *
      * @return bool
      */
@@ -43,10 +42,8 @@ class CredentialsTokenValidator implements TokenValidator
         AppUUID $appUUID,
         IndexUUID $indexUUID,
         string $referrer,
-        string $path,
-        string $verb
+        string $routeName
     ): bool {
-        $endpoint = strtolower($verb.'~~'.trim($path, '/'));
         $indexUUIDAsStringArray = $this->indexUUIDArrayToStringArray([$indexUUID]);
         $tokenIndexUUIDAsStringArray = $this->indexUUIDArrayToStringArray($token->getIndices());
 
@@ -64,7 +61,7 @@ class CredentialsTokenValidator implements TokenValidator
             ) &&
             (
                 empty($token->getEndpoints()) ||
-                in_array($endpoint, $token->getEndpoints())
+                in_array($routeName, $token->getEndpoints())
             )
         ;
     }

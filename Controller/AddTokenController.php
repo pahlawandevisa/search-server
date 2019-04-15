@@ -39,9 +39,9 @@ class AddTokenController extends ControllerWithBus
     public function __invoke(Request $request): JsonResponse
     {
         $query = $request->query;
-        $newTokenAsArray = $this->getRequestContentObject(
+        $newTokenAsArray = RequestAccessor::extractRequestContentObject(
             $request,
-            Http::TOKEN_FIELD,
+            '',
             InvalidFormatException::tokenFormatNotValid($request->getContent())
         );
 
@@ -49,7 +49,7 @@ class AddTokenController extends ControllerWithBus
             ->commandBus
             ->handle(new AddToken(
                 RepositoryReference::create(
-                    AppUUID::createById($query->get(Http::APP_ID_FIELD, ''))
+                    AppUUID::createById($request->get('app_id', ''))
                 ),
                 $query->get(Http::TOKEN_FIELD, ''),
                 Token::createFromArray($newTokenAsArray)

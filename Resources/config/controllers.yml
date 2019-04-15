@@ -50,20 +50,14 @@ services:
         tags:
             - 'controller.service_arguments'
 
-    apisearch_server.delete_all_interactions_controller:
-        class: Apisearch\Server\Controller\DeleteAllInteractionsController
-        parent: apisearch_server.controller_with_command_bus
-        tags:
-            - 'controller.service_arguments'
-
     apisearch_server.index_items_controller:
         class: Apisearch\Server\Controller\IndexItemsController
         parent: apisearch_server.controller_with_command_bus
         tags:
             - 'controller.service_arguments'
 
-    apisearch_server.update_items_controller:
-        class: Apisearch\Server\Controller\UpdateItemsController
+    apisearch_server.update_items_by_query_controller:
+        class: Apisearch\Server\Controller\UpdateItemsByQueryController
         parent: apisearch_server.controller_with_command_bus
         tags:
             - 'controller.service_arguments'

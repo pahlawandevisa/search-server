@@ -22,7 +22,7 @@ use Apisearch\Model\AppUUID;
 use Apisearch\Model\IndexUUID;
 use Apisearch\Model\Token;
 use Apisearch\Model\TokenUUID;
-use Apisearch\Server\Controller\Extractor\RequestContentExtractor;
+use Apisearch\Server\Controller\RequestAccessor;
 use Apisearch\Server\Domain\Token\TokenManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -58,7 +58,15 @@ class TokenCheckOverHTTP
     {
         $request = $event->getRequest();
         $query = $request->query;
-        $token = $query->get(Http::TOKEN_FIELD, '');
+        $headers = $request->headers;
+        $token = $headers->get(
+            Http::TOKEN_ID_HEADER,
+            $query->get(
+                Http::TOKEN_FIELD,
+                ''
+            )
+        );
+
         if (is_null($token)) {
             throw InvalidTokenException::createInvalidTokenPermissions('');
         }
@@ -71,16 +79,16 @@ class TokenCheckOverHTTP
         $urlParts = parse_url($origin);
         $origin = $urlParts['host'] ?? '';
         $indices = $this->getIndices($request);
+        $route = str_replace('apisearch_', '', $request->get('_route'));
 
         $token = $this
             ->tokenManager
             ->checkToken(
-                AppUUID::createById($query->get(Http::APP_ID_FIELD, '')),
+                AppUUID::createById($request->get('app_id', '')),
                 $indices,
                 TokenUUID::createById($tokenString),
                 $origin,
-                $request->getPathInfo(),
-                $request->getMethod()
+                $route
             );
 
         $request
@@ -98,10 +106,10 @@ class TokenCheckOverHTTP
     private function getIndices(Request $request): IndexUUID
     {
         $query = null;
-        $indices = [$request->query->get(Http::INDEX_FIELD, '')];
+        $indices = [$request->get('index_id', '')];
 
         try {
-            $query = RequestContentExtractor::extractQuery($request);
+            $query = RequestAccessor::extractQuery($request);
         } catch (InvalidFormatException $formatException) {
             return IndexUUID::createById($indices[0]);
         }

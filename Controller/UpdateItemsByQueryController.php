@@ -17,9 +17,7 @@ namespace Apisearch\Server\Controller;
 
 use Apisearch\Exception\InvalidFormatException;
 use Apisearch\Http\Http;
-use Apisearch\Model\AppUUID;
 use Apisearch\Model\Changes;
-use Apisearch\Model\IndexUUID;
 use Apisearch\Query\Query as QueryModel;
 use Apisearch\Repository\RepositoryReference;
 use Apisearch\Server\Domain\Command\UpdateItems;
@@ -27,9 +25,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Class UpdateItemsController.
+ * Class UpdateItemsByQueryController.
  */
-class UpdateItemsController extends ControllerWithBus
+class UpdateItemsByQueryController extends ControllerWithBus
 {
     /**
      * Update items.
@@ -42,14 +40,13 @@ class UpdateItemsController extends ControllerWithBus
      */
     public function __invoke(Request $request): JsonResponse
     {
-        $query = $request->query;
-        $queryAsArray = $this->getRequestContentObject(
+        $queryAsArray = RequestAccessor::extractRequestContentObject(
             $request,
             Http::QUERY_FIELD,
             InvalidFormatException::queryFormatNotValid($request->getContent())
         );
 
-        $changesAsArray = $this->getRequestContentObject(
+        $changesAsArray = RequestAccessor::extractRequestContentObject(
             $request,
             Http::CHANGES_FIELD,
             InvalidFormatException::queryFormatNotValid($request->getContent())
@@ -59,10 +56,10 @@ class UpdateItemsController extends ControllerWithBus
             ->commandBus
             ->handle(new UpdateItems(
                 RepositoryReference::create(
-                    AppUUID::createById($query->get(Http::APP_ID_FIELD, '')),
-                    IndexUUID::createById($query->get(Http::INDEX_FIELD, '*'))
+                    RequestAccessor::getAppUUIDFromRequest($request),
+                    RequestAccessor::getIndexUUIDFromRequest($request)
                 ),
-                $query->get(Http::TOKEN_FIELD, ''),
+                RequestAccessor::getTokenFromRequest($request),
                 QueryModel::createFromArray($queryAsArray),
                 Changes::createFromArray($changesAsArray)
             ));

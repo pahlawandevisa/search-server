@@ -74,9 +74,9 @@ abstract class TokenTest extends HttpFunctionalTest
      * Test token without endpoint permissions.
      *
      * @expectedException \Apisearch\Exception\InvalidTokenException
-     * @dataProvider dataTokenWithoutEndpointPermissionsFailing
+     * @dataProvider dataTokenWithEndpointPermissionsFailing
      */
-    public function testTokenWithoutEndpointPermissionsFailing(array $routes)
+    public function testTokenWithEndpointPermissionsFailing(array $routes)
     {
         $token = new Token(
             TokenUUID::createById('12345'),
@@ -95,27 +95,25 @@ abstract class TokenTest extends HttpFunctionalTest
     }
 
     /**
-     * Data for testTokenWithoutEndpointPermissionsFailing.
+     * Data for testTokenWithEndpointPermissionsFailing.
      *
      * @return []
      */
-    public function dataTokenWithoutEndpointPermissionsFailing()
+    public function dataTokenWithEndpointPermissionsFailing()
     {
         return [
-            [['get~~v1/events']],
-            [['post~~v1']],
-            [['post~~v1', 'post~~v1/']],
-            [['get~~v1/events', 'post~~v1']],
-            [['get~~v1/non-existing', 'post~~v1']],
+            [['check_health']],
+            [['v2_query']],
+            [['v2_query', 'check_health']],
         ];
     }
 
     /**
      * Test token without endpoint permissions.
      *
-     * @dataProvider dataTokenWithoutEndpointPermissionsAccepted
+     * @dataProvider dataTokenWithEndpointPermissionsAccepted
      */
-    public function testTokenWithoutEndpointPermissionsAccepted(array $routes)
+    public function testTokenWithEndpointPermissionsAccepted(array $routes)
     {
         $token = new Token(
             TokenUUID::createById('12345'),
@@ -135,22 +133,17 @@ abstract class TokenTest extends HttpFunctionalTest
     }
 
     /**
-     * Data for testTokenWithoutEndpointPermissionsAccepted.
+     * Data for testTokenWithEndpointPermissionsAccepted.
      *
      * @return []
      */
-    public function dataTokenWithoutEndpointPermissionsAccepted()
+    public function dataTokenWithEndpointPermissionsAccepted()
     {
         return [
             [[]],
-            [['get~~v1']],
-            [['get~~/v1']],
-            [['get~~v1/']],
-            [['get~~/v1/']],
-            [['get~~/v1', 'post~~v1/']],
-            [['get~~v1', 'get~~/v1']],
-            [['get~~v1/items', 'get~~v1', '']],
-            [['get~~v1/events', 'get~~v1', 'get~~/v1', '']],
+            [['v1_query']],
+            [['v1_query', 'v1_delete_items']],
+            [['v1_query', 'v1_delete_items', '']],
         ];
     }
 
@@ -266,8 +259,6 @@ abstract class TokenTest extends HttpFunctionalTest
      * @dataProvider dataMultiqueryInvalidToken
      *
      * @expectedException \Apisearch\Exception\InvalidTokenException
-     *
-     * @group lele
      */
     public function testMultiqueryInvalidToken(Query $query)
     {

@@ -18,7 +18,6 @@ namespace Apisearch\Server\Controller;
 use Apisearch\Config\Config;
 use Apisearch\Exception\InvalidFormatException;
 use Apisearch\Http\Http;
-use Apisearch\Model\AppUUID;
 use Apisearch\Model\IndexUUID;
 use Apisearch\Repository\RepositoryReference;
 use Apisearch\Server\Domain\Command\CreateIndex;
@@ -39,16 +38,14 @@ class CreateIndexController extends ControllerWithBus
      */
     public function __invoke(Request $request): JsonResponse
     {
-        $query = $request->query;
-
-        $configAsArray = $this->getRequestContentObject(
+        $configAsArray = RequestAccessor::extractRequestContentObject(
             $request,
             Http::CONFIG_FIELD,
             InvalidFormatException::configFormatNotValid($request->getContent()),
             []
         );
 
-        $indexAsArray = $this->getRequestContentObject(
+        $indexAsArray = RequestAccessor::extractRequestContentObject(
             $request,
             Http::INDEX_FIELD,
             InvalidFormatException::indexUUIDFormatNotValid(),
@@ -59,10 +56,9 @@ class CreateIndexController extends ControllerWithBus
             ->commandBus
             ->handle(new CreateIndex(
                 RepositoryReference::create(
-                    AppUUID::createById($query->get(Http::APP_ID_FIELD, '')),
-                    IndexUUID::createFromArray($indexAsArray)
+                    RequestAccessor::getAppUUIDFromRequest($request)
                 ),
-                $query->get(Http::TOKEN_FIELD, ''),
+                RequestAccessor::getTokenFromRequest($request),
                 IndexUUID::createFromArray($indexAsArray),
                 Config::createFromArray($configAsArray)
             ));

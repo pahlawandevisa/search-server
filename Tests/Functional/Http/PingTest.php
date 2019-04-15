@@ -35,7 +35,7 @@ class PingTest extends HttpFunctionalTest
         int $responseCode
     ) {
         $client = $this->createClient();
-        $testRoute = static::get('router')->generate('search_server_api_ping', [
+        $testRoute = static::get('router')->generate('apisearch_ping', [
             'token' => $token,
         ]);
 

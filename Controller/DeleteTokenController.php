@@ -16,8 +16,6 @@ declare(strict_types=1);
 namespace Apisearch\Server\Controller;
 
 use Apisearch\Exception\InvalidFormatException;
-use Apisearch\Http\Http;
-use Apisearch\Model\AppUUID;
 use Apisearch\Model\TokenUUID;
 use Apisearch\Repository\RepositoryReference;
 use Apisearch\Server\Domain\Command\DeleteToken;
@@ -38,21 +36,16 @@ class DeleteTokenController extends ControllerWithBus
      */
     public function __invoke(Request $request): JsonResponse
     {
-        $query = $request->query;
-        $tokenUUIDAsArray = $this->getRequestContentObject(
-            $request,
-            Http::TOKEN_FIELD,
-            InvalidFormatException::tokenUUIDFormatNotValid($request->getContent())
-        );
+        $tokenUUID = TokenUUID::createById($request->get('token_id', ''));
 
         $this
             ->commandBus
             ->handle(new DeleteToken(
                 RepositoryReference::create(
-                    AppUUID::createById($query->get(Http::APP_ID_FIELD, ''))
+                    RequestAccessor::getAppUUIDFromRequest($request)
                 ),
-                $query->get(Http::TOKEN_FIELD, ''),
-                TokenUUID::createFromArray($tokenUUIDAsArray)
+                RequestAccessor::getTokenFromRequest($request),
+                $tokenUUID
             ));
 
         return new JsonResponse('Token deleted', 200);

@@ -13,18 +13,21 @@
 
 declare(strict_types=1);
 
-namespace Apisearch\Server\Controller\Extractor;
+namespace Apisearch\Server\Controller;
 
 use Apisearch\Exception\InvalidFormatException;
 use Apisearch\Exception\TransportableException;
 use Apisearch\Http\Http;
+use Apisearch\Model\AppUUID;
+use Apisearch\Model\IndexUUID;
+use Apisearch\Model\Token;
 use Apisearch\Query\Query;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Class RequestContentExtractor.
+ * Class RequestAccessor.
  */
-class RequestContentExtractor
+class RequestAccessor
 {
     /**
      * Get element from body, having a default value and a possible exception to
@@ -55,8 +58,13 @@ class RequestContentExtractor
 
         if (
             !is_array($requestBody) ||
-            !isset($requestBody[$field]) ||
-            !is_array($requestBody[$field])
+            (
+                !empty($field) &&
+                (
+                    !isset($requestBody[$field]) ||
+                    !is_array($requestBody[$field])
+                )
+            )
         ) {
             if (is_null($default)) {
                 throw $exception;
@@ -65,7 +73,9 @@ class RequestContentExtractor
             return $default;
         }
 
-        return $requestBody[$field];
+        return empty($field)
+            ? $requestBody
+            : $requestBody[$field];
     }
 
     /**
@@ -89,7 +99,7 @@ class RequestContentExtractor
 
         $queryAsArray = self::extractRequestContentObject(
             $request,
-            Http::QUERY_FIELD,
+            '',
             InvalidFormatException::queryFormatNotValid($request->getContent()),
             []
         );
@@ -128,5 +138,51 @@ class RequestContentExtractor
         }
 
         return $response;
+    }
+
+    /**
+     * Get token uuid from request.
+     *
+     * @param Request $request
+     *
+     * @return Token|null
+     */
+    public static function getTokenFromRequest(Request $request): ? Token
+    {
+        return $request
+            ->query
+            ->get(Http::TOKEN_FIELD);
+    }
+
+    /**
+     * Get app uuid from request.
+     *
+     * @param Request $request
+     *
+     * @return AppUUID|null
+     */
+    public static function getAppUUIDFromRequest(Request $request): ? AppUUID
+    {
+        $appId = $request->get('app_id', null);
+
+        return $appId
+            ? AppUUID::createById($appId)
+            : null;
+    }
+
+    /**
+     * Get index uuid from request.
+     *
+     * @param Request $request
+     *
+     * @return IndexUUID|null
+     */
+    public static function getIndexUUIDFromRequest(Request $request): ? IndexUUID
+    {
+        $indexId = $request->get('index_id', null);
+
+        return $indexId
+            ? IndexUUID::createById($indexId)
+            : null;
     }
 }

@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/apisearch-io/apisearch-bundle.git",
-                "reference": "95b4e700bdd2c3961fad66841e27fedd21238d0a"
+                "reference": "70d34ee385d85aa12d291436892ffd2f432583ad"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/apisearch-io/apisearch-bundle/zipball/95b4e700bdd2c3961fad66841e27fedd21238d0a",
-                "reference": "95b4e700bdd2c3961fad66841e27fedd21238d0a",
+                "url": "https://api.github.com/repos/apisearch-io/apisearch-bundle/zipball/70d34ee385d85aa12d291436892ffd2f432583ad",
+                "reference": "70d34ee385d85aa12d291436892ffd2f432583ad",
                 "shasum": ""
             },
             "require": {
@@ -57,7 +57,7 @@
                     "email": "hello@puntmig.com"
                 }
             ],
-            "time": "2019-02-19 15:29:32"
+            "time": "2019-04-15 12:59:39"
         },
         {
             "name": "apisearch-io/php-client",
@@ -65,12 +65,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/apisearch-io/php-client.git",
-                "reference": "0146c638ad2a45f0e9ff7e990e2087fa9d3241d8"
+                "reference": "126c9acd5302585e26a7269e5a5e2df67225071f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/apisearch-io/php-client/zipball/0146c638ad2a45f0e9ff7e990e2087fa9d3241d8",
-                "reference": "0146c638ad2a45f0e9ff7e990e2087fa9d3241d8",
+                "url": "https://api.github.com/repos/apisearch-io/php-client/zipball/126c9acd5302585e26a7269e5a5e2df67225071f",
+                "reference": "126c9acd5302585e26a7269e5a5e2df67225071f",
                 "shasum": ""
             },
             "require": {
@@ -103,7 +103,7 @@
                     "email": "yuhu@mmoreram.com"
                 }
             ],
-            "time": "2019-04-09 15:30:59"
+            "time": "2019-04-15 09:31:53"
         },
         {
             "name": "ekino/newrelic-bundle",
@@ -3883,16 +3883,16 @@
         },
         {
             "name": "myclabs/deep-copy",
-            "version": "1.8.1",
+            "version": "1.9.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/myclabs/DeepCopy.git",
-                "reference": "3e01bdad3e18354c3dce54466b7fbe33a9f9f7f8"
+                "reference": "e6828efaba2c9b79f4499dae1d66ef8bfa7b2b72"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/3e01bdad3e18354c3dce54466b7fbe33a9f9f7f8",
-                "reference": "3e01bdad3e18354c3dce54466b7fbe33a9f9f7f8",
+                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/e6828efaba2c9b79f4499dae1d66ef8bfa7b2b72",
+                "reference": "e6828efaba2c9b79f4499dae1d66ef8bfa7b2b72",
                 "shasum": ""
             },
             "require": {
@@ -3927,7 +3927,7 @@
                 "object",
                 "object graph"
             ],
-            "time": "2018-06-11T23:09:50+00:00"
+            "time": "2019-04-07T13:18:21+00:00"
         },
         {
             "name": "phar-io/manifest",

@@ -35,8 +35,7 @@ class SecondsValidTokenValidator implements TokenValidator
      * @param IndexUUID $indexUUID
      * @param Token     $token
      * @param string    $referrer
-     * @param string    $path
-     * @param string    $verb
+     * @param string    $routeName
      *
      * @return bool
      */
@@ -45,8 +44,7 @@ class SecondsValidTokenValidator implements TokenValidator
         AppUUID $appUUID,
         IndexUUID $indexUUID,
         string $referrer,
-        string $path,
-        string $verb
+        string $routeName
     ): bool {
         $secondsValid = $token->getMetadataValue('seconds_valid', 0);
 
