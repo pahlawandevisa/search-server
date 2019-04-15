@@ -15,7 +15,6 @@ declare(strict_types=1);
 
 namespace Apisearch\Server\Controller;
 
-use Apisearch\Exception\InvalidFormatException;
 use Apisearch\Model\TokenUUID;
 use Apisearch\Repository\RepositoryReference;
 use Apisearch\Server\Domain\Command\DeleteToken;
