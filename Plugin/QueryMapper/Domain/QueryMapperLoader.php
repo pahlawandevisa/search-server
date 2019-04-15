@@ -68,7 +68,7 @@ class QueryMapperLoader
         }
 
         $repositoryReference = $queryMapper->getRepositoryReference();
-        $requestQuery->set(Http::INDEX_FIELD, $repositoryReference->getIndexUUID()->composeUUID());
+        $requestQuery->set('index_id', $repositoryReference->getIndexUUID()->composeUUID());
         $requestQuery->set(Http::TOKEN_FIELD, $queryMapper->getToken());
         $requestQuery->set(Http::QUERY_FIELD, json_encode(
             $queryMapper->buildQueryByRequest($request)->toArray()
