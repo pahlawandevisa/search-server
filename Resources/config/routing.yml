@@ -1,109 +1,125 @@
-search_server_api_get_indices:
-    path: /v1/indices
-    methods: ["GET"]
-    defaults:
-        _controller: apisearch_server.get_indices_controller
-
-search_server_api_create_index:
-    path: /v1/index
+#
+# Token API
+#
+apisearch_v1_put_token:
+    path: /v1/{app_id}/tokens
     methods: ["PUT"]
-    defaults:
-        _controller: apisearch_server.create_index_controller
-
-search_server_api_delete_index:
-    path: /v1/index
-    methods: ["DELETE"]
-    defaults:
-        _controller: apisearch_server.delete_index_controller
-
-search_server_api_reset_index:
-    path: /v1/index/reset
-    methods: ["POST"]
-    defaults:
-        _controller: apisearch_server.reset_index_controller
-
-search_server_api_configure_index:
-    path: /v1/index
-    methods: ["POST"]
-    defaults:
-        _controller: apisearch_server.configure_index_controller
-
-search_server_api_add_token:
-    path: /v1/token
-    methods: ["POST"]
     defaults:
         _controller: apisearch_server.add_token_controller
 
-search_server_api_delete_token:
-    path: /v1/token
+apisearch_v1_delete_token:
+    path: /v1/{app_id}/tokens/{token_id}
     methods: ["DELETE"]
     defaults:
         _controller: apisearch_server.delete_token_controller
 
-search_server_api_get_tokens:
-    path: /v1/tokens
+apisearch_v1_get_tokens:
+    path: /v1/{app_id}/tokens
     methods: ["GET"]
     defaults:
         _controller: apisearch_server.get_tokens_controller
 
-search_server_api_delete_tokens:
-    path: /v1/tokens
+apisearch_v1_delete_tokens:
+    path: /v1/{app_id}/tokens
     methods: ["DELETE"]
     defaults:
         _controller: apisearch_server.delete_tokens_controller
 
-search_server_api_add_interaction:
-    path: /v1/interaction
+#
+# Index API
+#
+apisearch_v1_get_indices:
+    path: /v1/{app_id}/indices
     methods: ["GET"]
     defaults:
-        _controller: apisearch_server.add_interaction_controller
+        _controller: apisearch_server.get_indices_controller
 
-search_server_api_delete_all_interaction:
-    path: /v1/interactions
+apisearch_v1_put_index:
+    path: /v1/{app_id}/indices
+    methods: ["PUT"]
+    defaults:
+        _controller: apisearch_server.create_index_controller
+
+apisearch_v1_delete_index:
+    path: /v1/{app_id}/indices/{index_id}
     methods: ["DELETE"]
     defaults:
-        _controller: apisearch_server.delete_all_interactions_controller
+        _controller: apisearch_server.delete_index_controller
 
-search_server_api_query:
-    path: /v1
-    methods: ["GET"]
-    defaults:
-        _controller: apisearch_server.query_controller
-
-search_server_api_index:
-    path: /v1/items
+apisearch_v1_reset_index:
+    path: /v1/{app_id}/indices/{index_id}/reset
     methods: ["POST"]
+    defaults:
+        _controller: apisearch_server.reset_index_controller
+
+apisearch_v1_configure_index:
+    path: /v1/{app_id}/indices/{index_id}/configure
+    methods: ["POST"]
+    defaults:
+        _controller: apisearch_server.configure_index_controller
+
+apisearch_v1_check_index:
+    path: /v1/{app_id}/indices/{index_id}
+    methods: ["HEAD"]
+    defaults:
+        _controller: apisearch_server.check_index_controller
+
+#
+# Items API
+#
+apisearch_v1_put_items:
+    path: /v1/{app_id}/indices/{index_id}/items
+    methods: ["PUT"]
     defaults:
         _controller: apisearch_server.index_items_controller
 
-search_server_api_update:
-    path: /v1/items
-    methods: ["PUT"]
+apisearch_v1_update_items_by_query:
+    path: /v1/{app_id}/indices/{index_id}/items/update-by-query
+    methods: ["POST"]
     defaults:
-        _controller: apisearch_server.update_items_controller
+        _controller: apisearch_server.update_items_by_query_controller
 
-search_server_api_delete:
-    path: /v1/items
+apisearch_v1_delete_items:
+    path: /v1/{app_id}/indices/{index_id}/items
     methods: ["DELETE"]
     defaults:
         _controller: apisearch_server.delete_items_controller
 
 #
-# Check
+# Query API
 #
-search_server_api_check_index:
-    path: /v1/index
-    methods: ["HEAD"]
+apisearch_v1_query:
+    path: /v1/{app_id}/indices/{index_id}
+    methods: ["GET"]
     defaults:
-        _controller: apisearch_server.check_index_controller
+        _controller: apisearch_server.query_controller
 
-search_server_api_check_health:
+apisearch_v1_query_all_indices:
+    path: /v1/{app_id}
+    methods: ["GET"]
+    defaults:
+        _controller: apisearch_server.query_controller
+        index_id: "*"
+
+#
+# Interaction API
+#
+apisearch_v1_post_interaction:
+    path: /v1/interactions
+    methods: ["POST"]
+    defaults:
+        _controller: apisearch_server.add_interaction_controller
+
+#
+# Server API
+#
+apisearch_check_health:
     path: /health
     methods: ["GET"]
     defaults:
         _controller: apisearch_server.check_health_controller
 
-search_server_api_ping:
+apisearch_ping:
     path: /
     methods: ["HEAD"]
     defaults:
@@ -112,13 +128,13 @@ search_server_api_ping:
 #
 # Consumers management
 #
-search_server_pause_consumers:
+apisearch_pause_consumers:
     path: /consumers/pause
     methods: ["POST"]
     defaults:
         _controller: apisearch_server.pause_consumers_controller
 
-search_server_resume_consumers:
+apisearch_resume_consumers:
     path: /consumers/resume
     methods: ["POST"]
     defaults:

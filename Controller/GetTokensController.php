@@ -15,8 +15,6 @@ declare(strict_types=1);
 
 namespace Apisearch\Server\Controller;
 
-use Apisearch\Http\Http;
-use Apisearch\Model\AppUUID;
 use Apisearch\Model\Token;
 use Apisearch\Repository\RepositoryReference;
 use Apisearch\Server\Domain\Query\GetTokens;
@@ -37,15 +35,13 @@ class GetTokensController extends ControllerWithBus
      */
     public function __invoke(Request $request): JsonResponse
     {
-        $query = $request->query;
-
         $tokens = $this
             ->commandBus
             ->handle(new GetTokens(
                 RepositoryReference::create(
-                    AppUUID::createById($query->get(Http::APP_ID_FIELD, ''))
+                    RequestAccessor::getAppUUIDFromRequest($request)
                 ),
-                $query->get(Http::TOKEN_FIELD, '')
+                RequestAccessor::getTokenFromRequest($request)
             ));
 
         return new JsonResponse(

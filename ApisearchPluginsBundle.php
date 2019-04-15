@@ -15,7 +15,6 @@ declare(strict_types=1);
 
 namespace Apisearch\Server;
 
-use Apisearch\Plugin\Callbacks\Domain\Callbacks;
 use Apisearch\Plugin\Elastica\ElasticaPluginBundle;
 use Apisearch\Plugin\ELK\ELKPluginBundle;
 use Apisearch\Plugin\MostRelevantWords\MostRelevantWordsPluginBundle;
@@ -77,7 +76,6 @@ class ApisearchPluginsBundle extends BaseBundle
     private static function resolveAliases(array $bundles): array
     {
         $aliases = [
-            'callbacks' => Callbacks::class,
             'elastica' => ElasticaPluginBundle::class,
             'elk' => ELKPluginBundle::class,
             'most_relevant_words' => MostRelevantWordsPluginBundle::class,

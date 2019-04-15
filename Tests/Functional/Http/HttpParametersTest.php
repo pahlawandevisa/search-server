@@ -28,7 +28,7 @@ class HttpParametersTest extends HttpFunctionalTest
     public function testMandatoryAppId()
     {
         $client = $this->createClient();
-        $testRoute = static::get('router')->generate('search_server_api_query', [
+        $testRoute = static::get('router')->generate('apisearch_v1_query_all_indices', [
             'token' => 'aaaa',
             'app_id' => '1234',
         ]);

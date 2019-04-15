@@ -51,7 +51,7 @@ class IndexRepository extends ElasticaWrapperWithRepositoryReference implements 
             );
 
         if ($this->refreshOnWrite) {
-            $this->refresh();
+            $this->refresh($this->getRepositoryReference());
         }
     }
 

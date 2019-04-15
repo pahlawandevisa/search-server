@@ -33,7 +33,7 @@ class QueryMappedTest extends QueryMapperFunctionalTest
         $client = static::createClient();
         $client->request(
             'get',
-            '/v1?token=query-mapped-simple'
+            sprintf('/v1/%s?token=%s', static::$appId, 'query-mapped-simple')
         );
 
         $resultAsJson = $client->getResponse()->getContent();
@@ -51,7 +51,7 @@ class QueryMappedTest extends QueryMapperFunctionalTest
         $client = static::createClient();
         $client->request(
             'get',
-            '/v1?token=non-existing'
+            sprintf('/v1/%s?token=%s', static::$appId, 'non-existing')
         );
 
         $resultAsJson = $client->getResponse()->getContent();
@@ -66,8 +66,8 @@ class QueryMappedTest extends QueryMapperFunctionalTest
     {
         $client = static::createClient();
         $client->request(
-            'post',
-            sprintf('/v1/items?app_id=%s&index=%s&token=%s',
+            'put',
+            sprintf('/v1/%s/indices/%s/items?token=%s',
                 static::$appId,
                 static::$index,
                 static::$godToken
@@ -76,11 +76,9 @@ class QueryMappedTest extends QueryMapperFunctionalTest
                 'CONTENT_TYPE' => 'application/json',
             ],
             json_encode([
-                'items' => [
-                    Item::create(
-                        ItemUUID::createByComposedUUID('10~lele')
-                    )->toArray(),
-                ],
+                Item::create(
+                    ItemUUID::createByComposedUUID('10~lele')
+                )->toArray(),
             ])
         );
 

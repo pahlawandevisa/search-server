@@ -36,7 +36,7 @@ class QueryBadFormatTest extends HttpFunctionalTest
             'http' => array('ignore_errors' => true),
         ));
 
-        $result = file_get_contents(sprintf('http://localhost:%d/v1?app_id=%s&index=%s&token=%s&query=%s',
+        $result = file_get_contents(sprintf('http://localhost:%d/v1/%s/indices/%s?token=%s&query=%s',
             self::HTTP_TEST_SERVICE_PORT,
             self::$appId,
             self::$index,

@@ -63,8 +63,7 @@ class TokenManager
      * @param IndexUUID $indexUUID
      * @param TokenUUID $tokenUUID
      * @param string    $referrer
-     * @param string    $path
-     * @param string    $verb
+     * @param string    $routeName
      *
      * @return Token $token
      */
@@ -73,8 +72,7 @@ class TokenManager
         IndexUUID $indexUUID,
         TokenUUID $tokenUUID,
         string $referrer,
-        string $path,
-        string $verb
+        string $routeName
     ): Token {
         $token = $this->locateTokenByUUID($appUUID, $tokenUUID);
 
@@ -85,8 +83,7 @@ class TokenManager
                 $appUUID,
                 $indexUUID,
                 $referrer,
-                $path,
-                $verb
+                $routeName
             )
         ) {
             throw InvalidTokenException::createInvalidTokenPermissions($tokenUUID->composeUUID());
@@ -134,8 +131,7 @@ class TokenManager
      * @param IndexUUID $indexUUID
      * @param Token     $token
      * @param string    $referrer
-     * @param string    $path
-     * @param string    $verb
+     * @param string    $routeName
      *
      * @return bool
      */
@@ -144,8 +140,7 @@ class TokenManager
         AppUUID $appUUID,
         IndexUUID $indexUUID,
         string $referrer,
-        string $path,
-        string $verb
+        string $routeName
     ): bool {
         $tokenValidators = $this
             ->tokenValidators
@@ -157,8 +152,7 @@ class TokenManager
                 $appUUID,
                 $indexUUID,
                 $referrer,
-                $path,
-                $verb
+                $routeName
             )) {
                 return false;
             }

@@ -55,7 +55,10 @@ class CheckMappedResult
         $route = $request->get('_route');
 
         if (
-            'search_server_api_query' !== $route ||
+            !in_array($route, [
+                'apisearch_v1_query',
+                'apisearch_v1_query_all_indices',
+            ]) ||
             !$request->query->get(Http::TOKEN_FIELD) instanceof Token ||
             !$request->get('result') instanceof Result
         ) {

@@ -28,9 +28,4 @@ interface IndexRepository
      * @param Interaction $interaction
      */
     public function addInteraction(Interaction $interaction);
-
-    /**
-     * Remove all interactions.
-     */
-    public function deleteAllInteractions();
 }

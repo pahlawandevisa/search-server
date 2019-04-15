@@ -36,10 +36,10 @@ class CreateIndexTest extends HttpFunctionalTest
         );
 
         $client = $this->createClient();
-        $testRoute = $this->get('router')->generate('search_server_api_create_index', [
+        $testRoute = $this->get('router')->generate('apisearch_v1_put_index', [
             'token' => self::$godToken,
             'app_id' => self::$appId,
-            'index' => self::$index,
+            'index_id' => self::$index,
         ]);
 
         $client->request(

@@ -16,9 +16,6 @@ declare(strict_types=1);
 namespace Apisearch\Server\Controller;
 
 use Apisearch\Exception\InvalidFormatException;
-use Apisearch\Http\Http;
-use Apisearch\Model\AppUUID;
-use Apisearch\Model\IndexUUID;
 use Apisearch\Model\ItemUUID;
 use Apisearch\Repository\RepositoryReference;
 use Apisearch\Server\Domain\Command\DeleteItems;
@@ -41,10 +38,9 @@ class DeleteItemsController extends ControllerWithBus
      */
     public function __invoke(Request $request): JsonResponse
     {
-        $query = $request->query;
-        $itemsUUIDAsArray = $this->getRequestContentObject(
+        $itemsUUIDAsArray = RequestAccessor::extractRequestContentObject(
             $request,
-            Http::ITEMS_FIELD,
+            '',
             InvalidFormatException::itemUUIDRepresentationNotValid($request->getContent()),
             []
         );
@@ -53,10 +49,10 @@ class DeleteItemsController extends ControllerWithBus
             ->commandBus
             ->handle(new DeleteItems(
                 RepositoryReference::create(
-                    AppUUID::createById($query->get(Http::APP_ID_FIELD, '')),
-                    IndexUUID::createById($query->get(Http::INDEX_FIELD, ''))
+                    RequestAccessor::getAppUUIDFromRequest($request),
+                    RequestAccessor::getIndexUUIDFromRequest($request)
                 ),
-                $query->get(Http::TOKEN_FIELD, ''),
+                RequestAccessor::getTokenFromRequest($request),
                 array_map(function (array $object) {
                     return ItemUUID::createFromArray($object);
                 }, $itemsUUIDAsArray)

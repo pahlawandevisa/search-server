@@ -17,10 +17,7 @@ namespace Apisearch\Server\Controller;
 
 use Apisearch\Exception\InvalidFormatException;
 use Apisearch\Http\Http;
-use Apisearch\Model\AppUUID;
-use Apisearch\Model\IndexUUID;
 use Apisearch\Repository\RepositoryReference;
-use Apisearch\Server\Controller\Extractor\RequestContentExtractor;
 use Apisearch\Server\Domain\Query\Query;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -42,22 +39,20 @@ class QueryController extends ControllerWithBus
     public function __invoke(Request $request): JsonResponse
     {
         $requestQuery = $request->query;
-        $queryModel = RequestContentExtractor::extractQuery($request);
+        $queryModel = RequestAccessor::extractQuery($request);
 
         $result = $this
             ->commandBus
             ->handle(new Query(
                 RepositoryReference::create(
-                    AppUUID::createById($requestQuery->get(Http::APP_ID_FIELD, '')),
-                    IndexUUID::createById($requestQuery->get(Http::INDEX_FIELD, '*'))
+                    RequestAccessor::getAppUUIDFromRequest($request),
+                    RequestAccessor::getIndexUUIDFromRequest($request)
                 ),
-                $requestQuery->get(Http::TOKEN_FIELD, ''),
+                RequestAccessor::getTokenFromRequest($request),
                 $queryModel,
                 array_filter($requestQuery->all(), function (string $key) {
                     return !in_array($key, [
                         Http::TOKEN_FIELD,
-                        Http::APP_ID_FIELD,
-                        Http::INDEX_FIELD,
                     ]);
                 }, ARRAY_FILTER_USE_KEY)
             ));

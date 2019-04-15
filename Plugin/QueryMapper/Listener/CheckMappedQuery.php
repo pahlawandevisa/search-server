@@ -50,7 +50,10 @@ class CheckMappedQuery
         $request = $event->getRequest();
         $route = $request->get('_route');
 
-        if ('search_server_api_query' !== $route) {
+        if (!in_array($route, [
+            'apisearch_v1_query',
+            'apisearch_v1_query_all_indices',
+        ])) {
             return;
         }
 

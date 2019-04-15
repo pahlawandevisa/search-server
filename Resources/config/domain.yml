@@ -111,14 +111,6 @@ services:
         tags:
             - { name: tactician.handler, command: Apisearch\Server\Domain\Command\AddInteraction }
 
-    apisearch_server.comand_handler.delete_all_interaction:
-        class: Apisearch\Server\Domain\CommandHandler\DeleteAllInteractionsHandler
-        arguments:
-            - "@apisearch.user_repository_main"
-            - "@apisearch_server.inline_event_publisher"
-        tags:
-            - { name: tactician.handler, command: Apisearch\Server\Domain\Command\DeleteAllInteractions }
-
     apisearch_server.comand_handler.pause_consumers:
         class: Apisearch\Server\Domain\CommandHandler\PauseConsumersHandler
         arguments:

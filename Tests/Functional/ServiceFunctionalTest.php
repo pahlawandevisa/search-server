@@ -33,7 +33,6 @@ use Apisearch\Server\Domain\Command\CleanEnvironment;
 use Apisearch\Server\Domain\Command\ConfigureEnvironment;
 use Apisearch\Server\Domain\Command\ConfigureIndex;
 use Apisearch\Server\Domain\Command\CreateIndex;
-use Apisearch\Server\Domain\Command\DeleteAllInteractions;
 use Apisearch\Server\Domain\Command\DeleteIndex;
 use Apisearch\Server\Domain\Command\DeleteItems;
 use Apisearch\Server\Domain\Command\DeleteToken;
@@ -525,31 +524,6 @@ abstract class ServiceFunctionalTest extends ApisearchServerBundleFunctionalTest
                         $appUUID
                     ),
                 $interaction
-            ));
-
-        static::waitAfterWriteCommand();
-    }
-
-    /**
-     * Delete all interactions.
-     *
-     * @param string $appId
-     * @param Token  $token
-     */
-    public static function deleteAllInteractions(
-        string $appId,
-        Token $token = null
-    ) {
-        $appUUID = AppUUID::createById($appId ?? self::$appId);
-
-        self::getStatic('apisearch_server.command_bus')
-            ->handle(new DeleteAllInteractions(
-                RepositoryReference::create($appUUID),
-                $token ??
-                    new Token(
-                        TokenUUID::createById(self::getParameterStatic('apisearch_server.god_token')),
-                        $appUUID
-                    )
             ));
 
         static::waitAfterWriteCommand();

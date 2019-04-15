@@ -35,7 +35,7 @@ class PauseConsumersController extends ControllerWithBus
         $this
             ->commandBus
             ->handle(new PauseConsumers(
-                $this->getRequestContentObject(
+                RequestAccessor::extractRequestContentObject(
                     $request,
                     'type',
                     InvalidFormatException::queryFormatNotValid($request->getContent()),
