@@ -49,10 +49,7 @@ class CreateIndexTest extends HttpFunctionalTest
             [],
             [
                 'CONTENT_TYPE' => 'application/json',
-            ],
-            json_encode([
-                Http::INDEX_FIELD => IndexUUID::createById(self::$index)->toArray(),
-            ])
+            ]
         );
 
         $response = $client->getResponse();
@@ -69,10 +66,7 @@ class CreateIndexTest extends HttpFunctionalTest
             [],
             [
                 'CONTENT_TYPE' => 'application/json',
-            ],
-            json_encode([
-                Http::INDEX_FIELD => IndexUUID::createById(self::$index)->toArray(),
-            ])
+            ]
         );
 
         $anotherResponse = $anotherClient->getResponse();

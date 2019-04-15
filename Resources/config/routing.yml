@@ -35,7 +35,7 @@ apisearch_v1_get_indices:
         _controller: apisearch_server.get_indices_controller
 
 apisearch_v1_put_index:
-    path: /v1/{app_id}/indices
+    path: /v1/{app_id}/indices/{index_id}
     methods: ["PUT"]
     defaults:
         _controller: apisearch_server.create_index_controller

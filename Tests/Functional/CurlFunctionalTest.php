@@ -230,7 +230,6 @@ abstract class CurlFunctionalTest extends ApisearchServerBundleFunctionalTest
         Token $token = null,
         Config $config = null
     ) {
-        $indexUUIDAsArray = TokenUUID::createById($index ?? self::$index)->toArray();
         self::$lastResponse = self::makeCurl(
             'v1_put_index',
             [
@@ -239,13 +238,8 @@ abstract class CurlFunctionalTest extends ApisearchServerBundleFunctionalTest
             ],
             $token,
             is_null($config)
-                ? [
-                    Http::INDEX_FIELD => $indexUUIDAsArray,
-                ]
-                : [
-                    Http::INDEX_FIELD => $indexUUIDAsArray,
-                    Http::CONFIG_FIELD => $config->toArray(),
-                ]
+                ? []
+                : $config->toArray()
         );
     }
 
