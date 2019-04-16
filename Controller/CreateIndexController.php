@@ -54,6 +54,9 @@ class CreateIndexController extends ControllerWithBus
                 Config::createFromArray($configAsArray)
             ));
 
-        return new JsonResponse('Index created', JsonResponse::HTTP_CREATED);
+        return new JsonResponse(
+            'Index created with given configuration',
+            $this->created()
+        );
     }
 }

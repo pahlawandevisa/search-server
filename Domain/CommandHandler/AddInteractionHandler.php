@@ -18,12 +18,12 @@ namespace Apisearch\Server\Domain\CommandHandler;
 use Apisearch\Server\Domain\Command\AddInteraction;
 use Apisearch\Server\Domain\Event\DomainEventWithRepositoryReference;
 use Apisearch\Server\Domain\Event\InteractionWasAdded;
-use Apisearch\Server\Domain\WithUserRepositoryAndEventPublisher;
+use Apisearch\Server\Domain\WithEventPublisher;
 
 /**
  * Class AddInteractionHandler.
  */
-class AddInteractionHandler extends WithUserRepositoryAndEventPublisher
+class AddInteractionHandler extends WithEventPublisher
 {
     /**
      * Add interaction.
@@ -34,14 +34,6 @@ class AddInteractionHandler extends WithUserRepositoryAndEventPublisher
     {
         $repositoryReference = $addInteraction->getRepositoryReference();
         $interaction = $addInteraction->getInteraction();
-
-        $this
-            ->userRepository
-            ->setRepositoryReference($repositoryReference);
-
-        $this
-            ->userRepository
-            ->addInteraction($interaction);
 
         $this
             ->eventPublisher

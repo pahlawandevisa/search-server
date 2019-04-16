@@ -16,8 +16,6 @@ declare(strict_types=1);
 namespace Apisearch\Server\Controller;
 
 use Apisearch\Exception\InvalidFormatException;
-use Apisearch\Http\Http;
-use Apisearch\Model\AppUUID;
 use Apisearch\Model\Token;
 use Apisearch\Repository\RepositoryReference;
 use Apisearch\Server\Domain\Command\AddToken;
@@ -38,7 +36,6 @@ class AddTokenController extends ControllerWithBus
      */
     public function __invoke(Request $request): JsonResponse
     {
-        $query = $request->query;
         $newTokenAsArray = RequestAccessor::extractRequestContentObject(
             $request,
             '',
@@ -49,12 +46,12 @@ class AddTokenController extends ControllerWithBus
             ->commandBus
             ->handle(new AddToken(
                 RepositoryReference::create(
-                    AppUUID::createById($request->get('app_id', ''))
+                    RequestAccessor::getAppUUIDFromRequest($request)
                 ),
-                $query->get(Http::TOKEN_FIELD, ''),
+                RequestAccessor::getTokenFromRequest($request),
                 Token::createFromArray($newTokenAsArray)
             ));
 
-        return new JsonResponse('Token added', 200);
+        return new JsonResponse('Token added', $this->created());
     }
 }

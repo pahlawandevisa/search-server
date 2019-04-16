@@ -47,6 +47,6 @@ class ResetIndexController extends ControllerWithBus
                 $indexUUID
             ));
 
-        return new JsonResponse('Index reset', 200);
+        return new JsonResponse('Index reset', $this->ok());
     }
 }

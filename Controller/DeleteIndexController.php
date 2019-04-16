@@ -47,6 +47,6 @@ class DeleteIndexController extends ControllerWithBus
                 $indexUUID
             ));
 
-        return new JsonResponse('Index deleted', 200);
+        return new JsonResponse('Index deleted', $this->created());
     }
 }
