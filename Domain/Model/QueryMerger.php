@@ -15,8 +15,6 @@ declare(strict_types=1);
 
 namespace Apisearch\Server\Domain\Model;
 
-use Apisearch\Query\Query;
-
 /**
  * Class QueryMerger.
  */

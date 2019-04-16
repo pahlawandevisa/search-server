@@ -15,8 +15,6 @@ declare(strict_types=1);
 
 namespace Apisearch\Server\Tests\Functional\Http;
 
-use Apisearch\Http\Http;
-use Apisearch\Model\IndexUUID;
 use Apisearch\Server\Tests\Functional\HttpFunctionalTest;
 use Symfony\Component\HttpFoundation\JsonResponse;
 

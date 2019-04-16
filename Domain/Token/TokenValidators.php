@@ -15,8 +15,6 @@ declare(strict_types=1);
 
 namespace Apisearch\Server\Domain\Token;
 
-use Apisearch\Model\Token;
-
 /**
  * Class TokenValidators.
  */
