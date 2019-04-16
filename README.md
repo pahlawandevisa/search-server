@@ -10,7 +10,7 @@ technologies. The project provides an *in crescendo* set of language
 integration libraries for her users, as well as some third party projects 
 integration bundles, plugins, or javascript widgets.
 
-Step 1 - Start Eleasticsearch
+> **Step 1** - Start Eleasticsearch
 
 ```
 docker run -d \
@@ -21,7 +21,7 @@ docker run -d \
     docker.elastic.co/elasticsearch/elasticsearch:6.6.0
 ```
 
-Step 2 - Start Apisearch Server
+> **Step 2** - Start Apisearch Server
 
 ```
 docker pull apisearchio/search-server &&
@@ -36,7 +36,7 @@ docker run -d \
     sh /server-pm-entrypoint.sh
 ```
 
-Step 3 - Check health of the Server
+> **Step 3** - Check health of the Server
 
 ```
 curl "http://localhost:8200/health" \
