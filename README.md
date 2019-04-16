@@ -10,6 +10,39 @@ technologies. The project provides an *in crescendo* set of language
 integration libraries for her users, as well as some third party projects 
 integration bundles, plugins, or javascript widgets.
 
+Step 1 - Start Eleasticsearch
+
+```
+docker run -d \
+    --network host \
+    -e "ES_JAVA_OPTS=-Xms256m -Xmx256m" \
+    -e "discovery.type=single-node" \
+    -e "action.auto_create_index=-apisearch*,+*" \
+    docker.elastic.co/elasticsearch/elasticsearch:6.6.0
+```
+
+Step 2 - Start Apisearch Server
+
+```
+docker pull apisearchio/search-server &&
+docker run -d \
+    --network host \
+    -e "APISEARCH_GOD_TOKEN=0e4d75ba-c640-44c1-a745-06ee51db4e93" \
+    -e "APISEARCH_READONLY_TOKEN=410806ed-f2c2-8d22-96ea-7fb68026df34" \
+    -e "APISEARCH_PING_TOKEN=6326d504-0a5f-f1ae-7344-8e70b75fcde9" \
+    -e "ELASTICSEARCH_HOST=localhost" \
+    -e "ELASTICSEARCH_PORT=9200" \
+    apisearchio/search-server:latest \
+    sh /server-pm-entrypoint.sh
+```
+
+Step 3 - Check health of the Server
+
+```
+curl "http://localhost:8200/health" \
+    -H "Apisearch-Token-Id: 6326d504-0a5f-f1ae-7344-8e70b75fcde9"
+```
+
 Some first steps for you!
 
 - [Go to DOCS](http://docs.apisearch.io)
