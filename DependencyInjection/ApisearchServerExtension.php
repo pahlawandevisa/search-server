@@ -113,6 +113,7 @@ class ApisearchServerExtension extends BaseExtension
              * Limitations
              */
             'apisearch_server.limitations_number_of_results' => $config['limitations']['number_of_results'],
+            'apisearch_server.commands_are_asynchronous' => 'enqueue' === $commandsAdapter,
         ];
     }
 

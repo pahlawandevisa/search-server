@@ -47,6 +47,6 @@ class DeleteTokenController extends ControllerWithBus
                 $tokenUUID
             ));
 
-        return new JsonResponse('Token deleted', 200);
+        return new JsonResponse('Token deleted', $this->ok());
     }
 }

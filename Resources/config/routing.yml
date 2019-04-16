@@ -105,7 +105,7 @@ apisearch_v1_query_all_indices:
 # Interaction API
 #
 apisearch_v1_post_interaction:
-    path: /v1/interactions
+    path: /v1/{app_id}/interactions
     methods: ["POST"]
     defaults:
         _controller: apisearch_server.add_interaction_controller

@@ -175,7 +175,7 @@ abstract class ApisearchServerBundleFunctionalTest extends BaseFunctionalTest
                             'repository_service' => 'apisearch_server.app_repository',
                         ],
                         'user' => [
-                            'repository_service' => 'apisearch_server.user_repository',
+                            'repository_service' => 'apisearch.user_repository_mock',
                         ],
                         'indices' => [
                             self::$index => self::$index,

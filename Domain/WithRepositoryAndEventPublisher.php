@@ -21,7 +21,7 @@ use Apisearch\Server\Domain\Event\EventPublisher;
 /**
  * Class WithRepositoryAndEventPublisher.
  */
-abstract class WithRepositoryAndEventPublisher
+abstract class WithRepositoryAndEventPublisher extends WithEventPublisher
 {
     /**
      * @var Repository
@@ -29,13 +29,6 @@ abstract class WithRepositoryAndEventPublisher
      * Repository
      */
     protected $repository;
-
-    /**
-     * @var EventPublisher
-     *
-     * Event publisher
-     */
-    protected $eventPublisher;
 
     /**
      * QueryHandler constructor.
@@ -48,6 +41,6 @@ abstract class WithRepositoryAndEventPublisher
         EventPublisher $eventPublisher
     ) {
         $this->repository = $repository;
-        $this->eventPublisher = $eventPublisher;
+        parent::__construct($eventPublisher);
     }
 }

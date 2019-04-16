@@ -43,6 +43,6 @@ class DeleteTokensController extends ControllerWithBus
                 RequestAccessor::getTokenFromRequest($request)
             ));
 
-        return new JsonResponse('Tokens deleted', 200);
+        return new JsonResponse('Tokens deleted', $this->ok());
     }
 }

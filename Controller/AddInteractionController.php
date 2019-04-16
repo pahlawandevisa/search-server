@@ -15,8 +15,7 @@ declare(strict_types=1);
 
 namespace Apisearch\Server\Controller;
 
-use Apisearch\Http\Http;
-use Apisearch\Model\AppUUID;
+use Apisearch\Exception\InvalidFormatException;
 use Apisearch\Repository\RepositoryReference;
 use Apisearch\Server\Domain\Command\AddInteraction;
 use Apisearch\User\Interaction;
@@ -37,19 +36,22 @@ class AddInteractionController extends ControllerWithBus
      */
     public function __invoke(Request $request): JsonResponse
     {
-        $query = $request->query;
+        $interactionAsArray = RequestAccessor::extractRequestContentObject(
+            $request,
+            '',
+            InvalidFormatException::interactionFormatNotValid($request->getContent())
+        );
 
-        return new JsonResponse('', 401);
         $this
             ->commandBus
             ->handle(new AddInteraction(
                 RepositoryReference::create(
-                    AppUUID::createById($query->get(Http::APP_ID_FIELD, ''))
+                    RequestAccessor::getAppUUIDFromRequest($request)
                 ),
-                $query->get(Http::TOKEN_FIELD, ''),
-                Interaction::createFromArray(json_decode($query->get(Http::INTERACTION_FIELD), true))
+                RequestAccessor::getTokenFromRequest($request),
+                Interaction::createFromArray($interactionAsArray)
             ));
 
-        return new JsonResponse('', 200);
+        return new JsonResponse('Interaction added', $this->created());
     }
 }

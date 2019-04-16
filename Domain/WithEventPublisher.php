@@ -15,27 +15,27 @@ declare(strict_types=1);
 
 namespace Apisearch\Server\Domain;
 
-use Apisearch\Event\EventRepository;
+use Apisearch\Server\Domain\Event\EventPublisher;
 
 /**
- * Class WithEventRepository.
+ * Class WithEventPublisher.
  */
-abstract class WithEventRepository
+abstract class WithEventPublisher
 {
     /**
-     * @var EventRepository
+     * @var EventPublisher
      *
-     * Event repository
+     * Event publisher
      */
-    protected $eventRepository;
+    protected $eventPublisher;
 
     /**
-     * ListEventsHandler constructor.
+     * WithEventPublisher constructor.
      *
-     * @param EventRepository $eventRepository
+     * @param EventPublisher $eventPublisher
      */
-    public function __construct(EventRepository $eventRepository)
+    public function __construct(EventPublisher $eventPublisher)
     {
-        $this->eventRepository = $eventRepository;
+        $this->eventPublisher = $eventPublisher;
     }
 }

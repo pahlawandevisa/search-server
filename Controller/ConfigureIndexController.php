@@ -55,6 +55,9 @@ class ConfigureIndexController extends ControllerWithBus
                 Config::createFromArray($configAsArray)
             ));
 
-        return new JsonResponse('Config applied', 200);
+        return new JsonResponse(
+            'Index configured with given configuration',
+            $this->ok()
+        );
     }
 }

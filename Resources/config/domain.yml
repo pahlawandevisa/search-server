@@ -106,7 +106,6 @@ services:
     apisearch_server.comand_handler.add_interaction:
         class: Apisearch\Server\Domain\CommandHandler\AddInteractionHandler
         arguments:
-            - "@apisearch.user_repository_main"
             - "@apisearch_server.inline_event_publisher"
         tags:
             - { name: tactician.handler, command: Apisearch\Server\Domain\Command\AddInteraction }
@@ -270,9 +269,6 @@ services:
         class: Apisearch\Server\Domain\Repository\AppRepository\Repository
         arguments:
             - "@apisearch_server.token_providers"
-
-    apisearch_server.user_repository:
-        class: Apisearch\Server\Domain\Repository\UserRepository\Repository
 
     #
     # Token

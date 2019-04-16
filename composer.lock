@@ -65,12 +65,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/apisearch-io/php-client.git",
-                "reference": "9a796fba59c2f172b6404d19400d24ad0e7663f1"
+                "reference": "bd5c3373cef6aa806afa320229b17565226178c5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/apisearch-io/php-client/zipball/9a796fba59c2f172b6404d19400d24ad0e7663f1",
-                "reference": "9a796fba59c2f172b6404d19400d24ad0e7663f1",
+                "url": "https://api.github.com/repos/apisearch-io/php-client/zipball/bd5c3373cef6aa806afa320229b17565226178c5",
+                "reference": "bd5c3373cef6aa806afa320229b17565226178c5",
                 "shasum": ""
             },
             "require": {
@@ -103,7 +103,7 @@
                     "email": "yuhu@mmoreram.com"
                 }
             ],
-            "time": "2019-04-15T23:14:38+00:00"
+            "time": "2019-04-16T01:21:16+00:00"
         },
         {
             "name": "ekino/newrelic-bundle",

@@ -49,7 +49,7 @@ class UpdateItemsByQueryController extends ControllerWithBus
         $changesAsArray = RequestAccessor::extractRequestContentObject(
             $request,
             Http::CHANGES_FIELD,
-            InvalidFormatException::queryFormatNotValid($request->getContent())
+            InvalidFormatException::changesFormatNotValid($request->getContent())
         );
 
         $this
@@ -64,6 +64,6 @@ class UpdateItemsByQueryController extends ControllerWithBus
                 Changes::createFromArray($changesAsArray)
             ));
 
-        return new JsonResponse('Items updated', 200);
+        return new JsonResponse('Items updated', $this->ok());
     }
 }
