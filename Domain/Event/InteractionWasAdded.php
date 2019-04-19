@@ -39,6 +39,14 @@ class InteractionWasAdded extends DomainEvent
     }
 
     /**
+     * @return Interaction
+     */
+    public function getInteraction(): Interaction
+    {
+        return $this->interaction;
+    }
+
+    /**
      * to array payload.
      *
      * @return array

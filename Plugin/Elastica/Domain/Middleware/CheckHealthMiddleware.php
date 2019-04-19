@@ -61,9 +61,9 @@ class CheckHealthMiddleware implements PluginMiddleware
             ->getStatus();
         $data['status']['elasticsearch'] = $elasticsearchStatus;
         $data['healthy'] = $data['healthy'] && in_array(strtolower($elasticsearchStatus), [
-            'yellow',
-            'green',
-        ]);
+                'yellow',
+                'green',
+            ]);
 
         return $data;
     }
@@ -76,7 +76,7 @@ class CheckHealthMiddleware implements PluginMiddleware
      *
      * @return string[]
      */
-    public function getSubscribedEvents(): array
+    public function getSubscribedCommands(): array
     {
         return [
             CheckHealth::class,

@@ -136,3 +136,9 @@ services:
         tags:
             -  { name: console.command, command: apisearch-server:resume-consumers }
 
+    apisearch_server.generate_crontab:
+        class: Apisearch\Server\Console\GenerateCrontabCommand
+        parent: apisearch_server.command_with_query_bus_and_god_token
+        tags:
+            -  { name: console.command, command: apisearch-server:generate-crontab }
+

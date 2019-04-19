@@ -45,7 +45,7 @@ class RedisMetadataFieldsPluginConfiguration extends BaseConfiguration
                     ->defaultNull()
                 ->end()
                 ->scalarNode('key')
-                    ->defaultValue('apisearch_server.redis_wrapper')
+                    ->defaultValue('apisearch_metadata_fields')
                 ->end();
     }
 }

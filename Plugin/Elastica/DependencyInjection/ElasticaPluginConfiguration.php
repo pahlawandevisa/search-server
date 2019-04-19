@@ -46,6 +46,7 @@ class ElasticaPluginConfiguration extends BaseConfiguration
                             ->end()
                         ->end()
                     ->end()
-                ->end();
+                ->end()
+            ->end();
     }
 }
