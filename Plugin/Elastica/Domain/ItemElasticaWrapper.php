@@ -370,14 +370,14 @@ class ItemElasticaWrapper
         $indexPrefix = $this->getAliasPrefix();
 
         $indexSearchKeyword = $indexPrefix.'_'.(
-                empty($appUUIDComposed)
+            empty($appUUIDComposed)
+                ? '*'
+                : $appUUIDComposed.'_'.(
+                empty($indexUUIDComposed)
                     ? '*'
-                    : $appUUIDComposed.'_'.(
-                        empty($indexUUIDComposed)
-                            ? '*'
-                            : $indexUUIDComposed
-                    )
-        );
+                    : $indexUUIDComposed
+                )
+            );
 
         $elasticaResponse = $this->client->requestEndpoint((new Indices())->setIndex($indexSearchKeyword));
         $elasticaMappingResponse = $this->client->requestEndpoint((new MappingEndpoint\Get())->setIndex($indexSearchKeyword));

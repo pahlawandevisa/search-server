@@ -757,11 +757,11 @@ class QueryBuilder
         foreach ($scoreStrategies->getScoreStrategies() as $scoreStrategy) {
             $filter = $scoreStrategy->getFilter() instanceof Filter
                 ? $this->createQueryFilterByApplicationType(
-                        $scoreStrategy->getFilter(),
-                        false,
-                        false,
-                        false
-                    )
+                    $scoreStrategy->getFilter(),
+                    false,
+                    false,
+                    false
+                )
                 : null;
 
             $field = Item::getPathByField(
@@ -975,13 +975,13 @@ class QueryBuilder
                             'nested' => array_filter([
                                 'path' => implode('.', $path),
                                 'filter' => (
-                                    isset($sortBy['filter'])
-                                        ? $this->createQueryFilterByApplicationType(
-                                            $sortBy['filter'],
-                                            false,
-                                            false,
-                                            false
-                                        ) : false
+                                isset($sortBy['filter'])
+                                    ? $this->createQueryFilterByApplicationType(
+                                    $sortBy['filter'],
+                                    false,
+                                    false,
+                                    false
+                                ) : false
                                 ),
                             ]),
                         ],

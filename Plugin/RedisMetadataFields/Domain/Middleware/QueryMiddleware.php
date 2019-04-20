@@ -90,7 +90,7 @@ class QueryMiddleware implements PluginMiddleware
      *
      * @return string[]
      */
-    public function getSubscribedEvents(): array
+    public function getSubscribedCommands(): array
     {
         return [Query::class];
     }

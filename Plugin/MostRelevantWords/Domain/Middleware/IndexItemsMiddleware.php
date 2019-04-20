@@ -69,7 +69,7 @@ class IndexItemsMiddleware implements PluginMiddleware
      *
      * @return string[]
      */
-    public function getSubscribedEvents(): array
+    public function getSubscribedCommands(): array
     {
         return [IndexItems::class];
     }
