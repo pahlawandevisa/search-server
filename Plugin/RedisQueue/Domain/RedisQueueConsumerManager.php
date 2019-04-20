@@ -16,15 +16,15 @@ declare(strict_types=1);
 namespace Apisearch\Plugin\RedisQueue\Domain;
 
 use Apisearch\Plugin\Redis\Domain\RedisWrapper;
+use Apisearch\Reconnect\PHPRedisReconnect;
 use Apisearch\Server\Domain\Consumer\ConsumerManager;
+use Redis;
 
 /**
  * Class RedisQueueConsumerManager.
  */
 class RedisQueueConsumerManager extends ConsumerManager
 {
-    use RedisQueueTrierTrait;
-
     /**
      * @var RedisWrapper
      *
@@ -47,6 +47,36 @@ class RedisQueueConsumerManager extends ConsumerManager
     }
 
     /**
+     * Get Client.
+     *
+     * @return Redis|RedisCluster
+     */
+    private function getClient()
+    {
+        return $this
+            ->redisWrapper
+            ->getClient();
+    }
+
+    /**
+     * Get config for PHPReconnect.
+     *
+     * @return array
+     */
+    private function getConfigForPHPReconnect(): array
+    {
+        $config = $this
+            ->redisWrapper
+            ->getRedisConfig();
+
+        return [
+            'host' => $config->getHost(),
+            'port' => $config->getPort(),
+            'database' => $config->getDatabase(),
+        ];
+    }
+
+    /**
     /**
      * Declare busy channel.
      *
@@ -57,15 +87,15 @@ class RedisQueueConsumerManager extends ConsumerManager
         string $type,
         $data
     ) {
-        $this->tryActionNTimes(
-            $this->redisWrapper,
+        PHPRedisReconnect::tryOrReconnect(
             function ($client) use ($type, $data) {
                 $client->rPush(
                     $this->queues['queues'][$type],
                     json_encode($data)
                 );
             },
-            3
+            $this->getClient(),
+            $this->getConfigForPHPReconnect()
         );
     }
 
@@ -84,17 +114,17 @@ class RedisQueueConsumerManager extends ConsumerManager
             return false;
         }
 
-        return (int) $this->tryActionNTimes(
-            $this->redisWrapper,
+        return PHPRedisReconnect::tryOrReconnect(
             function ($client) use ($queueName) {
                 return $client->lLen($queueName);
             },
-            3
+            $this->getClient(),
+            $this->getConfigForPHPReconnect()
         );
     }
 
     /**
-     * Produce message.
+     * Reject message. Enqueue it in the original position.
      *
      * @param string $queue
      * @param array  $payload
@@ -103,15 +133,15 @@ class RedisQueueConsumerManager extends ConsumerManager
         string $queue,
         array $payload
     ) {
-        $this->tryActionNTimes(
-            $this->redisWrapper,
+        PHPRedisReconnect::tryOrReconnect(
             function ($client) use ($queue, $payload) {
                 $client->lPush(
                     $queue,
                     json_encode($payload)
                 );
             },
-            3
+            $this->getClient(),
+            $this->getConfigForPHPReconnect()
         );
     }
 
@@ -124,8 +154,7 @@ class RedisQueueConsumerManager extends ConsumerManager
      */
     public function consume(string $queueName): array
     {
-        list($queueName, $payload) = $this->tryActionNTimes(
-            $this->redisWrapper,
+        list($queueName, $payload) = PHPRedisReconnect::tryOrReconnect(
             function ($client) use ($queueName) {
                 return $client->blPop(
                     [
@@ -134,7 +163,8 @@ class RedisQueueConsumerManager extends ConsumerManager
                     ], 0
                 );
             },
-            3
+            $this->getClient(),
+            $this->getConfigForPHPReconnect()
         );
 
         return [$queueName, json_decode($payload, true)];
@@ -151,15 +181,15 @@ class RedisQueueConsumerManager extends ConsumerManager
         bool $value
     ) {
         foreach ($queues as $queue) {
-            $this->tryActionNTimes(
-                $this->redisWrapper,
+            PHPRedisReconnect::tryOrReconnect(
                 function ($client) use ($queue, $value) {
                     return $client->rPush(
                         $queue,
                         json_encode($value)
                     );
                 },
-                3
+                $this->getClient(),
+                $this->getConfigForPHPReconnect()
             );
         }
     }

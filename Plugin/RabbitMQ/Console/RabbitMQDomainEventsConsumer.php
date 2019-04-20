@@ -18,6 +18,7 @@ namespace Apisearch\Plugin\RabbitMQ\Console;
 use Apisearch\Plugin\RabbitMQ\Domain\RabbitMQChannel;
 use Apisearch\Server\Domain\Consumer\ConsumerManager;
 use Apisearch\Server\Domain\EventConsumer\EventConsumer;
+use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -70,10 +71,12 @@ class RabbitMQDomainEventsConsumer extends RabbitMQConsumer
      * Consume message.
      *
      * @param AMQPMessage     $message
+     * @param AMQPChannel     $channel
      * @param OutputInterface $output
      */
     protected function consumeMessage(
         AMQPMessage $message,
+        AMQPChannel $channel,
         OutputInterface $output
     ) {
         $this
@@ -83,9 +86,6 @@ class RabbitMQDomainEventsConsumer extends RabbitMQConsumer
                 json_decode($message->body, true)
             );
 
-        $this
-            ->channel
-            ->getChannel()
-            ->basic_ack($message->delivery_info['delivery_tag']);
+        $channel->basic_ack($message->delivery_info['delivery_tag']);
     }
 }

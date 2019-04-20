@@ -15,8 +15,9 @@ declare(strict_types=1);
 
 namespace Apisearch\Plugin\RabbitMQ\Domain;
 
+use Apisearch\Reconnect\AMQPReconnect;
 use Apisearch\Server\Domain\Consumer\ConsumerManager;
-use PhpAmqpLib\Channel\AMQPChannel;
+use PhpAmqpLib\Connection\AbstractConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
 /**
@@ -24,8 +25,6 @@ use PhpAmqpLib\Message\AMQPMessage;
  */
 class RabbitMQConsumerManager extends ConsumerManager
 {
-    use RabbitMQTrierTrait;
-
     /**
      * @var RabbitMQChannel
      *
@@ -48,6 +47,18 @@ class RabbitMQConsumerManager extends ConsumerManager
     }
 
     /**
+     * Get connection.
+     *
+     * @return AbstractConnection
+     */
+    private function getConnection(): AbstractConnection
+    {
+        return $this
+            ->channel
+            ->getConnection();
+    }
+
+    /**
      * Declare consumer and return if was ok.
      *
      * @param string $type
@@ -62,11 +73,13 @@ class RabbitMQConsumerManager extends ConsumerManager
             return false;
         }
 
-        $this->tryActionNTimes(
-            $this->channel,
-            function (AMQPChannel $channel) use ($queueName) {
-                $channel->queue_declare($queueName, false, false, false, false);
-            }, 3
+        AMQPReconnect::tryOrReconnect(
+            function (AbstractConnection $connection) use ($queueName) {
+                $connection
+                    ->channel()
+                    ->queue_declare($queueName, false, false, false, false);
+            },
+            $this->getConnection()
         );
 
         return true;
@@ -86,16 +99,16 @@ class RabbitMQConsumerManager extends ConsumerManager
             return null;
         }
 
-        $createdBusyQueueName = $this->tryActionNTimes(
-            $this->channel,
-            function (AMQPChannel $channel) use ($busyQueueName) {
+        $createdBusyQueueName = AMQPReconnect::tryOrReconnect(
+            function (AbstractConnection $connection) use ($busyQueueName) {
+                $channel = $connection->channel();
                 $channel->exchange_declare($busyQueueName, 'fanout', false, false, false);
                 list($createdBusyQueueName) = $channel->queue_declare('', false, false, true, false);
                 $channel->queue_bind($createdBusyQueueName, $busyQueueName);
 
                 return $createdBusyQueueName;
             },
-            3
+            $this->getConnection()
         );
 
         return $createdBusyQueueName;
@@ -115,14 +128,14 @@ class RabbitMQConsumerManager extends ConsumerManager
             return;
         }
 
-        $this->tryActionNTimes(
-            $this->channel,
-            function (AMQPChannel $channel) use ($type, $data) {
+        AMQPReconnect::tryOrReconnect(
+            function (AbstractConnection $connection) use ($type, $data) {
+                $channel = $connection->channel();
                 $channel->basic_publish(new AMQPMessage(json_encode($data), [
                     'delivery_mode' => 2,
                 ]), '', $this->queues['queues'][$type]);
             },
-            3
+            $this->getConnection()
         );
     }
 
@@ -138,15 +151,16 @@ class RabbitMQConsumerManager extends ConsumerManager
         $queueName = $this->queues['queues'][$type] ?? null;
 
         if (is_null($queueName)) {
-            return false;
+            return null;
         }
 
-        $data = $this->tryActionNTimes(
-            $this->channel,
-            function (AMQPChannel $channel) use ($queueName) {
-                return $channel->queue_declare($queueName, true);
+        $data = AMQPReconnect::tryOrReconnect(
+            function (AbstractConnection $connection) use ($queueName) {
+                return $connection
+                    ->channel()
+                    ->queue_declare($queueName, true);
             },
-            3
+            $this->getConnection()
         );
 
         return \intval($data[1]);
@@ -162,14 +176,14 @@ class RabbitMQConsumerManager extends ConsumerManager
         array $queues,
         bool $value
     ) {
-        $this->tryActionNTimes(
-            $this->channel,
-            function (AMQPChannel $channel) use ($queues, $value) {
+        AMQPReconnect::tryOrReconnect(
+            function (AbstractConnection $connection) use ($queues, $value) {
+                $channel = $connection->channel();
                 foreach ($queues as $queue) {
                     $channel->basic_publish(new AMQPMessage($value), $queue);
                 }
             },
-            3
+            $this->getConnection()
         );
     }
 }

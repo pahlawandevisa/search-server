@@ -22,6 +22,7 @@
         "one-bundle-app/one-bundle-app": "^1.0.24",
         "apisearch-io/apisearch-bundle": "dev-master@dev",
         "apisearch-io/php-client": "dev-master@dev",
+        "apisearch-io/php-reconnect": "dev-master@dev",
 
         "ruflin/elastica": "^6.0",
         "league/tactician-bundle": "^1.1",
