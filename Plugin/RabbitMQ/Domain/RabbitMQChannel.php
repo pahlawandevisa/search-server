@@ -15,7 +15,7 @@ declare(strict_types=1);
 
 namespace Apisearch\Plugin\RabbitMQ\Domain;
 
-use PhpAmqpLib\Channel\AMQPChannel;
+use PhpAmqpLib\Connection\AbstractConnection;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 
 /**
@@ -59,11 +59,11 @@ class RabbitMQChannel
     private $vhost;
 
     /**
-     * @var AMQPChannel
+     * @var AbstractConnection
      *
      * Channel
      */
-    private $channel;
+    private $connection;
 
     /**
      * RabbitMQChannel constructor.
@@ -89,38 +89,24 @@ class RabbitMQChannel
     }
 
     /**
-     * Get channel.
+     * Get connection.
      *
-     * @param bool $forceNew
-     *
-     * @return AMQPChannel
+     * @return AbstractConnection
      */
-    public function getChannel($forceNew = false): AMQPChannel
+    public function getConnection(): AbstractConnection
     {
-        if (
-            !$forceNew &&
-            $this->channel instanceof AMQPChannel &&
-            $this->channel->is_open()
-        ) {
-            return $this->channel;
+        if ($this->connection instanceof AbstractConnection) {
+            return $this->connection;
         }
 
-        $this->channel = $this->getFreshNewConnection();
-
-        return $this->channel;
-    }
-
-    /**
-     * Get a fresh new channel connection.
-     */
-    private function getFreshNewConnection()
-    {
-        return (new AMQPStreamConnection(
+        $this->connection = new AMQPStreamConnection(
             $this->host,
             $this->port,
             $this->user,
             $this->password,
             $this->vhost
-        ))->channel();
+        );
+
+        return $this->connection;
     }
 }

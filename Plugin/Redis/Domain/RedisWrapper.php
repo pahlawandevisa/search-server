@@ -54,17 +54,22 @@ class RedisWrapper
     /**
      * Get client.
      *
-     * @param bool $forceNew
-     *
      * @return Redis|RedisCluster
      */
-    public function getClient(bool $forceNew = false)
+    public function getClient()
     {
         return $this
             ->redisFactory
-            ->create(
-                $this->redisConfig,
-                $forceNew
-            );
+            ->create($this->redisConfig);
+    }
+
+    /**
+     * Get RedisConfig.
+     *
+     * @return RedisConfig
+     */
+    public function getRedisConfig()
+    {
+        return $this->redisConfig;
     }
 }

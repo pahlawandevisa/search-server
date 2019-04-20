@@ -34,19 +34,13 @@ class RedisFactory
      * Generate new Predis instance.
      *
      * @param RedisConfig $redisConfig
-     * @param bool        $forceNew
      *
      * @return Redis|RedisCluster
      */
-    public function create(
-        RedisConfig $redisConfig,
-        bool $forceNew = false
-    ) {
+    public function create(RedisConfig $redisConfig)
+    {
         $key = md5($redisConfig->serialize());
-        if (
-            !$forceNew &&
-            isset($this->redisInstances[$key])
-        ) {
+        if (isset($this->redisInstances[$key])) {
             return $this->redisInstances[$key];
         }
 

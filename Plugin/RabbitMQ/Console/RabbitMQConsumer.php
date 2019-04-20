@@ -17,9 +17,10 @@ namespace Apisearch\Plugin\RabbitMQ\Console;
 
 use Apisearch\Command\ApisearchCommand;
 use Apisearch\Plugin\RabbitMQ\Domain\RabbitMQChannel;
-use Apisearch\Plugin\RabbitMQ\Domain\RabbitMQTrierTrait;
+use Apisearch\Reconnect\AMQPReconnect;
 use Apisearch\Server\Domain\Consumer\ConsumerManager;
 use PhpAmqpLib\Channel\AMQPChannel;
+use PhpAmqpLib\Connection\AbstractConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -29,8 +30,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 abstract class RabbitMQConsumer extends ApisearchCommand
 {
-    use RabbitMQTrierTrait;
-
     /**
      * @var RabbitMQChannel
      *
@@ -99,17 +98,18 @@ abstract class RabbitMQConsumer extends ApisearchCommand
             ->consumerManager
             ->declareConsumer($queueType);
 
-        $this->tryActionNTimes(
-            $this->channel,
-            function (AMQPChannel $channel) use ($output) {
+        AMQPReconnect::tryOrReconnect(
+            function (AbstractConnection $connection) use ($output) {
                 self::printInfoMessage($output, 'RabbitMQ', 'Connecting...');
+                $channel = $connection->channel();
                 $this->bindCallbacksToChannel($channel, $output);
                 while (count($channel->callbacks)) {
                     $channel->wait();
                 }
             },
-            -1,
-            1
+            $this
+                ->channel
+                ->getConnection()
         );
 
         return 0;
@@ -140,6 +140,7 @@ abstract class RabbitMQConsumer extends ApisearchCommand
 
             $this->consumeMessage(
                 $message,
+                $channel,
                 $output
             );
         });
@@ -165,10 +166,12 @@ abstract class RabbitMQConsumer extends ApisearchCommand
      * Consume message.
      *
      * @param AMQPMessage     $message
+     * @param AMQPChannel     $channel
      * @param OutputInterface $output
      */
     abstract protected function consumeMessage(
         AMQPMessage $message,
+        AMQPChannel $channel,
         OutputInterface $output
     );
 }

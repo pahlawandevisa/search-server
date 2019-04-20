@@ -19,6 +19,7 @@ use Apisearch\Plugin\RabbitMQ\Domain\RabbitMQChannel;
 use Apisearch\Server\Domain\CommandConsumer\CommandConsumer;
 use Apisearch\Server\Domain\Consumer\ConsumerManager;
 use Apisearch\Server\Domain\ExclusiveCommand;
+use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
 use ReflectionClass;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -72,10 +73,12 @@ class RabbitMQCommandsConsumer extends RabbitMQConsumer
      * Consume message.
      *
      * @param AMQPMessage     $message
+     * @param AMQPChannel     $channel
      * @param OutputInterface $output
      */
     protected function consumeMessage(
         AMQPMessage $message,
+        AMQPChannel $channel,
         OutputInterface $output
     ) {
         $consumerManager = $this->consumerManager;
@@ -95,10 +98,7 @@ class RabbitMQCommandsConsumer extends RabbitMQConsumer
                 $command
             );
 
-        $this
-            ->channel
-            ->getChannel()
-            ->basic_ack($message->delivery_info['delivery_tag']);
+        $channel->basic_ack($message->delivery_info['delivery_tag']);
 
         if ($isExclusiveCommand) {
             $consumerManager->resumeConsumers([ConsumerManager::COMMAND_CONSUMER_TYPE]);
