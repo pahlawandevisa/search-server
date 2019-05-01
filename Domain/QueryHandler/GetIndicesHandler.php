@@ -33,13 +33,8 @@ class GetIndicesHandler extends WithAppRepository
      */
     public function handle(GetIndices $getIndices): array
     {
-        $repositoryReference = $getIndices->getRepositoryReference();
-        $this
-            ->appRepository
-            ->setRepositoryReference($repositoryReference);
-
         return $this
             ->appRepository
-            ->getIndices();
+            ->getIndices($getIndices->getRepositoryReference());
     }
 }

@@ -16,18 +16,14 @@ declare(strict_types=1);
 namespace Apisearch\Plugin\Elastica\Domain;
 
 use Apisearch\Repository\RepositoryReference;
-use Apisearch\Repository\WithRepositoryReference;
-use Apisearch\Repository\WithRepositoryReferenceTrait;
 
 /**
  * Class ElasticaWithAppIdWrapper.
  */
-abstract class ElasticaWrapperWithRepositoryReference implements WithRepositoryReference
+abstract class WithElasticaWrapper
 {
-    use WithRepositoryReferenceTrait;
-
     /**
-     * @var ItemElasticaWrapper
+     * @var ElasticaWrapper
      *
      * Elastica wrapper
      */
@@ -43,11 +39,11 @@ abstract class ElasticaWrapperWithRepositoryReference implements WithRepositoryR
     /**
      * ElasticaSearchRepository constructor.
      *
-     * @param ItemElasticaWrapper $elasticaWrapper
-     * @param bool                $refreshOnWrite
+     * @param ElasticaWrapper $elasticaWrapper
+     * @param bool            $refreshOnWrite
      */
     public function __construct(
-        ItemElasticaWrapper $elasticaWrapper,
+        ElasticaWrapper $elasticaWrapper,
         bool $refreshOnWrite
     ) {
         $this->elasticaWrapper = $elasticaWrapper;

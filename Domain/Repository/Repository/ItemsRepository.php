@@ -13,52 +13,51 @@
 
 declare(strict_types=1);
 
-namespace Apisearch\Server\Domain\Repository\AppRepository;
+namespace Apisearch\Server\Domain\Repository\Repository;
 
-use Apisearch\Model\Token;
-use Apisearch\Model\TokenUUID;
+use Apisearch\Model\Changes;
+use Apisearch\Model\Item;
+use Apisearch\Model\ItemUUID;
+use Apisearch\Query\Query;
 use Apisearch\Repository\RepositoryReference;
 
 /**
- * Interface TokenRepository.
+ * Interface ItemsRepository.
  */
-interface TokenRepository
+interface ItemsRepository
 {
     /**
-     * Add token.
+     * Generate items documents.
      *
      * @param RepositoryReference $repositoryReference
-     * @param Token               $token
+     * @param Item[]              $items
      */
-    public function addToken(
+    public function addItems(
         RepositoryReference $repositoryReference,
-        Token $token
+        array $items
     );
 
     /**
-     * Delete token.
+     * Delete items.
      *
      * @param RepositoryReference $repositoryReference
-     * @param TokenUUID           $tokenUUID
+     * @param ItemUUID[]          $itemUUIDs
      */
-    public function deleteToken(
+    public function deleteItems(
         RepositoryReference $repositoryReference,
-        TokenUUID $tokenUUID
+        array $itemUUIDs
     );
 
     /**
-     * Get tokens.
+     * Update items.
      *
      * @param RepositoryReference $repositoryReference
-     *
-     * @return Token[]
+     * @param Query               $query
+     * @param Changes             $changes
      */
-    public function getTokens(RepositoryReference $repositoryReference): array;
-
-    /**
-     * Delete all tokens.
-     *
-     * @param RepositoryReference $repositoryReference
-     */
-    public function deleteTokens(RepositoryReference $repositoryReference);
+    public function updateItems(
+        RepositoryReference $repositoryReference,
+        Query $query,
+        Changes $changes
+    );
 }

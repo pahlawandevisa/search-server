@@ -37,11 +37,10 @@ class DeleteTokenHandler extends WithAppRepositoryAndEventPublisher
 
         $this
             ->appRepository
-            ->setRepositoryReference($repositoryReference);
-
-        $this
-            ->appRepository
-            ->deleteToken($tokenUUID);
+            ->deleteToken(
+                $repositoryReference,
+                $tokenUUID
+            );
 
         $this
             ->eventPublisher

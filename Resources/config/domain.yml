@@ -26,7 +26,7 @@ services:
     apisearch_server.comand_handler.create_index:
         class: Apisearch\Server\Domain\CommandHandler\CreateIndexHandler
         arguments:
-            - "@apisearch.app_repository_main"
+            - "@apisearch_server.app_repository"
             - "@apisearch_server.inline_event_publisher"
         tags:
             - { name: tactician.handler, command: Apisearch\Server\Domain\Command\CreateIndex }
@@ -34,7 +34,7 @@ services:
     apisearch_server.comand_handler.delete_index:
         class: Apisearch\Server\Domain\CommandHandler\DeleteIndexHandler
         arguments:
-            - "@apisearch.app_repository_main"
+            - "@apisearch_server.app_repository"
             - "@apisearch_server.inline_event_publisher"
         tags:
             - { name: tactician.handler, command: Apisearch\Server\Domain\Command\DeleteIndex }
@@ -42,7 +42,7 @@ services:
     apisearch_server.comand_handler.reset_index:
         class: Apisearch\Server\Domain\CommandHandler\ResetIndexHandler
         arguments:
-            - "@apisearch.app_repository_main"
+            - "@apisearch_server.app_repository"
             - "@apisearch_server.inline_event_publisher"
         tags:
             - { name: tactician.handler, command: Apisearch\Server\Domain\Command\ResetIndex }
@@ -50,7 +50,7 @@ services:
     apisearch_server.comand_handler.configure_index:
         class: Apisearch\Server\Domain\CommandHandler\ConfigureIndexHandler
         arguments:
-            - "@apisearch.app_repository_main"
+            - "@apisearch_server.app_repository"
             - "@apisearch_server.inline_event_publisher"
         tags:
             - { name: tactician.handler, command: Apisearch\Server\Domain\Command\ConfigureIndex }
@@ -58,7 +58,7 @@ services:
     apisearch_server.comand_handler.delete_items:
         class: Apisearch\Server\Domain\CommandHandler\DeleteItemsHandler
         arguments:
-            - "@apisearch.repository_main.default"
+            - "@apisearch_server.repository"
             - "@apisearch_server.inline_event_publisher"
         tags:
             - { name: tactician.handler, command: Apisearch\Server\Domain\Command\DeleteItems }
@@ -66,7 +66,7 @@ services:
     apisearch_server.comand_handler.index_items:
         class: Apisearch\Server\Domain\CommandHandler\IndexItemsHandler
         arguments:
-            - "@apisearch.repository_main.default"
+            - "@apisearch_server.repository"
             - "@apisearch_server.inline_event_publisher"
         tags:
             - { name: tactician.handler, command: Apisearch\Server\Domain\Command\IndexItems }
@@ -74,7 +74,7 @@ services:
     apisearch_server.comand_handler.update_items:
         class: Apisearch\Server\Domain\CommandHandler\UpdateItemsHandler
         arguments:
-            - "@apisearch.repository_main.default"
+            - "@apisearch_server.repository"
             - "@apisearch_server.inline_event_publisher"
         tags:
             - { name: tactician.handler, command: Apisearch\Server\Domain\Command\UpdateItems }
@@ -82,7 +82,7 @@ services:
     apisearch_server.comand_handler.add_token:
         class: Apisearch\Server\Domain\CommandHandler\AddTokenHandler
         arguments:
-            - "@apisearch.app_repository_main"
+            - "@apisearch_server.app_repository"
             - "@apisearch_server.inline_event_publisher"
         tags:
             - { name: tactician.handler, command: Apisearch\Server\Domain\Command\AddToken }
@@ -90,7 +90,7 @@ services:
     apisearch_server.comand_handler.delete_token:
         class: Apisearch\Server\Domain\CommandHandler\DeleteTokenHandler
         arguments:
-            - "@apisearch.app_repository_main"
+            - "@apisearch_server.app_repository"
             - "@apisearch_server.inline_event_publisher"
         tags:
             - { name: tactician.handler, command: Apisearch\Server\Domain\Command\DeleteToken }
@@ -98,7 +98,7 @@ services:
     apisearch_server.comand_handler.delete_tokens:
         class: Apisearch\Server\Domain\CommandHandler\DeleteTokensHandler
         arguments:
-            - "@apisearch.app_repository_main"
+            - "@apisearch_server.app_repository"
             - "@apisearch_server.inline_event_publisher"
         tags:
             - { name: tactician.handler, command: Apisearch\Server\Domain\Command\DeleteTokens }
@@ -130,7 +130,7 @@ services:
     apisearch_server.query_handler.query:
         class: Apisearch\Server\Domain\QueryHandler\QueryHandler
         arguments:
-            - "@apisearch.repository_main.default"
+            - "@apisearch_server.repository"
             - "@apisearch_server.inline_event_publisher"
         tags:
             - { name: tactician.handler, command: Apisearch\Server\Domain\Query\Query }
@@ -138,14 +138,14 @@ services:
     apisearch_server.query_handler.check_index:
         class: Apisearch\Server\Domain\QueryHandler\CheckIndexHandler
         arguments:
-            - "@apisearch.app_repository_main"
+            - "@apisearch_server.app_repository"
         tags:
             - { name: tactician.handler, command: Apisearch\Server\Domain\Query\CheckIndex }
 
     apisearch_server.query_handler.get_tokens:
         class: Apisearch\Server\Domain\QueryHandler\GetTokensHandler
         arguments:
-            - "@apisearch.app_repository_main"
+            - "@apisearch_server.app_repository"
             - "@apisearch_server.inline_event_publisher"
         tags:
             - { name: tactician.handler, command: Apisearch\Server\Domain\Query\GetTokens }
@@ -153,7 +153,7 @@ services:
     apisearch_server.query_handler.get_indices:
         class: Apisearch\Server\Domain\QueryHandler\GetIndicesHandler
         arguments:
-            - "@apisearch.app_repository_main"
+            - "@apisearch_server.app_repository"
         tags:
             - { name: tactician.handler, command: Apisearch\Server\Domain\Query\GetIndices }
 
@@ -230,12 +230,6 @@ services:
     #
     # Domain Middlewares
     #
-    apisearch_server.middleware.interactions:
-        class: Apisearch\Server\Domain\Middleware\InteractionsMiddleware
-        arguments:
-            - "@apisearch.user_repository_main"
-        public: false
-
     apisearch_server.middleware.repository_reference:
         class: Apisearch\Server\Domain\Middleware\RepositoryReferenceMiddleware
         public: false
@@ -267,12 +261,17 @@ services:
     #
     # Repositories
     #
-    apisearch_server.items_repository:
+    apisearch_server.repository:
         class: Apisearch\Server\Domain\Repository\Repository\Repository
+        arguments:
+            - "@apisearch_server.item_repository"
+            - "@apisearch_server.query_repository"
 
     apisearch_server.app_repository:
         class: Apisearch\Server\Domain\Repository\AppRepository\Repository
         arguments:
+            - "@apisearch_server.index_repository"
+            - "@apisearch_server.token_repository"
             - "@apisearch_server.token_providers"
 
     #

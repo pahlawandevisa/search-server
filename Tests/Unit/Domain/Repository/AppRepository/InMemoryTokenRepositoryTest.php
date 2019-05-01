@@ -36,13 +36,13 @@ class InMemoryTokenRepositoryTest extends TestCase
         $repository = new InMemoryTokenRepository();
         $appUUID = AppUUID::createById('yyy');
         $indexUUID = IndexUUID::createById('index');
-        $repository->setRepositoryReference(RepositoryReference::create(
+        $repositoryReference = RepositoryReference::create(
             $appUUID,
             $indexUUID
-        ));
+        );
         $tokenUUID = TokenUUID::createById('xxx');
         $token = new Token($tokenUUID, $appUUID);
-        $repository->addToken($token);
+        $repository->addToken($repositoryReference, $token);
         $this->assertEquals(
             $token,
             $repository->getTokenByUUID(
@@ -51,7 +51,7 @@ class InMemoryTokenRepositoryTest extends TestCase
             )
         );
         $this->assertNull($repository->getTokenByUUID($appUUID, TokenUUID::createById('lll')));
-        $repository->deleteToken($tokenUUID);
+        $repository->deleteToken($repositoryReference, $tokenUUID);
         $this->assertNull($repository->getTokenByUUID($appUUID, $tokenUUID));
     }
 
@@ -63,33 +63,38 @@ class InMemoryTokenRepositoryTest extends TestCase
         $repository = new InMemoryTokenRepository();
         $appUUID = AppUUID::createById('yyy');
         $indexUUID = IndexUUID::createById('index');
-        $repository->setRepositoryReference(RepositoryReference::create(
+        $mainRepositoryReference = RepositoryReference::create(
             $appUUID,
             $indexUUID
-        ));
+        );
         $tokenUUID = TokenUUID::createById('xxx');
         $token = new Token($tokenUUID, $appUUID);
-        $repository->addToken($token);
+        $repository->addToken($mainRepositoryReference, $token);
         $tokenUUID2 = TokenUUID::createById('xxx2');
         $token2 = new Token($tokenUUID2, $appUUID);
-        $repository->addToken($token2);
-        $repository->setRepositoryReference(RepositoryReference::create(
+        $repository->addToken($mainRepositoryReference, $token2);
+
+        $repositoryReference = RepositoryReference::create(
             AppUUID::createById('zzz'),
             $indexUUID
-        ));
+        );
         $tokenUUID3 = TokenUUID::createById('xxx3');
         $token3 = new Token($tokenUUID3, AppUUID::createById('zzz'));
-        $repository->addToken($token3);
+        $repository->addToken($repositoryReference, $token3);
 
-        $repository->setRepositoryReference(RepositoryReference::create($appUUID, $indexUUID));
-        $this->assertCount(2, $repository->getTokens());
-        $repository->setRepositoryReference(RepositoryReference::create(AppUUID::createById('zzz'), $indexUUID));
-        $this->assertCount(1, $repository->getTokens());
-        $repository->setRepositoryReference(RepositoryReference::create(AppUUID::createById('lol'), $indexUUID));
-        $this->assertCount(0, $repository->getTokens());
+        $this->assertCount(2, $repository->getTokens($mainRepositoryReference));
+        $repositoryReference = RepositoryReference::create(
+            AppUUID::createById('zzz'),
+            $indexUUID
+        );
+        $this->assertCount(1, $repository->getTokens($repositoryReference));
+        $repositoryReference = RepositoryReference::create(
+            AppUUID::createById('lol'),
+            $indexUUID
+        );
+        $this->assertCount(0, $repository->getTokens($repositoryReference));
 
-        $repository->setRepositoryReference(RepositoryReference::create($appUUID, $indexUUID));
-        $repository->deleteTokens();
-        $this->assertCount(0, $repository->getTokens());
+        $repository->deleteTokens($mainRepositoryReference);
+        $this->assertCount(0, $repository->getTokens($mainRepositoryReference));
     }
 }

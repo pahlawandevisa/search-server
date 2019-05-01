@@ -30,15 +30,11 @@ class DeleteIndexHandler extends WithAppRepositoryAndEventPublisher
      */
     public function handle(DeleteIndex $deleteIndex)
     {
-        $repositoryReference = $deleteIndex->getRepositoryReference();
-        $indexUUID = $deleteIndex->getIndexUUID();
-
         $this
             ->appRepository
-            ->setRepositoryReference($repositoryReference);
-
-        $this
-            ->appRepository
-            ->deleteIndex($indexUUID);
+            ->deleteIndex(
+                $deleteIndex->getRepositoryReference(),
+                $deleteIndex->getIndexUUID()
+            );
     }
 }

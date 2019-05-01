@@ -3,13 +3,6 @@ services:
     #
     # Middlewares
     #
-    apisearch_plugin.elastica.middleware.transaction:
-        class: Apisearch\Plugin\Elastica\Domain\Middleware\TransactionElasticaMiddleware
-        arguments:
-            - "@apisearch.repository_main.default"
-        tags:
-            - { name: apisearch_plugin.middleware }
-
     apisearch_plugin.elastica.check_health_middleware:
         class: Apisearch\Plugin\Elastica\Domain\Middleware\CheckHealthMiddleware
         arguments:

@@ -37,11 +37,10 @@ class AddTokenHandler extends WithAppRepositoryAndEventPublisher
 
         $this
             ->appRepository
-            ->setRepositoryReference($repositoryReference);
-
-        $this
-            ->appRepository
-            ->addToken($token);
+            ->addToken(
+                $repositoryReference,
+                $token
+            );
 
         $this
             ->eventPublisher

@@ -49,7 +49,7 @@ class InlineCommandBus extends CommandBus
      */
     public function handle($command)
     {
-        $this
+        return $this
             ->commandBus
             ->handle($command);
     }

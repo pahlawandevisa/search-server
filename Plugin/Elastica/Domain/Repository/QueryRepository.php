@@ -20,9 +20,9 @@ use Apisearch\Model\Item;
 use Apisearch\Model\ItemUUID;
 use Apisearch\Plugin\Elastica\Domain\Builder\QueryBuilder;
 use Apisearch\Plugin\Elastica\Domain\Builder\ResultBuilder;
-use Apisearch\Plugin\Elastica\Domain\ElasticaWrapperWithRepositoryReference;
-use Apisearch\Plugin\Elastica\Domain\ItemElasticaWrapper;
+use Apisearch\Plugin\Elastica\Domain\ElasticaWrapper;
 use Apisearch\Plugin\Elastica\Domain\Search;
+use Apisearch\Plugin\Elastica\Domain\WithElasticaWrapper;
 use Apisearch\Query\Query;
 use Apisearch\Repository\RepositoryReference;
 use Apisearch\Result\Result;
@@ -35,7 +35,7 @@ use Elastica\Suggest;
 /**
  * Class QueryRepository.
  */
-class QueryRepository extends ElasticaWrapperWithRepositoryReference implements QueryRepositoryInterface
+class QueryRepository extends WithElasticaWrapper implements QueryRepositoryInterface
 {
     /**
      * @var QueryBuilder
@@ -54,13 +54,13 @@ class QueryRepository extends ElasticaWrapperWithRepositoryReference implements 
     /**
      * ElasticaSearchRepository constructor.
      *
-     * @param ItemElasticaWrapper $elasticaWrapper
-     * @param bool                $refreshOnWrite
-     * @param QueryBuilder        $queryBuilder
-     * @param ResultBuilder       $resultBuilder
+     * @param ElasticaWrapper $elasticaWrapper
+     * @param bool            $refreshOnWrite
+     * @param QueryBuilder    $queryBuilder
+     * @param ResultBuilder   $resultBuilder
      */
     public function __construct(
-        ItemElasticaWrapper $elasticaWrapper,
+        ElasticaWrapper $elasticaWrapper,
         bool $refreshOnWrite,
         QueryBuilder $queryBuilder,
         ResultBuilder $resultBuilder
@@ -77,15 +77,18 @@ class QueryRepository extends ElasticaWrapperWithRepositoryReference implements 
     /**
      * Search cross the index types.
      *
-     * @param Query $query
+     * @param RepositoryReference $repositoryReference
+     * @param Query               $query
      *
      * @return Result
      */
-    public function query(Query $query): Result
-    {
+    public function query(
+        RepositoryReference $repositoryReference,
+        Query $query
+    ): Result {
         $r = (count($query->getSubqueries()) > 0)
-            ? $this->makeMultiQuery($query)
-            : $this->makeSimpleQuery($query);
+            ? $this->makeMultiQuery($repositoryReference, $query)
+            : $this->makeSimpleQuery($repositoryReference, $query);
 
         return $r;
     }
@@ -93,17 +96,20 @@ class QueryRepository extends ElasticaWrapperWithRepositoryReference implements 
     /**
      * Make simple query.
      *
-     * @param Query $query
+     * @param RepositoryReference $repositoryReference
+     * @param Query               $query
      *
      * @return Result
      */
-    private function makeSimpleQuery(Query $query)
-    {
+    private function makeSimpleQuery(
+        RepositoryReference $repositoryReference,
+        Query $query
+    ) {
         $resultSet = $this
             ->elasticaWrapper
             ->simpleSearch(
                 $this->getRepositoryReferenceIndexSpecific(
-                    $this->getRepositoryReference(),
+                    $repositoryReference,
                     $query->getIndexUUID()
                 ),
                 new Search(
@@ -126,17 +132,20 @@ class QueryRepository extends ElasticaWrapperWithRepositoryReference implements 
     /**
      * Make multi query.
      *
-     * @param Query $query
+     * @param RepositoryReference $repositoryReference
+     * @param Query               $query
      *
      * @return Result
      */
-    private function makeMultiQuery(Query $query)
-    {
+    private function makeMultiQuery(
+        RepositoryReference $repositoryReference,
+        Query $query
+    ) {
         $searches = [];
         $repositoryReferencies = [];
         foreach ($query->getSubqueries() as $name => $subquery) {
             $repositoryReferencies[] = $this->getRepositoryReferenceIndexSpecific(
-                $this->getRepositoryReference(),
+                $repositoryReference,
                 $subquery->getIndexUUID()
             );
             $searches[] = new Search(

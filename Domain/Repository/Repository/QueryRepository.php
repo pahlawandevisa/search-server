@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Apisearch\Server\Domain\Repository\Repository;
 
 use Apisearch\Query\Query;
+use Apisearch\Repository\RepositoryReference;
 use Apisearch\Result\Result;
 
 /**
@@ -26,9 +27,13 @@ interface QueryRepository
     /**
      * Search cross the index types.
      *
-     * @param Query $query
+     * @param RepositoryReference $repositoryReference
+     * @param Query               $query
      *
      * @return Result
      */
-    public function query(Query $query): Result;
+    public function query(
+        RepositoryReference $repositoryReference,
+        Query $query
+    ): Result;
 }

@@ -38,11 +38,10 @@ class IndexItemsHandler extends WithRepositoryAndEventPublisher
 
         $this
             ->repository
-            ->setRepositoryReference($repositoryReference);
-
-        $this
-            ->repository
-            ->addItems($items);
+            ->addItems(
+                $repositoryReference,
+                $items
+            );
 
         $this
             ->eventPublisher

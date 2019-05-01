@@ -38,11 +38,8 @@ class ConfigureIndexHandler extends WithAppRepositoryAndEventPublisher
 
         $this
             ->appRepository
-            ->setRepositoryReference($repositoryReference);
-
-        $this
-            ->appRepository
             ->configureIndex(
+                $repositoryReference,
                 $indexUUID,
                 $config
             );

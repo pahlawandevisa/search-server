@@ -37,11 +37,10 @@ class ResetIndexHandler extends WithAppRepositoryAndEventPublisher
 
         $this
             ->appRepository
-            ->setRepositoryReference($repositoryReference);
-
-        $this
-            ->appRepository
-            ->resetIndex($indexUUID);
+            ->resetIndex(
+                $repositoryReference,
+                $indexUUID
+            );
 
         $this
             ->eventPublisher

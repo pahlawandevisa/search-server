@@ -30,19 +30,12 @@ class CreateIndexHandler extends WithAppRepositoryAndEventPublisher
      */
     public function handle(CreateIndex $createIndex)
     {
-        $repositoryReference = $createIndex->getRepositoryReference();
-        $indexUUID = $createIndex->getIndexUUID();
-        $config = $createIndex->getConfig();
-
-        $this
-            ->appRepository
-            ->setRepositoryReference($repositoryReference);
-
         $this
             ->appRepository
             ->createIndex(
-                $indexUUID,
-                $config
+                $createIndex->getRepositoryReference(),
+                $createIndex->getIndexUUID(),
+                $createIndex->getConfig()
             );
     }
 }

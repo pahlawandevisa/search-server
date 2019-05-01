@@ -42,16 +42,14 @@ class QueryHandler extends WithRepositoryAndEventPublisher
         $repositoryReference = $query->getRepositoryReference();
         $searchQuery = $query->getQuery();
         $from = microtime(true);
-
         $this->assignUUIDIfNeeded($query->getQuery());
-
-        $this
-            ->repository
-            ->setRepositoryReference($query->getRepositoryReference());
 
         $result = $this
             ->repository
-            ->query($searchQuery);
+            ->query(
+                $repositoryReference,
+                $searchQuery
+            );
 
         try {
             $this

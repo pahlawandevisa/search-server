@@ -32,15 +32,11 @@ class CheckIndexHandler extends WithAppRepository
      */
     public function handle(CheckIndex $checkIndex): bool
     {
-        $repositoryReference = $checkIndex->getRepositoryReference();
-        $indexUUID = $checkIndex->getIndexUUID();
-
-        $this
-            ->appRepository
-            ->setRepositoryReference($repositoryReference);
-
         return $this
             ->appRepository
-            ->checkIndex($indexUUID);
+            ->checkIndex(
+                $checkIndex->getRepositoryReference(),
+                $checkIndex->getIndexUUID()
+            );
     }
 }

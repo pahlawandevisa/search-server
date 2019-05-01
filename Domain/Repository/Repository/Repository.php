@@ -15,165 +15,123 @@ declare(strict_types=1);
 
 namespace Apisearch\Server\Domain\Repository\Repository;
 
-use Apisearch\Config\Config;
-use Apisearch\Exception\ResourceExistsException;
 use Apisearch\Exception\ResourceNotAvailableException;
-use Apisearch\Exception\TransportableException;
 use Apisearch\Model\Changes;
-use Apisearch\Model\Index;
 use Apisearch\Model\Item;
 use Apisearch\Model\ItemUUID;
 use Apisearch\Query\Query;
-use Apisearch\Repository\Repository as BaseRepository;
+use Apisearch\Repository\RepositoryReference;
 use Apisearch\Result\Result;
-use Apisearch\Server\Domain\Repository\WithRepositories;
 
 /**
  * Class Repository.
  */
-class Repository extends BaseRepository
+class Repository
 {
-    use WithRepositories;
+    /**
+     * @var ItemsRepository
+     *
+     * Items repository
+     */
+    private $itemsRepository;
 
     /**
-     * Flush items.
+     * @var QueryRepository
      *
-     * @param Item[]     $itemsToUpdate
-     * @param ItemUUID[] $itemsToDelete
+     * Query Repository
      */
-    protected function flushItems(
-        array $itemsToUpdate,
-        array $itemsToDelete
-    ) {
-        if (!empty($itemsToUpdate)) {
-            $this
-                ->getRepository(IndexRepository::class)
-                ->addItems($itemsToUpdate);
-        }
+    private $queryRepository;
 
-        if (!empty($itemsToDelete)) {
-            $this
-                ->getRepository(DeleteRepository::class)
-                ->deleteItems($itemsToDelete);
-        }
+    /**
+     * Repository constructor.
+     *
+     * @param ItemsRepository $itemsRepository
+     * @param QueryRepository $queryRepository
+     */
+    public function __construct(
+        ItemsRepository $itemsRepository,
+        QueryRepository $queryRepository
+    ) {
+        $this->itemsRepository = $itemsRepository;
+        $this->queryRepository = $queryRepository;
     }
 
     /**
-     * @param string|null $appId
+     * Add items.
      *
-     * @return array|Index[]
+     * @param RepositoryReference $repositoryReference
+     * @param Item[]              $items
      */
-    public function getIndices(string $appId = null): array
-    {
-        return $this
-            ->getRepository(IndexRepository::class)
-            ->getIndices($appId);
+    public function addItems(
+        RepositoryReference $repositoryReference,
+        array $items
+    ) {
+        $this
+            ->itemsRepository
+            ->addItems(
+                $repositoryReference,
+                $items
+            );
+    }
+
+    /**
+     * Delete items.
+     *
+     * @param RepositoryReference $repositoryReference
+     * @param ItemUUID[]          $itemsUUID
+     */
+    public function deleteItems(
+        RepositoryReference $repositoryReference,
+        array $itemsUUID
+    ) {
+        $this
+            ->itemsRepository
+            ->deleteItems(
+                $repositoryReference,
+                $itemsUUID
+            );
     }
 
     /**
      * Search across the index types.
      *
-     * @param Query $query
-     * @param array $parameters
+     * @param RepositoryReference $repositoryReference
+     * @param Query               $query
      *
      * @return Result
      *
      * @throws ResourceNotAvailableException
      */
     public function query(
-        Query $query,
-        array $parameters = []
+        RepositoryReference $repositoryReference,
+        Query $query
     ): Result {
         return $this
-            ->getRepository(QueryRepository::class)
-            ->query($query);
+            ->queryRepository
+            ->query(
+                $repositoryReference,
+                $query
+            );
     }
 
     /**
      * Update items.
      *
-     * @param Query   $query
-     * @param Changes $changes
+     * @param RepositoryReference $repositoryReference
+     * @param Query               $query
+     * @param Changes             $changes
      */
     public function updateItems(
+        RepositoryReference $repositoryReference,
         Query $query,
         Changes $changes
     ) {
         $this
-            ->getRepository(UpdateRepository::class)
+            ->itemsRepository
             ->updateItems(
+                $repositoryReference,
                 $query,
                 $changes
             );
-    }
-
-    /**
-     * Create an index.
-     *
-     * @param Config $config
-     *
-     * @throws ResourceExistsException
-     */
-    public function createIndex(Config $config)
-    {
-        $this
-            ->getRepository(IndexRepository::class)
-            ->createIndex($config);
-    }
-
-    /**
-     * Delete an index.
-     *
-     * @throws ResourceNotAvailableException
-     */
-    public function deleteIndex()
-    {
-        $this
-            ->getRepository(IndexRepository::class)
-            ->deleteIndex();
-    }
-
-    /**
-     * Reset the index.
-     *
-     * @throws ResourceNotAvailableException
-     */
-    public function resetIndex()
-    {
-        $this
-            ->getRepository(IndexRepository::class)
-            ->resetIndex();
-    }
-
-    /**
-     * Checks the index.
-     *
-     * @return bool
-     */
-    public function checkIndex(): bool
-    {
-        try {
-            $this
-                ->getRepository(IndexRepository::class)
-                ->getIndexStats();
-        } catch (TransportableException $exception) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Config the index.
-     *
-     * @param Config $config
-     *
-     * @throws ResourceNotAvailableException
-     */
-    public function configureIndex(Config $config)
-    {
-        $this
-            ->getRepository(ConfigRepository::class)
-            ->configureIndex($config);
     }
 }

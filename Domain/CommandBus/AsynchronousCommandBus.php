@@ -70,7 +70,7 @@ class AsynchronousCommandBus extends CommandBus
             return;
         }
 
-        $this
+        return $this
             ->commandBus
             ->handle($command);
     }

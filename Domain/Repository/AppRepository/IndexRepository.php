@@ -20,6 +20,7 @@ use Apisearch\Exception\ResourceExistsException;
 use Apisearch\Exception\ResourceNotAvailableException;
 use Apisearch\Model\Index;
 use Apisearch\Model\IndexUUID;
+use Apisearch\Repository\RepositoryReference;
 
 /**
  * Interface IndexRepository.
@@ -29,19 +30,23 @@ interface IndexRepository
     /**
      * Get indices.
      *
+     * @param RepositoryReference $repositoryReference
+     *
      * @return Index[]
      */
-    public function getIndices(): array;
+    public function getIndices(RepositoryReference $repositoryReference): array;
 
     /**
      * Create an index.
      *
-     * @param IndexUUID $indexUUID
-     * @param Config    $config
+     * @param RepositoryReference $repositoryReference
+     * @param IndexUUID           $indexUUID
+     * @param Config              $config
      *
      * @throws ResourceExistsException
      */
     public function createIndex(
+        RepositoryReference $repositoryReference,
         IndexUUID $indexUUID,
         Config $config
     );
@@ -49,12 +54,14 @@ interface IndexRepository
     /**
      * Config the index.
      *
-     * @param IndexUUID $indexUUID
-     * @param Config    $config
+     * @param RepositoryReference $repositoryReference
+     * @param IndexUUID           $indexUUID
+     * @param Config              $config
      *
      * @throws ResourceNotAvailableException
      */
     public function configureIndex(
+        RepositoryReference $repositoryReference,
         IndexUUID $indexUUID,
         Config $config
     );
@@ -62,18 +69,26 @@ interface IndexRepository
     /**
      * Delete an index.
      *
-     * @param IndexUUID $indexUUID
+     * @param RepositoryReference $repositoryReference
+     * @param IndexUUID           $indexUUID
      *
      * @throws ResourceNotAvailableException
      */
-    public function deleteIndex(IndexUUID $indexUUID);
+    public function deleteIndex(
+        RepositoryReference $repositoryReference,
+        IndexUUID $indexUUID
+    );
 
     /**
      * Reset the index.
      *
-     * @param IndexUUID $indexUUID
+     * @param RepositoryReference $repositoryReference
+     * @param IndexUUID           $indexUUID
      *
      * @throws ResourceNotAvailableException
      */
-    public function resetIndex(IndexUUID $indexUUID);
+    public function resetIndex(
+        RepositoryReference $repositoryReference,
+        IndexUUID $indexUUID
+    );
 }

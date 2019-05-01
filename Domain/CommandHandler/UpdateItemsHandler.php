@@ -38,11 +38,8 @@ class UpdateItemsHandler extends WithRepositoryAndEventPublisher
 
         $this
             ->repository
-            ->setRepositoryReference($updateItems->getRepositoryReference());
-
-        $this
-            ->repository
             ->updateItems(
+                $repositoryReference,
                 $query,
                 $changes
             );

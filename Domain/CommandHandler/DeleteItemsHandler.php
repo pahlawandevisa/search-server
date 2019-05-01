@@ -37,11 +37,10 @@ class DeleteItemsHandler extends WithRepositoryAndEventPublisher
 
         $this
             ->repository
-            ->setRepositoryReference($repositoryReference);
-
-        $this
-            ->repository
-            ->deleteItems($itemsUUID);
+            ->deleteItems(
+                $repositoryReference,
+                $itemsUUID
+            );
 
         $this
             ->eventPublisher

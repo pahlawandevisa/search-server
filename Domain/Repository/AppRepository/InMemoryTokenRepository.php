@@ -18,17 +18,14 @@ namespace Apisearch\Server\Domain\Repository\AppRepository;
 use Apisearch\Model\AppUUID;
 use Apisearch\Model\Token;
 use Apisearch\Model\TokenUUID;
-use Apisearch\Repository\WithRepositoryReference;
-use Apisearch\Repository\WithRepositoryReferenceTrait;
+use Apisearch\Repository\RepositoryReference;
 use Apisearch\Server\Domain\Token\TokenLocator;
 
 /**
  * Class InMemoryTokenRepository.
  */
-class InMemoryTokenRepository implements TokenRepository, TokenLocator, WithRepositoryReference
+class InMemoryTokenRepository implements TokenRepository, TokenLocator
 {
-    use WithRepositoryReferenceTrait;
-
     /**
      * @var array[]
      *
@@ -49,11 +46,14 @@ class InMemoryTokenRepository implements TokenRepository, TokenLocator, WithRepo
     /**
      * Add token.
      *
-     * @param Token $token
+     * @param Token               $token
+     * @param RepositoryReference $repositoryReference
      */
-    public function addToken(Token $token)
-    {
-        $appUUIDComposed = $this
+    public function addToken(
+        RepositoryReference $repositoryReference,
+        Token $token
+    ) {
+        $appUUIDComposed = $repositoryReference
             ->getAppUUID()
             ->composeUUID();
 
@@ -67,11 +67,14 @@ class InMemoryTokenRepository implements TokenRepository, TokenLocator, WithRepo
     /**
      * Delete token.
      *
-     * @param TokenUUID $tokenUUID
+     * @param TokenUUID           $tokenUUID
+     * @param RepositoryReference $repositoryReference
      */
-    public function deleteToken(TokenUUID $tokenUUID)
-    {
-        $appUUIDComposed = $this
+    public function deleteToken(
+        RepositoryReference $repositoryReference,
+        TokenUUID $tokenUUID
+    ) {
+        $appUUIDComposed = $repositoryReference
             ->getAppUUID()
             ->composeUUID();
 
@@ -85,11 +88,13 @@ class InMemoryTokenRepository implements TokenRepository, TokenLocator, WithRepo
     /**
      * Get tokens.
      *
+     * @param RepositoryReference $repositoryReference
+     *
      * @return Token[]
      */
-    public function getTokens(): array
+    public function getTokens(RepositoryReference $repositoryReference): array
     {
-        $appUUIDComposed = $this
+        $appUUIDComposed = $repositoryReference
             ->getAppUUID()
             ->composeUUID();
 
@@ -102,10 +107,12 @@ class InMemoryTokenRepository implements TokenRepository, TokenLocator, WithRepo
 
     /**
      * Delete all tokens.
+     *
+     * @param RepositoryReference $repositoryReference
      */
-    public function deleteTokens()
+    public function deleteTokens(RepositoryReference $repositoryReference)
     {
-        $appUUIDComposed = $this
+        $appUUIDComposed = $repositoryReference
             ->getAppUUID()
             ->composeUUID();
 

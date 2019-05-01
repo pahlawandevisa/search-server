@@ -42,9 +42,9 @@ use Elasticsearch\Endpoints\Indices\Mapping as MappingEndpoint;
 use Elasticsearch\Endpoints\Reindex;
 
 /**
- * Class ItemElasticaWrapper.
+ * Class ElasticaWrapper.
  */
-class ItemElasticaWrapper
+class ElasticaWrapper
 {
     /**
      * @var string
@@ -881,5 +881,46 @@ class ItemElasticaWrapper
         preg_match($regexToParse, $elasticaResponse->getData()['message'], $match);
 
         return $match['index_name'] ?? null;
+    }
+
+    /**
+     * Normalize Repository Reference for cross index.
+     *
+     * @param RepositoryReference $repositoryReference
+     *
+     * @return RepositoryReference
+     */
+    protected function normalizeRepositoryReferenceCrossIndices(RepositoryReference $repositoryReference)
+    {
+        if (is_null($repositoryReference->getIndexUUID())) {
+            return $repositoryReference;
+        }
+
+        $indices = $repositoryReference
+            ->getIndexUUID()
+            ->composeUUID();
+
+        $appUUIDComposed = $repositoryReference
+            ->getAppUUID()
+            ->composeUUID();
+
+        if ('*' === $indices) {
+            return RepositoryReference::create(
+                $appUUIDComposed,
+                'all'
+            );
+        }
+
+        $splittedIndices = explode(',', $indices);
+        if (count($splittedIndices) > 1) {
+            sort($splittedIndices);
+
+            return RepositoryReference::create(
+                $appUUIDComposed,
+                implode('_', $splittedIndices)
+            );
+        }
+
+        return $repositoryReference;
     }
 }

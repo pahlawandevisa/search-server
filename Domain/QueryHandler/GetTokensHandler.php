@@ -33,14 +33,8 @@ class GetTokensHandler extends WithAppRepositoryAndEventPublisher
      */
     public function handle(GetTokens $getTokens): array
     {
-        $this
-            ->appRepository
-            ->setRepositoryReference(
-                $getTokens->getRepositoryReference()
-            );
-
         return $this
             ->appRepository
-            ->getTokens();
+            ->getTokens($getTokens->getRepositoryReference());
     }
 }

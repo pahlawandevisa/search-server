@@ -15,7 +15,6 @@ declare(strict_types=1);
 
 namespace Apisearch\Server\Domain\Repository\AppRepository;
 
-use Apisearch\App\AppRepository as BaseRepository;
 use Apisearch\Config\Config;
 use Apisearch\Exception\ResourceExistsException;
 use Apisearch\Exception\ResourceNotAvailableException;
@@ -24,16 +23,27 @@ use Apisearch\Model\Index;
 use Apisearch\Model\IndexUUID;
 use Apisearch\Model\Token;
 use Apisearch\Model\TokenUUID;
-use Apisearch\Repository\RepositoryWithCredentials;
-use Apisearch\Server\Domain\Repository\WithRepositories;
+use Apisearch\Repository\RepositoryReference;
 use Apisearch\Server\Domain\Token\TokenProviders;
 
 /**
  * Class Repository.
  */
-class Repository extends RepositoryWithCredentials implements BaseRepository
+final class Repository
 {
-    use WithRepositories;
+    /**
+     * @var IndexRepository
+     *
+     * Index Repository
+     */
+    private $indexRepository;
+
+    /**
+     * @var TokenRepository
+     *
+     * Token repository
+     */
+    private $tokenRepository;
 
     /**
      * @var TokenProviders
@@ -45,89 +55,114 @@ class Repository extends RepositoryWithCredentials implements BaseRepository
     /**
      * Repository constructor.
      *
-     * @param TokenProviders $tokenProviders
+     * @param IndexRepository $indexRepository
+     * @param TokenRepository $tokenRepository
+     * @param TokenProviders  $tokenProviders
      */
-    public function __construct(TokenProviders $tokenProviders)
-    {
+    public function __construct(
+        IndexRepository $indexRepository,
+        TokenRepository $tokenRepository,
+        TokenProviders $tokenProviders
+    ) {
+        $this->indexRepository = $indexRepository;
+        $this->tokenRepository = $tokenRepository;
         $this->tokenProviders = $tokenProviders;
     }
 
     /**
      * Add token.
      *
-     * @param Token $token
+     * @param RepositoryReference $repositoryReference
+     * @param Token               $token
      */
-    public function addToken(Token $token)
-    {
-        $tokenRepository = $this->getRepository(TokenRepository::class);
-        if ($tokenRepository instanceof TokenRepository) {
-            $tokenRepository->addToken($token);
-        }
+    public function addToken(
+        RepositoryReference $repositoryReference,
+        Token $token
+    ) {
+        $this
+            ->tokenRepository
+            ->addToken(
+                $repositoryReference,
+                $token
+            );
     }
 
     /**
      * Delete token.
      *
-     * @param TokenUUID $tokenUUID
+     * @param RepositoryReference $repositoryReference
+     * @param TokenUUID           $tokenUUID
      */
-    public function deleteToken(TokenUUID $tokenUUID)
-    {
-        $tokenRepository = $this->getRepository(TokenRepository::class);
-        if ($tokenRepository instanceof TokenRepository) {
-            $tokenRepository->deleteToken($tokenUUID);
-        }
+    public function deleteToken(
+        RepositoryReference $repositoryReference,
+        TokenUUID $tokenUUID
+    ) {
+        $this
+            ->tokenRepository
+            ->deleteToken(
+                $repositoryReference,
+                $tokenUUID
+            );
     }
 
     /**
      * Get tokens.
      *
+     * @param RepositoryReference $repositoryReference
+     *
      * @return Token[]
      */
-    public function getTokens(): array
+    public function getTokens(RepositoryReference $repositoryReference): array
     {
         return $this
             ->tokenProviders
-            ->getTokensByAppUUID($this->getAppUUID());
+            ->getTokensByAppUUID($repositoryReference->getAppUUID());
     }
 
     /**
      * Delete all tokens.
+     *
+     * @param RepositoryReference $repositoryReference
      */
-    public function deleteTokens()
+    public function deleteTokens(RepositoryReference $repositoryReference)
     {
-        $tokenRepository = $this->getRepository(TokenRepository::class);
-        if ($tokenRepository instanceof TokenRepository) {
-            $tokenRepository->deleteTokens();
-        }
+        $this
+            ->tokenRepository
+            ->deleteTokens($repositoryReference);
     }
 
     /**
      * Get indices.
      *
+     * @param RepositoryReference $repositoryReference
+     *
      * @return Index[]
      */
-    public function getIndices(): array
+    public function getIndices(RepositoryReference $repositoryReference): array
     {
         return $this
-            ->getRepository(IndexRepository::class)
-            ->getIndices();
+            ->indexRepository
+            ->getIndices($repositoryReference);
     }
 
     /**
      * Create an index.
      *
-     * @param IndexUUID $indexUUID
-     * @param Config    $config
+     * @param RepositoryReference $repositoryReference
+     * @param IndexUUID           $indexUUID
+     * @param Config              $config
      *
      * @throws ResourceExistsException
      */
     public function createIndex(
+        RepositoryReference $repositoryReference,
         IndexUUID $indexUUID,
         Config $config
     ) {
-        return $this
-            ->getRepository(IndexRepository::class)
+        $this
+            ->indexRepository
             ->createIndex(
+                $repositoryReference,
                 $indexUUID,
                 $config
             );
@@ -136,44 +171,59 @@ class Repository extends RepositoryWithCredentials implements BaseRepository
     /**
      * Delete an index.
      *
-     * @param IndexUUID $indexUUID
+     * @param RepositoryReference $repositoryReference
+     * @param IndexUUID           $indexUUID
      *
      * @throws ResourceNotAvailableException
      */
-    public function deleteIndex(IndexUUID $indexUUID)
-    {
+    public function deleteIndex(
+        RepositoryReference $repositoryReference,
+        IndexUUID $indexUUID
+    ) {
         $this
-            ->getRepository(IndexRepository::class)
-            ->deleteIndex($indexUUID);
+            ->indexRepository
+            ->deleteIndex(
+                $repositoryReference,
+                $indexUUID
+            );
     }
 
     /**
      * Reset the index.
      *
-     * @param IndexUUID $indexUUID
+     * @param RepositoryReference $repositoryReference
+     * @param IndexUUID           $indexUUID
      *
      * @throws ResourceNotAvailableException
      */
-    public function resetIndex(IndexUUID $indexUUID)
-    {
+    public function resetIndex(
+        RepositoryReference $repositoryReference,
+        IndexUUID $indexUUID
+    ) {
         $this
-            ->getRepository(IndexRepository::class)
-            ->resetIndex($indexUUID);
+            ->indexRepository
+            ->resetIndex(
+                $repositoryReference,
+                $indexUUID
+            );
     }
 
     /**
      * Checks the index.
      *
-     * @param IndexUUID $indexUUID
+     * @param RepositoryReference $repositoryReference
+     * @param IndexUUID           $indexUUID
      *
      * @return bool
      */
-    public function checkIndex(IndexUUID $indexUUID): bool
-    {
+    public function checkIndex(
+        RepositoryReference $repositoryReference,
+        IndexUUID $indexUUID
+    ): bool {
         try {
             $indices = $this
-                ->getRepository(IndexRepository::class)
-                ->getIndices();
+                ->indexRepository
+                ->getIndices($repositoryReference);
 
             foreach ($indices as $index) {
                 if (
@@ -193,18 +243,21 @@ class Repository extends RepositoryWithCredentials implements BaseRepository
     /**
      * Config the index.
      *
-     * @param IndexUUID $indexUUID
-     * @param Config    $config
+     * @param RepositoryReference $repositoryReference
+     * @param IndexUUID           $indexUUID
+     * @param Config              $config
      *
      * @throws ResourceNotAvailableException
      */
     public function configureIndex(
+        RepositoryReference $repositoryReference,
         IndexUUID $indexUUID,
         Config $config
     ) {
         $this
-            ->getRepository(IndexRepository::class)
+            ->indexRepository
             ->configureIndex(
+                $repositoryReference,
                 $indexUUID,
                 $config
             );
