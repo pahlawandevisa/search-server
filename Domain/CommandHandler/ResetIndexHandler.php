@@ -19,6 +19,7 @@ use Apisearch\Server\Domain\Command\ResetIndex;
 use Apisearch\Server\Domain\Event\DomainEventWithRepositoryReference;
 use Apisearch\Server\Domain\Event\IndexWasReset;
 use Apisearch\Server\Domain\WithAppRepositoryAndEventPublisher;
+use React\Promise\PromiseInterface;
 
 /**
  * Class ResetIndexHandler.
@@ -29,24 +30,27 @@ class ResetIndexHandler extends WithAppRepositoryAndEventPublisher
      * Reset the index.
      *
      * @param ResetIndex $resetIndex
+     *
+     * @return PromiseInterface
      */
-    public function handle(ResetIndex $resetIndex)
+    public function handle(ResetIndex $resetIndex): PromiseInterface
     {
         $repositoryReference = $resetIndex->getRepositoryReference();
         $indexUUID = $resetIndex->getIndexUUID();
 
-        $this
+        return $this
             ->appRepository
             ->resetIndex(
                 $repositoryReference,
                 $indexUUID
-            );
-
-        $this
-            ->eventPublisher
-            ->publish(new DomainEventWithRepositoryReference(
-                $repositoryReference,
-                new IndexWasReset($indexUUID)
-            ));
+            )
+            ->then(function () use ($repositoryReference, $indexUUID) {
+                return $this
+                    ->eventPublisher
+                    ->publish(new DomainEventWithRepositoryReference(
+                        $repositoryReference,
+                        new IndexWasReset($indexUUID)
+                    ));
+            });
     }
 }

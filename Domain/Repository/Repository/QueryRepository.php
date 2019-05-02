@@ -17,7 +17,7 @@ namespace Apisearch\Server\Domain\Repository\Repository;
 
 use Apisearch\Query\Query;
 use Apisearch\Repository\RepositoryReference;
-use Apisearch\Result\Result;
+use React\Promise\PromiseInterface;
 
 /**
  * Interface QueryRepository.
@@ -30,10 +30,10 @@ interface QueryRepository
      * @param RepositoryReference $repositoryReference
      * @param Query               $query
      *
-     * @return Result
+     * @return PromiseInterface
      */
     public function query(
         RepositoryReference $repositoryReference,
         Query $query
-    ): Result;
+    ): PromiseInterface;
 }

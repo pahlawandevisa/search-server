@@ -28,6 +28,9 @@ use Apisearch\Server\Domain\Repository\Repository\ItemsRepository as ItemReposit
 use Elastica\Document as ElasticaDocument;
 use Elastica\Query as ElasticaQuery;
 use Elastica\Script\Script;
+use Elasticsearch\Endpoints\UpdateByQuery;
+use React\Promise\FulfilledPromise;
+use React\Promise\PromiseInterface;
 
 /**
  * Class ItemRepository.
@@ -66,30 +69,29 @@ class ItemRepository extends WithElasticaWrapper implements ItemRepositoryInterf
      *
      * @param RepositoryReference $repositoryReference
      * @param Item[]              $items
+     *
+     * @return PromiseInterface
      */
     public function addItems(
         RepositoryReference $repositoryReference,
         array $items
-    ) {
+    ): PromiseInterface {
         $documents = [];
         foreach ($items as $item) {
             $documents[] = $this->createItemDocument($item);
         }
 
         if (empty($documents)) {
-            return;
+            return new FulfilledPromise(null);
         }
 
-        $this
+        return $this
             ->elasticaWrapper
             ->addDocuments(
                 $repositoryReference,
-                $documents
+                $documents,
+                $this->refreshOnWrite
             );
-
-        if ($this->refreshOnWrite) {
-            $this->refresh($repositoryReference);
-        }
     }
 
     /**
@@ -97,23 +99,22 @@ class ItemRepository extends WithElasticaWrapper implements ItemRepositoryInterf
      *
      * @param RepositoryReference $repositoryReference
      * @param ItemUUID[]          $itemUUIDs
+     *
+     * @return PromiseInterface
      */
     public function deleteItems(
         RepositoryReference $repositoryReference,
         array $itemUUIDs
-    ) {
-        $this
+    ): PromiseInterface {
+        return $this
             ->elasticaWrapper
             ->deleteDocumentsByIds(
                 $repositoryReference,
                 array_map(function (ItemUUID $itemUUID) {
                     return $itemUUID->composeUUID();
-                }, $itemUUIDs)
+                }, $itemUUIDs),
+                $this->refreshOnWrite
             );
-
-        if ($this->refreshOnWrite) {
-            $this->refresh($repositoryReference);
-        }
     }
 
     /**
@@ -122,12 +123,14 @@ class ItemRepository extends WithElasticaWrapper implements ItemRepositoryInterf
      * @param RepositoryReference $repositoryReference
      * @param Query               $query
      * @param Changes             $changes
+     *
+     * @return PromiseInterface
      */
     public function updateItems(
         RepositoryReference $repositoryReference,
         Query $query,
         Changes $changes
-    ) {
+    ): PromiseInterface {
         $mainQuery = new ElasticaQuery();
         $boolQuery = new ElasticaQuery\BoolQuery();
         $this
@@ -138,20 +141,28 @@ class ItemRepository extends WithElasticaWrapper implements ItemRepositoryInterf
                 $boolQuery
             );
 
-        $this
-            ->elasticaWrapper
-            ->getIndex($repositoryReference)
-            ->updateByQuery(
-                $mainQuery,
-                $this->createUpdateScriptByChanges($changes),
-                [
-                    'conflicts' => 'proceed',
-                ]
-            );
+        $query = ElasticaQuery::create($mainQuery)->getQuery();
+        $endpoint = new UpdateByQuery();
+        $body = ['query' => is_array($query)
+            ? $query
+            : $query->toArray(),
+        ];
 
-        if ($this->refreshOnWrite) {
-            $this->refresh($repositoryReference);
-        }
+        $body['script'] = $this->createUpdateScriptByChanges($changes)->toArray()['script'];
+        $endpoint->setBody($body);
+        $endpoint->setParams([
+            'conflicts' => 'proceed',
+            'refresh' => $this->refreshOnWrite,
+        ]);
+
+        return $this
+            ->elasticaWrapper
+            ->requestAsyncEndpoint(
+                $endpoint,
+                $this
+                    ->elasticaWrapper
+                    ->getIndex($repositoryReference)
+            );
     }
 
     /**

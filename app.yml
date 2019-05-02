@@ -27,6 +27,12 @@ config:
             autoconfigure: false
             public: true
 
+        react_client:
+            synthetic: true
+
+        react_redis_factory:
+            synthetic: true
+
     #
     # Elastica plugin for Apisearch
     #

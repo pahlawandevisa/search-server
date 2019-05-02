@@ -4,8 +4,9 @@ services:
     # Elastica related services
     #
     apisearch_plugin.elastica.elastica_client:
-        class: Elastica\Client
+        class: Apisearch\Plugin\Elastica\Adapter\AsyncClient
         arguments:
+            - "@reactphp.event_loop"
             - "%apisearch_plugin.elastica.cluster%"
 
     apisearch_plugin.elastica.query_builder:

@@ -20,6 +20,7 @@ use Apisearch\Model\Item;
 use Apisearch\Model\ItemUUID;
 use Apisearch\Query\Query;
 use Apisearch\Repository\RepositoryReference;
+use React\Promise\PromiseInterface;
 
 /**
  * Interface ItemsRepository.
@@ -31,22 +32,26 @@ interface ItemsRepository
      *
      * @param RepositoryReference $repositoryReference
      * @param Item[]              $items
+     *
+     * @return PromiseInterface
      */
     public function addItems(
         RepositoryReference $repositoryReference,
         array $items
-    );
+    ): PromiseInterface;
 
     /**
      * Delete items.
      *
      * @param RepositoryReference $repositoryReference
      * @param ItemUUID[]          $itemUUIDs
+     *
+     * @return PromiseInterface
      */
     public function deleteItems(
         RepositoryReference $repositoryReference,
         array $itemUUIDs
-    );
+    ): PromiseInterface;
 
     /**
      * Update items.
@@ -54,10 +59,12 @@ interface ItemsRepository
      * @param RepositoryReference $repositoryReference
      * @param Query               $query
      * @param Changes             $changes
+     *
+     * @return PromiseInterface
      */
     public function updateItems(
         RepositoryReference $repositoryReference,
         Query $query,
         Changes $changes
-    );
+    ): PromiseInterface;
 }

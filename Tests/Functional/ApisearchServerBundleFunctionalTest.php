@@ -111,6 +111,7 @@ abstract class ApisearchServerBundleFunctionalTest extends BaseFunctionalTest
                 'ignore_errors' => true,
             ],
             ['resource' => '@ApisearchServerBundle/Resources/test/subscribers.yml'],
+            ['resource' => '@ApisearchServerBundle/Resources/test/reactphp.yml'],
         ];
 
         if (!static::logDomainEvents()) {

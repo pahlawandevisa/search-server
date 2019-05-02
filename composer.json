@@ -17,6 +17,16 @@
         "symfony/console": "^4.0",
         "symfony/dependency-injection" : "^4.0",
 
+        "php-http/promise": "^1.0.0",
+        "php-http/guzzle6-adapter": "*",
+        "php-http/react-adapter": "*",
+        "guzzlehttp/psr7": "*",
+        "react/promise": "*",
+        "php-http/message": "*",
+        "clue/redis-react": "*",
+        "clue/block-react": "*",
+        "clue/buzz-react": "*",
+
         "mmoreram/base-bundle": "^1.0.10",
         "mmoreram/symfony-bundle-dependencies": "^2.0.0",
         "one-bundle-app/one-bundle-app": "^1.0.24",

@@ -19,6 +19,8 @@ use Apisearch\Server\Domain\AsynchronousableCommand;
 use Apisearch\Server\Domain\Consumer;
 use Exception;
 use League\Tactician\CommandBus;
+use React\Promise\FulfilledPromise;
+use React\Promise\PromiseInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -48,17 +50,19 @@ class CommandConsumer extends Consumer
      *
      * @param OutputInterface $output
      * @param array           $data
+     *
+     * @return PromiseInterface
      */
     public function consumeCommand(
         OutputInterface $output,
         array $data
-    ) {
+    ): PromiseInterface {
         $class = 'Apisearch\Server\Domain\Command\\'.$data['class'];
         if (
             !class_exists($class) ||
             !in_array(AsynchronousableCommand::class, class_implements($class))
         ) {
-            return;
+            return new FulfilledPromise();
         }
 
         $success = true;
@@ -82,5 +86,7 @@ class CommandConsumer extends Consumer
             $message,
             $from
         );
+
+        return new FulfilledPromise();
     }
 }

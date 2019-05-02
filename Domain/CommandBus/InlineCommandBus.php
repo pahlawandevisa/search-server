@@ -15,7 +15,9 @@ declare(strict_types=1);
 
 namespace Apisearch\Server\Domain\CommandBus;
 
+use Clue\React\Block;
 use League\Tactician\CommandBus;
+use React\EventLoop\LoopInterface;
 
 /**
  * Class InlineCommandBus.
@@ -30,14 +32,25 @@ class InlineCommandBus extends CommandBus
     private $commandBus;
 
     /**
-     * InlineCommandIngestor constructor.
+     * @var LoopInterface
      *
-     * @param CommandBus $commandBus
+     * Loop interface
      */
-    public function __construct(CommandBus $commandBus)
-    {
+    private $loop;
+
+    /**
+     * AwaitCommandBus constructor.
+     *
+     * @param CommandBus    $commandBus
+     * @param LoopInterface $loop
+     */
+    public function __construct(
+        CommandBus $commandBus,
+        LoopInterface $loop
+    ) {
         parent::__construct([]);
         $this->commandBus = $commandBus;
+        $this->loop = $loop;
     }
 
     /**
@@ -49,8 +62,11 @@ class InlineCommandBus extends CommandBus
      */
     public function handle($command)
     {
-        return $this
-            ->commandBus
-            ->handle($command);
+        return Block\await(
+            $this
+                ->commandBus
+                ->handle($command),
+            $this->loop
+        );
     }
 }

@@ -24,6 +24,8 @@ use Apisearch\Model\Token;
 use Apisearch\Model\TokenUUID;
 use Apisearch\Server\Controller\RequestAccessor;
 use Apisearch\Server\Domain\Token\TokenManager;
+use Clue\React\Block;
+use React\EventLoop\LoopInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 
@@ -40,13 +42,23 @@ class TokenCheckOverHTTP
     private $tokenManager;
 
     /**
+     * @var LoopInterface
+     *
+     * Loop
+     */
+    private $loop;
+
+    /**
      * TokenValidationOverHTTP constructor.
      *
      * @param TokenManager $tokenManager
      */
-    public function __construct(TokenManager $tokenManager)
-    {
+    public function __construct(
+        TokenManager $tokenManager,
+        LoopInterface $loop
+    ) {
         $this->tokenManager = $tokenManager;
+        $this->loop = $loop;
     }
 
     /**
@@ -81,7 +93,7 @@ class TokenCheckOverHTTP
         $indices = $this->getIndices($request);
         $route = str_replace('apisearch_', '', $request->get('_route'));
 
-        $token = $this
+        $promise = $this
             ->tokenManager
             ->checkToken(
                 AppUUID::createById($request->get('app_id', '')),
@@ -89,26 +101,32 @@ class TokenCheckOverHTTP
                 TokenUUID::createById($tokenString),
                 $origin,
                 $route
-            );
+            )
+            ->then(function(Token $token) use ($request) {
+                if (!$request->attributes->has('app_id')) {
+                    $request
+                        ->attributes
+                        ->set('app_id', $token
+                            ->getAppUUID()
+                            ->composeUUID()
+                        );
+                }
 
-        if (!$request->attributes->has('app_id')) {
-            $request
-                ->attributes
-                ->set('app_id', $token
-                    ->getAppUUID()
-                    ->composeUUID()
-                );
-        }
+                if (!$request->attributes->has('index_id')) {
+                    $indicesAsString = array_map(function (IndexUUID $indexUUID) {
+                        return $indexUUID->composeUUID();
+                    }, $token->getIndices());
 
-        if (!$request->attributes->has('index_id')) {
-            $indicesAsString = array_map(function (IndexUUID $indexUUID) {
-                return $indexUUID->composeUUID();
-            }, $token->getIndices());
+                    $request
+                        ->attributes
+                        ->set('index_id', implode(',', $indicesAsString));
+                }
+            });
 
-            $request
-                ->attributes
-                ->set('index_id', implode(',', $indicesAsString));
-        }
+        $token = Block\await(
+            $promise,
+            $this->loop
+        );
 
         $request
             ->query

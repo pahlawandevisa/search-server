@@ -15,7 +15,7 @@ declare(strict_types=1);
 
 namespace Apisearch\Server\Domain;
 
-use Apisearch\Server\Domain\Event\EventPublisher;
+use Apisearch\Server\Domain\EventPublisher\EventPublisher;
 use Apisearch\Server\Domain\Repository\Repository\Repository;
 
 /**

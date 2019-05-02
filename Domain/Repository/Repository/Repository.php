@@ -21,7 +21,7 @@ use Apisearch\Model\Item;
 use Apisearch\Model\ItemUUID;
 use Apisearch\Query\Query;
 use Apisearch\Repository\RepositoryReference;
-use Apisearch\Result\Result;
+use React\Promise\PromiseInterface;
 
 /**
  * Class Repository.
@@ -61,12 +61,14 @@ class Repository
      *
      * @param RepositoryReference $repositoryReference
      * @param Item[]              $items
+     *
+     * @return PromiseInterface
      */
     public function addItems(
         RepositoryReference $repositoryReference,
         array $items
-    ) {
-        $this
+    ): PromiseInterface {
+        return $this
             ->itemsRepository
             ->addItems(
                 $repositoryReference,
@@ -79,12 +81,14 @@ class Repository
      *
      * @param RepositoryReference $repositoryReference
      * @param ItemUUID[]          $itemsUUID
+     *
+     * @return PromiseInterface
      */
     public function deleteItems(
         RepositoryReference $repositoryReference,
         array $itemsUUID
-    ) {
-        $this
+    ): PromiseInterface {
+        return $this
             ->itemsRepository
             ->deleteItems(
                 $repositoryReference,
@@ -98,14 +102,14 @@ class Repository
      * @param RepositoryReference $repositoryReference
      * @param Query               $query
      *
-     * @return Result
+     * @return PromiseInterface<Result>
      *
      * @throws ResourceNotAvailableException
      */
     public function query(
         RepositoryReference $repositoryReference,
         Query $query
-    ): Result {
+    ): PromiseInterface {
         return $this
             ->queryRepository
             ->query(
@@ -120,13 +124,15 @@ class Repository
      * @param RepositoryReference $repositoryReference
      * @param Query               $query
      * @param Changes             $changes
+     *
+     * @return PromiseInterface
      */
     public function updateItems(
         RepositoryReference $repositoryReference,
         Query $query,
         Changes $changes
-    ) {
-        $this
+    ): PromiseInterface {
+        return $this
             ->itemsRepository
             ->updateItems(
                 $repositoryReference,

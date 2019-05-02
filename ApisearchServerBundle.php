@@ -84,7 +84,7 @@ class ApisearchServerBundle extends BaseBundle
     public function getCompilerPasses(): array
     {
         return [
-            new CompilerPass\DomainEventsMiddlewareCompilerPass(),
+            new CompilerPass\EventPublisherCompilerPass(),
             new CompilerPass\CommandBusCompilerPass(),
             new CompilerPass\PluginsMiddlewareCompilerPass(),
             new CompilerPass\EnabledPluginsMiddlewareCompilerPass($this->kernel),

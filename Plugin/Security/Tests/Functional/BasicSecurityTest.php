@@ -236,8 +236,6 @@ class BasicSecurityTest extends SecurityFunctionalTest
 
     /**
      * Test plugin is working with subqueries as well.
-     *
-     * @group lolo
      */
     public function testRestrictedFieldsInSubqueries()
     {

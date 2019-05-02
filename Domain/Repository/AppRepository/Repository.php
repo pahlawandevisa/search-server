@@ -19,12 +19,12 @@ use Apisearch\Config\Config;
 use Apisearch\Exception\ResourceExistsException;
 use Apisearch\Exception\ResourceNotAvailableException;
 use Apisearch\Exception\TransportableException;
-use Apisearch\Model\Index;
 use Apisearch\Model\IndexUUID;
 use Apisearch\Model\Token;
 use Apisearch\Model\TokenUUID;
 use Apisearch\Repository\RepositoryReference;
 use Apisearch\Server\Domain\Token\TokenProviders;
+use React\Promise\PromiseInterface;
 
 /**
  * Class Repository.
@@ -74,12 +74,14 @@ final class Repository
      *
      * @param RepositoryReference $repositoryReference
      * @param Token               $token
+     *
+     * @return PromiseInterface
      */
     public function addToken(
         RepositoryReference $repositoryReference,
         Token $token
-    ) {
-        $this
+    ): PromiseInterface {
+        return $this
             ->tokenRepository
             ->addToken(
                 $repositoryReference,
@@ -92,12 +94,14 @@ final class Repository
      *
      * @param RepositoryReference $repositoryReference
      * @param TokenUUID           $tokenUUID
+     *
+     * @return PromiseInterface
      */
     public function deleteToken(
         RepositoryReference $repositoryReference,
         TokenUUID $tokenUUID
-    ) {
-        $this
+    ): PromiseInterface {
+        return $this
             ->tokenRepository
             ->deleteToken(
                 $repositoryReference,
@@ -110,9 +114,9 @@ final class Repository
      *
      * @param RepositoryReference $repositoryReference
      *
-     * @return Token[]
+     * @return PromiseInterface<Token[]>
      */
-    public function getTokens(RepositoryReference $repositoryReference): array
+    public function getTokens(RepositoryReference $repositoryReference): PromiseInterface
     {
         return $this
             ->tokenProviders
@@ -123,10 +127,12 @@ final class Repository
      * Delete all tokens.
      *
      * @param RepositoryReference $repositoryReference
+     *
+     * @return PromiseInterface
      */
-    public function deleteTokens(RepositoryReference $repositoryReference)
+    public function deleteTokens(RepositoryReference $repositoryReference): PromiseInterface
     {
-        $this
+        return $this
             ->tokenRepository
             ->deleteTokens($repositoryReference);
     }
@@ -136,9 +142,9 @@ final class Repository
      *
      * @param RepositoryReference $repositoryReference
      *
-     * @return Index[]
+     * @return PromiseInterface<Index[]>
      */
-    public function getIndices(RepositoryReference $repositoryReference): array
+    public function getIndices(RepositoryReference $repositoryReference): PromiseInterface
     {
         return $this
             ->indexRepository
@@ -152,14 +158,16 @@ final class Repository
      * @param IndexUUID           $indexUUID
      * @param Config              $config
      *
+     * @return PromiseInterface
+     *
      * @throws ResourceExistsException
      */
     public function createIndex(
         RepositoryReference $repositoryReference,
         IndexUUID $indexUUID,
         Config $config
-    ) {
-        $this
+    ): PromiseInterface {
+        return $this
             ->indexRepository
             ->createIndex(
                 $repositoryReference,
@@ -174,13 +182,15 @@ final class Repository
      * @param RepositoryReference $repositoryReference
      * @param IndexUUID           $indexUUID
      *
+     * @return PromiseInterface
+     *
      * @throws ResourceNotAvailableException
      */
     public function deleteIndex(
         RepositoryReference $repositoryReference,
         IndexUUID $indexUUID
-    ) {
-        $this
+    ): PromiseInterface {
+        return $this
             ->indexRepository
             ->deleteIndex(
                 $repositoryReference,
@@ -194,13 +204,15 @@ final class Repository
      * @param RepositoryReference $repositoryReference
      * @param IndexUUID           $indexUUID
      *
+     * @return PromiseInterface
+     *
      * @throws ResourceNotAvailableException
      */
     public function resetIndex(
         RepositoryReference $repositoryReference,
         IndexUUID $indexUUID
-    ) {
-        $this
+    ): PromiseInterface {
+        return $this
             ->indexRepository
             ->resetIndex(
                 $repositoryReference,
@@ -214,30 +226,29 @@ final class Repository
      * @param RepositoryReference $repositoryReference
      * @param IndexUUID           $indexUUID
      *
-     * @return bool
+     * @return PromiseInterface
      */
     public function checkIndex(
         RepositoryReference $repositoryReference,
         IndexUUID $indexUUID
-    ): bool {
-        try {
-            $indices = $this
-                ->indexRepository
-                ->getIndices($repositoryReference);
-
-            foreach ($indices as $index) {
-                if (
-                    $index->getUUID()->composeUUID() == $indexUUID->composeUUID() &&
-                    $index->isOK()
-                ) {
-                    return true;
+    ): PromiseInterface {
+        return $this
+            ->indexRepository
+            ->getIndices($repositoryReference)
+            ->then(function (array $indices) use ($indexUUID) {
+                foreach ($indices as $index) {
+                    if (
+                        $index->getUUID()->composeUUID() == $indexUUID->composeUUID() &&
+                        $index->isOK()
+                    ) {
+                        return true;
+                    }
                 }
-            }
-        } catch (TransportableException $exception) {
-            // Silent pass
-        }
 
-        return false;
+                return false;
+            }, function (TransportableException $_) {
+                return false;
+            });
     }
 
     /**
@@ -247,14 +258,16 @@ final class Repository
      * @param IndexUUID           $indexUUID
      * @param Config              $config
      *
+     * @return PromiseInterface
+     *
      * @throws ResourceNotAvailableException
      */
     public function configureIndex(
         RepositoryReference $repositoryReference,
         IndexUUID $indexUUID,
         Config $config
-    ) {
-        $this
+    ): PromiseInterface {
+        return $this
             ->indexRepository
             ->configureIndex(
                 $repositoryReference,

@@ -15,9 +15,9 @@ declare(strict_types=1);
 
 namespace Apisearch\Server\Domain\QueryHandler;
 
-use Apisearch\Model\Token;
 use Apisearch\Server\Domain\Query\GetTokens;
 use Apisearch\Server\Domain\WithAppRepositoryAndEventPublisher;
+use React\Promise\PromiseInterface;
 
 /**
  * Class GetTokensHandler.
@@ -29,9 +29,9 @@ class GetTokensHandler extends WithAppRepositoryAndEventPublisher
      *
      * @param GetTokens $getTokens
      *
-     * @return Token[]
+     * @return PromiseInterface<Token[]>
      */
-    public function handle(GetTokens $getTokens): array
+    public function handle(GetTokens $getTokens): PromiseInterface
     {
         return $this
             ->appRepository

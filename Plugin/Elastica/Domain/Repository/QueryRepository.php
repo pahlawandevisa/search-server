@@ -31,6 +31,7 @@ use Elastica\Multi\ResultSet as ElasticaMultiResultSet;
 use Elastica\Query as ElasticaQuery;
 use Elastica\ResultSet as ElasticaResultSet;
 use Elastica\Suggest;
+use React\Promise\PromiseInterface;
 
 /**
  * Class QueryRepository.
@@ -80,17 +81,15 @@ class QueryRepository extends WithElasticaWrapper implements QueryRepositoryInte
      * @param RepositoryReference $repositoryReference
      * @param Query               $query
      *
-     * @return Result
+     * @return PromiseInterface
      */
     public function query(
         RepositoryReference $repositoryReference,
         Query $query
-    ): Result {
-        $r = (count($query->getSubqueries()) > 0)
+    ): PromiseInterface {
+        return (count($query->getSubqueries()) > 0)
             ? $this->makeMultiQuery($repositoryReference, $query)
             : $this->makeSimpleQuery($repositoryReference, $query);
-
-        return $r;
     }
 
     /**
@@ -99,13 +98,13 @@ class QueryRepository extends WithElasticaWrapper implements QueryRepositoryInte
      * @param RepositoryReference $repositoryReference
      * @param Query               $query
      *
-     * @return Result
+     * @return PromiseInterface
      */
     private function makeSimpleQuery(
         RepositoryReference $repositoryReference,
         Query $query
-    ) {
-        $resultSet = $this
+    ): PromiseInterface {
+        return $this
             ->elasticaWrapper
             ->simpleSearch(
                 $this->getRepositoryReferenceIndexSpecific(
@@ -121,12 +120,13 @@ class QueryRepository extends WithElasticaWrapper implements QueryRepositoryInte
                         ? $query->getSize()
                         : 0
                 )
-            );
-
-        return $this->elasticaResultSetToResult(
-            $query,
-            $resultSet
-        );
+            )
+            ->then(function (ElasticaResultSet $resultSet) use ($query) {
+                return $this->elasticaResultSetToResult(
+                    $query,
+                    $resultSet
+                );
+            });
     }
 
     /**
@@ -135,12 +135,12 @@ class QueryRepository extends WithElasticaWrapper implements QueryRepositoryInte
      * @param RepositoryReference $repositoryReference
      * @param Query               $query
      *
-     * @return Result
+     * @return PromiseInterface
      */
     private function makeMultiQuery(
         RepositoryReference $repositoryReference,
         Query $query
-    ) {
+    ): PromiseInterface {
         $searches = [];
         $repositoryReferencies = [];
         foreach ($query->getSubqueries() as $name => $subquery) {
@@ -160,17 +160,18 @@ class QueryRepository extends WithElasticaWrapper implements QueryRepositoryInte
             );
         }
 
-        $multiResultSet = $this
+        return $this
             ->elasticaWrapper
             ->multisearch(
                 $repositoryReferencies,
                 $searches
-            );
-
-        return $this->elasticaMultiResultSetToResult(
-            $query,
-            $multiResultSet
-        );
+            )
+            ->then(function (ElasticaMultiResultSet $multiResultSet) use ($query) {
+                return $this->elasticaMultiResultSetToResult(
+                    $query,
+                    $multiResultSet
+                );
+            });
     }
 
     /**

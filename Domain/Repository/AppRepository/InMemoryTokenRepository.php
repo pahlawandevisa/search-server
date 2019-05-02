@@ -20,6 +20,8 @@ use Apisearch\Model\Token;
 use Apisearch\Model\TokenUUID;
 use Apisearch\Repository\RepositoryReference;
 use Apisearch\Server\Domain\Token\TokenLocator;
+use React\Promise\FulfilledPromise;
+use React\Promise\PromiseInterface;
 
 /**
  * Class InMemoryTokenRepository.
@@ -48,11 +50,13 @@ class InMemoryTokenRepository implements TokenRepository, TokenLocator
      *
      * @param Token               $token
      * @param RepositoryReference $repositoryReference
+     *
+     * @return PromiseInterface
      */
     public function addToken(
         RepositoryReference $repositoryReference,
         Token $token
-    ) {
+    ): PromiseInterface {
         $appUUIDComposed = $repositoryReference
             ->getAppUUID()
             ->composeUUID();
@@ -62,6 +66,8 @@ class InMemoryTokenRepository implements TokenRepository, TokenLocator
         }
 
         $this->tokens[$appUUIDComposed][$token->getTokenUUID()->composeUUID()] = $token;
+
+        return new FulfilledPromise();
     }
 
     /**
@@ -69,20 +75,24 @@ class InMemoryTokenRepository implements TokenRepository, TokenLocator
      *
      * @param TokenUUID           $tokenUUID
      * @param RepositoryReference $repositoryReference
+     *
+     * @return PromiseInterface
      */
     public function deleteToken(
         RepositoryReference $repositoryReference,
         TokenUUID $tokenUUID
-    ) {
+    ): PromiseInterface {
         $appUUIDComposed = $repositoryReference
             ->getAppUUID()
             ->composeUUID();
 
         if (!isset($this->tokens[$appUUIDComposed])) {
-            return;
+            return new FulfilledPromise();
         }
 
         unset($this->tokens[$appUUIDComposed][$tokenUUID->composeUUID()]);
+
+        return new FulfilledPromise();
     }
 
     /**
@@ -90,33 +100,33 @@ class InMemoryTokenRepository implements TokenRepository, TokenLocator
      *
      * @param RepositoryReference $repositoryReference
      *
-     * @return Token[]
+     * @return PromiseInterface<Token[]>
      */
-    public function getTokens(RepositoryReference $repositoryReference): array
+    public function getTokens(RepositoryReference $repositoryReference): PromiseInterface
     {
         $appUUIDComposed = $repositoryReference
             ->getAppUUID()
             ->composeUUID();
 
-        if (!isset($this->tokens[$appUUIDComposed])) {
-            return [];
-        }
-
-        return $this->tokens[$appUUIDComposed];
+        return new FulfilledPromise($this->tokens[$appUUIDComposed] ?? []);
     }
 
     /**
      * Delete all tokens.
      *
      * @param RepositoryReference $repositoryReference
+     *
+     * @return PromiseInterface
      */
-    public function deleteTokens(RepositoryReference $repositoryReference)
+    public function deleteTokens(RepositoryReference $repositoryReference): PromiseInterface
     {
         $appUUIDComposed = $repositoryReference
             ->getAppUUID()
             ->composeUUID();
 
         unset($this->tokens[$appUUIDComposed]);
+
+        return new FulfilledPromise();
     }
 
     /**
@@ -125,18 +135,18 @@ class InMemoryTokenRepository implements TokenRepository, TokenLocator
      * @param AppUUID   $appUUID
      * @param TokenUUID $tokenUUID
      *
-     * @return Token|null
+     * @return PromiseInterface<Token|null>
      */
     public function getTokenByUUID(
         AppUUID $appUUID,
         TokenUUID $tokenUUID
-    ): ? Token {
+    ): PromiseInterface {
         $appUUIDComposed = $appUUID->composeUUID();
 
-        if (!isset($this->tokens[$appUUIDComposed])) {
-            return null;
-        }
-
-        return $this->tokens[$appUUIDComposed][$tokenUUID->composeUUID()] ?? null;
+        return new FulfilledPromise(
+            isset($this->tokens[$appUUIDComposed])
+                 ? $this->tokens[$appUUIDComposed][$tokenUUID->composeUUID()] ?? null
+                 : null
+        );
     }
 }

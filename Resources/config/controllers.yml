@@ -151,6 +151,7 @@ services:
         class: Apisearch\Server\Controller\Listener\TokenCheckOverHTTP
         arguments:
             - "@apisearch_server.token_manager"
+            - "@reactphp.event_loop"
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: checkTokenOnKernelRequest, priority: 8 }
 
