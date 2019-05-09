@@ -57,7 +57,7 @@ class ExceptionsMiddleware implements Middleware
     public function execute($command, callable $next)
     {
         return $next($command)
-            ->then(null, function (Exception $exception) use ($command) {
+            ->then(null, function ($exception) use ($command) {
                 return $this
                     ->eventPublisher
                     ->publish(new DomainEventWithRepositoryReference(

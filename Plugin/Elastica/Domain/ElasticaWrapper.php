@@ -35,7 +35,6 @@ use Elastica\Exception\Bulk\ResponseException as BulkResponseException;
 use Elastica\Index;
 use Elastica\Query;
 use Elastica\Request;
-use Elastica\Response as ElasticaResponse;
 use Elastica\Search as ElasticaSearch;
 use Elastica\Type;
 use Elasticsearch\Endpoints\AbstractEndpoint;
@@ -72,13 +71,6 @@ class ElasticaWrapper implements AsyncRequestAccessor
      * Elastica client
      */
     private $client;
-
-    /**
-     * @var bool
-     *
-     * Async
-     */
-    private $async = false;
 
     /**
      * Construct.
@@ -995,7 +987,7 @@ class ElasticaWrapper implements AsyncRequestAccessor
 
         return $this
             ->requestAsyncEndpoint($endpoint)
-            ->then(function (ElasticaResponse $response) {
+            ->then(function ($response) {
                 return $response->getData()['status'];
             });
     }

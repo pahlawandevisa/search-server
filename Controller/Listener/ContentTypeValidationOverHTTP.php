@@ -17,7 +17,7 @@ namespace Apisearch\Server\Controller\Listener;
 
 use Apisearch\Exception\UnsupportedContentTypeException;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\GetResponsePromiseEvent;
 
 /**
  * Class ContentTypeValidationOverHTTP.
@@ -27,9 +27,9 @@ class ContentTypeValidationOverHTTP
     /**
      * Check content type.
      *
-     * @param GetResponseEvent $event
+     * @param GetResponsePromiseEvent $event
      */
-    public function validateContentTypeOnKernelRequest(GetResponseEvent $event)
+    public function validateContentTypeOnKernelAsyncRequest(GetResponsePromiseEvent $event)
     {
         $request = $event->getRequest();
 

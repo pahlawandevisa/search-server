@@ -120,6 +120,8 @@ class BasicSecurityTest extends SecurityFunctionalTest
      * @param array $referrers
      *
      * @dataProvider dataGoodReferrers
+     *
+     * @group lolo
      */
     public function testGoodReferrers(array $referrers)
     {

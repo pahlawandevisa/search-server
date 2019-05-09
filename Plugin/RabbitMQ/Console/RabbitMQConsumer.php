@@ -107,30 +107,25 @@ abstract class RabbitMQConsumer extends ApisearchCommand
         $this->startCommand($output);
         $queueType = $this->getQueueType();
 
-        Block\await(
-            $this
-                ->consumerManager
-                ->declareConsumer($queueType)
-                ->then(function () use ($output) {
-                    AMQPReconnect::tryOrReconnect(
-                        function (AbstractConnection $connection) use ($output) {
-                            self::printInfoMessage($output, 'RabbitMQ', 'Connecting...');
-                            $channel = $connection->channel();
-                            Block\await(
-                                $this->bindCallbacksToChannel($channel, $output),
-                                $this->loop
-                            );
-                            while (count($channel->callbacks)) {
-                                $channel->wait();
-                            }
-                        },
-                        $this
-                            ->channel
-                            ->getConnection()
-                    );
-                }),
-            $this->loop
-        );
+        $this
+            ->consumerManager
+            ->declareConsumer($queueType)
+            ->then(function () use ($output) {
+                AMQPReconnect::tryOrReconnect(
+                    function (AbstractConnection $connection) use ($output) {
+                        self::printInfoMessage($output, 'RabbitMQ', 'Connecting...');
+                        $channel = $connection->channel();
+                        $this->bindCallbacksToChannel($channel, $output);
+
+                        while (count($channel->callbacks)) {
+                            $channel->wait();
+                        }
+                    },
+                    $this
+                        ->channel
+                        ->getConnection()
+                );
+            });
 
         return 0;
     }

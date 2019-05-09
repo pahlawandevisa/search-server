@@ -195,7 +195,6 @@ services:
         public: true
         arguments:
             - "@tactician.commandbus.command"
-            - "@reactphp.event_loop"
 
     apisearch_server.command_bus.asynchronous:
         class: Apisearch\Server\Domain\CommandBus\AsynchronousCommandBus
@@ -203,7 +202,6 @@ services:
         arguments:
             - "@apisearch_server.command_enqueuer"
             - "@tactician.commandbus.command"
-            - "@reactphp.event_loop"
 
     #
     # Command enqueuer

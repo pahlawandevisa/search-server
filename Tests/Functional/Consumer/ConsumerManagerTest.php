@@ -28,8 +28,6 @@ abstract class ConsumerManagerTest extends AsynchronousFunctionalTest
 {
     /**
      * Test pause and resume consumers.
-     *
-     * @group lele
      */
     public function testPauseAndResumeConsumers()
     {

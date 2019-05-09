@@ -17,7 +17,6 @@ namespace Apisearch\Plugin\RabbitMQ\Domain;
 
 use Apisearch\Server\Domain\CommandEnqueuer\CommandEnqueuer;
 use Apisearch\Server\Domain\Consumer\ConsumerManager;
-use React\Promise\FulfilledPromise;
 use React\Promise\PromiseInterface;
 
 /**
@@ -54,10 +53,8 @@ class RabbitMQCommandEnqueuer implements CommandEnqueuer
         $commandAsArray = $command->toArray();
         $commandAsArray['class'] = str_replace('Apisearch\Server\Domain\Command\\', '', get_class($command));
 
-        $this
+        return $this
             ->consumerManager
             ->enqueue(ConsumerManager::COMMAND_CONSUMER_TYPE, $commandAsArray);
-
-        return new FulfilledPromise();
     }
 }

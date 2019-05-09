@@ -54,21 +54,22 @@ class CheckHealthMiddleware implements PluginMiddleware
         $command,
         $next
     ): PromiseInterface {
-        return $next($command)
-            ->then(function ($data) {
-                return $this
-                    ->elasticaWrapper
-                    ->getClusterStatus()
-                    ->then(function (string $elasticsearchStatus) use ($data) {
-                        $data['status']['elasticsearch'] = $elasticsearchStatus;
-                        $data['healthy'] = $data['healthy'] && in_array(strtolower($elasticsearchStatus), [
-                                'yellow',
-                                'green',
-                            ]);
+        return
+            $next($command)
+                ->then(function ($data) {
+                    return $this
+                        ->elasticaWrapper
+                        ->getClusterStatus()
+                        ->then(function (string $elasticsearchStatus) use ($data) {
+                            $data['status']['elasticsearch'] = $elasticsearchStatus;
+                            $data['healthy'] = $data['healthy'] && in_array(strtolower($elasticsearchStatus), [
+                                    'yellow',
+                                    'green',
+                                ]);
 
-                        return $data;
-                    });
-            });
+                            return $data;
+                        });
+                });
     }
 
     /**

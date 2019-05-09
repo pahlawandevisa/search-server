@@ -24,10 +24,11 @@ use Apisearch\Model\Token;
 use Apisearch\Model\TokenUUID;
 use Apisearch\Server\Controller\RequestAccessor;
 use Apisearch\Server\Domain\Token\TokenManager;
-use Clue\React\Block;
 use React\EventLoop\LoopInterface;
+use React\Promise\FulfilledPromise;
+use React\Promise\PromiseInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\GetResponsePromiseEvent;
 
 /**
  * Class TokenCheckOverHTTP.
@@ -51,7 +52,8 @@ class TokenCheckOverHTTP
     /**
      * TokenValidationOverHTTP constructor.
      *
-     * @param TokenManager $tokenManager
+     * @param TokenManager  $tokenManager
+     * @param LoopInterface $loop
      */
     public function __construct(
         TokenManager $tokenManager,
@@ -64,45 +66,51 @@ class TokenCheckOverHTTP
     /**
      * Validate token given a Request.
      *
-     * @param GetResponseEvent $event
+     * @param GetResponsePromiseEvent $event
+     *
+     * @return PromiseInterface
      */
-    public function checkTokenOnKernelRequest(GetResponseEvent $event)
+    public function checkTokenOnKernelAsyncRequestPromise(GetResponsePromiseEvent $event): PromiseInterface
     {
         $request = $event->getRequest();
-        $query = $request->query;
-        $headers = $request->headers;
-        $token = $headers->get(
-            Http::TOKEN_ID_HEADER,
-            $query->get(
-                Http::TOKEN_FIELD,
-                ''
-            )
-        );
 
-        if (is_null($token)) {
-            throw InvalidTokenException::createInvalidTokenPermissions('');
-        }
+        return (new FulfilledPromise())
+            ->then(function() use ($request) {
+                $query = $request->query;
+                $headers = $request->headers;
+                $token = $headers->get(
+                    Http::TOKEN_ID_HEADER,
+                    $query->get(
+                        Http::TOKEN_FIELD,
+                        ''
+                    )
+                );
 
-        $tokenString = $token instanceof Token
-            ? $token->getTokenUUID()->composeUUID()
-            : $token;
+                if (is_null($token)) {
+                    throw InvalidTokenException::createInvalidTokenPermissions('');
+                }
 
-        $origin = $request->headers->get('Referer', '');
-        $urlParts = parse_url($origin);
-        $origin = $urlParts['host'] ?? '';
-        $indices = $this->getIndices($request);
-        $route = str_replace('apisearch_', '', $request->get('_route'));
+                $tokenString = $token instanceof Token
+                    ? $token->getTokenUUID()->composeUUID()
+                    : $token;
 
-        $promise = $this
-            ->tokenManager
-            ->checkToken(
-                AppUUID::createById($request->get('app_id', '')),
-                $indices,
-                TokenUUID::createById($tokenString),
-                $origin,
-                $route
-            )
-            ->then(function(Token $token) use ($request) {
+                $origin = $request->headers->get('Referer', '');
+                $urlParts = parse_url($origin);
+                $origin = $urlParts['host'] ?? '';
+                $indices = $this->getIndices($request);
+                $route = str_replace('apisearch_', '', $request->get('_route'));
+
+                return $this
+                    ->tokenManager
+                    ->checkToken(
+                        AppUUID::createById($request->get('app_id', '')),
+                        $indices,
+                        TokenUUID::createById($tokenString),
+                        $origin,
+                        $route
+                    );
+            })
+            ->then(function (Token $token) use ($request) {
                 if (!$request->attributes->has('app_id')) {
                     $request
                         ->attributes
@@ -121,16 +129,12 @@ class TokenCheckOverHTTP
                         ->attributes
                         ->set('index_id', implode(',', $indicesAsString));
                 }
+            })
+            ->then(function (Token $token) use ($request) {
+                $request
+                    ->query
+                    ->set(Http::TOKEN_FIELD, $token);
             });
-
-        $token = Block\await(
-            $promise,
-            $this->loop
-        );
-
-        $request
-            ->query
-            ->set(Http::TOKEN_FIELD, $token);
     }
 
     /**

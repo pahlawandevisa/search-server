@@ -27,6 +27,7 @@ use Elastica\Index;
 use Elastica\Request;
 use Elastica\Response;
 use Elasticsearch\Endpoints\AbstractEndpoint;
+use GuzzleHttp\Psr7;
 use Psr\Http\Message\ResponseInterface;
 use React\EventLoop\LoopInterface;
 use React\Promise\PromiseInterface;
@@ -92,8 +93,8 @@ class AsyncClient extends Client implements AsyncRequestAccessor
             $this->arrayValuesToQuery($query)
         );
 
-        $request = new \GuzzleHttp\Psr7\Request($method, $fullPath);
-        $request = $request->withBody(\GuzzleHttp\Psr7\stream_for($data));
+        $request = new Psr7\Request($method, $fullPath);
+        $request = $request->withBody(Psr7\stream_for($data));
         $request = $request->withHeader('Content-Type', $contentType);
         $request = $request->withHeader('Content-Length', strlen($data));
 

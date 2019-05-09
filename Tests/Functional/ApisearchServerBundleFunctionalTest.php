@@ -33,7 +33,7 @@ use Apisearch\Server\ApisearchServerBundle;
 use Apisearch\Server\Exception\ErrorException;
 use Apisearch\User\Interaction;
 use Mmoreram\BaseBundle\BaseBundle;
-use Mmoreram\BaseBundle\Kernel\BaseKernel;
+use Mmoreram\BaseBundle\Kernel\AsyncBaseKernel;
 use Mmoreram\BaseBundle\Tests\BaseFunctionalTest;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Yaml\Yaml;
@@ -211,7 +211,7 @@ abstract class ApisearchServerBundleFunctionalTest extends BaseFunctionalTest
             ],
         ];
 
-        return new BaseKernel(
+        return new AsyncBaseKernel(
             static::decorateBundles($bundles),
             static::decorateConfiguration($configuration),
             static::decorateRoutes([

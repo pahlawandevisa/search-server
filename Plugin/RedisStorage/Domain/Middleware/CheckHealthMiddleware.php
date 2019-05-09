@@ -54,17 +54,18 @@ class CheckHealthMiddleware implements PluginMiddleware
         $command,
         $next
     ): PromiseInterface {
-        return $next($command)
-            ->then(function (array $data) {
-                return $this
-                    ->getRedisStatus()
-                    ->then(function (bool $isHealth) use ($data) {
-                        $data['status']['redis'] = $isHealth;
-                        $data['healthy'] = $data['healthy'] && $isHealth;
+        return
+            $next($command)
+                ->then(function (array $data) {
+                    return $this
+                        ->getRedisStatus()
+                        ->then(function (bool $isHealth) use ($data) {
+                            $data['status']['redis'] = $isHealth;
+                            $data['healthy'] = $data['healthy'] && $isHealth;
 
-                        return $data;
-                    });
-            });
+                            return $data;
+                        });
+                });
     }
 
     /**
@@ -80,7 +81,7 @@ class CheckHealthMiddleware implements PluginMiddleware
             ->ping()
             ->then(function ($pong) {
                 return in_array($pong, ['PONG', '+PONG']);
-            }, function (\RedisException $e) {
+            }, function (\Exception $e) {
                 return false;
             });
     }

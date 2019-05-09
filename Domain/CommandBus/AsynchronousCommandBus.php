@@ -17,9 +17,7 @@ namespace Apisearch\Server\Domain\CommandBus;
 
 use Apisearch\Server\Domain\AsynchronousableCommand;
 use Apisearch\Server\Domain\CommandEnqueuer\CommandEnqueuer;
-use Clue\React\Block;
 use League\Tactician\CommandBus;
-use React\EventLoop\LoopInterface;
 
 /**
  * Class AsynchronousCommandBus.
@@ -41,28 +39,18 @@ class AsynchronousCommandBus extends CommandBus
     private $commandBus;
 
     /**
-     * @var LoopInterface
-     *
-     * Loop interface
-     */
-    private $loop;
-
-    /**
      * AsynchronousCommandIngestor constructor.
      *
      * @param CommandEnqueuer $commandEnqueuer
      * @param CommandBus      $commandBus
-     * @param LoopInterface   $loop
      */
     public function __construct(
         CommandEnqueuer $commandEnqueuer,
-        CommandBus $commandBus,
-        LoopInterface $loop
+        CommandBus $commandBus
     ) {
         parent::__construct([]);
         $this->commandEnqueuer = $commandEnqueuer;
         $this->commandBus = $commandBus;
-        $this->loop = $loop;
     }
 
     /**
@@ -74,15 +62,12 @@ class AsynchronousCommandBus extends CommandBus
      */
     public function handle($command)
     {
-        return Block\await(
-            $command instanceof AsynchronousableCommand
-                ? $this
-                    ->commandEnqueuer
-                    ->enqueueCommand($command)
-                : $this
-                    ->commandBus
-                    ->handle($command),
-            $this->loop
-        );
+        return $command instanceof AsynchronousableCommand
+            ? $this
+                ->commandEnqueuer
+                ->enqueueCommand($command)
+            : $this
+                ->commandBus
+                ->handle($command);
     }
 }

@@ -18,8 +18,9 @@ namespace Apisearch\Server\Controller\Listener;
 use Apisearch\Exception\ResourceNotAvailableException;
 use Apisearch\Exception\TransportableException;
 use Exception;
+use React\Promise\FulfilledPromise;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
+use Symfony\Component\HttpKernel\Event\GetResponsePromiseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -30,20 +31,29 @@ class PHPExceptionToJsonResponse
     /**
      * When controller gets exception.
      *
-     * @param GetResponseForExceptionEvent $event
+     * @param GetResponsePromiseForExceptionEvent $event
      */
-    public function onKernelException(GetResponseForExceptionEvent $event)
+    public function onKernelAsyncException(GetResponsePromiseForExceptionEvent $event)
     {
         $exception = $event->getException();
-        $exception = $this->toOwnException($exception);
-        $exceptionErrorCode = $exception instanceof TransportableException
-            ? $exception::getTransportableHTTPError()
-            : 500;
 
-        $event->setResponse(new JsonResponse([
-            'message' => $exception->getMessage(),
-            'code' => $exceptionErrorCode,
-        ], $exceptionErrorCode));
+        if ($exception instanceof Exception) {
+            $exception = $this->toOwnException($exception);
+        }
+
+        $event->setPromise(
+            (new FulfilledPromise())
+            ->then(function () use ($exception) {
+                $exceptionErrorCode = $exception instanceof TransportableException
+                    ? $exception::getTransportableHTTPError()
+                    : 500;
+
+                return new JsonResponse([
+                    'message' => $exception->getMessage(),
+                    'code' => $exceptionErrorCode,
+                ], $exceptionErrorCode);
+            })
+        );
 
         $event->stopPropagation();
     }
