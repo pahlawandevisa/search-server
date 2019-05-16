@@ -84,7 +84,10 @@ class StaticTokenLocator implements TokenLocator, TokenProvider
                 $this->tokens,
                 function (Token $token) use ($appUUID, $tokenUUID) {
                     return
-                        $token->getAppUUID()->composeUUID() === $appUUID->composeUUID() &&
+                        (
+                            empty($appUUID->composeUUID()) ||
+                            $token->getAppUUID()->composeUUID() === $appUUID->composeUUID()
+                        ) &&
                         $token->getTokenUUID()->composeUUID() === $tokenUUID->composeUUID();
                 }
             )

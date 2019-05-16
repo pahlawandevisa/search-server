@@ -91,6 +91,25 @@ class TokenCheckOverHTTP
                 $route
             );
 
+        if (!$request->attributes->has('app_id')) {
+            $request
+                ->attributes
+                ->set('app_id', $token
+                    ->getAppUUID()
+                    ->composeUUID()
+                );
+        }
+
+        if (!$request->attributes->has('index_id')) {
+            $indicesAsString = array_map(function (IndexUUID $indexUUID) {
+                return $indexUUID->composeUUID();
+            }, $token->getIndices());
+
+            $request
+                ->attributes
+                ->set('index_id', implode(',', $indicesAsString));
+        }
+
         $request
             ->query
             ->set(Http::TOKEN_FIELD, $token);
