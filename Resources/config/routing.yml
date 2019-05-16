@@ -101,6 +101,12 @@ apisearch_v1_query_all_indices:
         _controller: apisearch_server.query_controller
         index_id: "*"
 
+apisearch_v1_query_short:
+    path: /v1
+    methods: ["GET"]
+    defaults:
+        _controller: apisearch_server.query_controller
+
 #
 # Interaction API
 #

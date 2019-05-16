@@ -50,6 +50,7 @@ class CredentialsTokenValidator implements TokenValidator
         return
             ($token instanceof Token) &&
             (
+                empty($appUUID->composeUUID()) ||
                 $appUUID->composeUUID() === $token->getAppUUID()->composeUUID()
             ) &&
             (
