@@ -125,4 +125,15 @@ class CheckTokenDefinitionsTest extends StaticTokensFunctionalTest
         );
         $this->assertTrue(true);
     }
+
+    /**
+     * Test readonly flag.
+     */
+    public function testReadOnlyFlag()
+    {
+        $tokens = $this->getTokensById();
+        $this->assertTrue($tokens['bla-bla-blah']->getMetadataValue('read_only'));
+        $this->assertTrue($tokens['onlyaddtoken']->getMetadataValue('read_only'));
+        $this->assertTrue($tokens['base_filtered_token']->getMetadataValue('read_only'));
+    }
 }

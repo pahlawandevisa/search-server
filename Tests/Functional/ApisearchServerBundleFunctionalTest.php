@@ -689,6 +689,27 @@ abstract class ApisearchServerBundleFunctionalTest extends BaseFunctionalTest
     );
 
     /**
+     * Get tokens.
+     *
+     * @param string $appId
+     * @param Token  $token
+     *
+     * @return Token[]
+     */
+    public static function getTokensById(
+        string $appId = null,
+        Token $token = null
+    ) {
+        $tokens = static::getTokens($appId, $token);
+        $tokensById = [];
+        foreach ($tokens as $token) {
+            $tokensById[$token->getTokenUUID()->composeUUID()] = $token;
+        }
+
+        return $tokensById;
+    }
+
+    /**
      * Delete token.
      *
      * @param string $appId
