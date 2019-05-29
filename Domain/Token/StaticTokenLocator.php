@@ -121,7 +121,10 @@ class StaticTokenLocator implements TokenLocator, TokenProvider
             [],
             [],
             [],
-            Token::NO_CACHE
+            Token::NO_CACHE,
+            [
+                'read_only' => true,
+            ]
         );
     }
 
@@ -140,7 +143,10 @@ class StaticTokenLocator implements TokenLocator, TokenProvider
             [],
             Endpoints::queryOnly(),
             [],
-            Token::DEFAULT_TTL
+            Token::DEFAULT_TTL,
+            [
+                'read_only' => true,
+            ]
         );
     }
 
@@ -160,7 +166,10 @@ class StaticTokenLocator implements TokenLocator, TokenProvider
                 'check_health', // Check health
             ],
             [],
-            Token::NO_CACHE
+            Token::NO_CACHE,
+            [
+                'read_only' => true,
+            ]
         );
     }
 
