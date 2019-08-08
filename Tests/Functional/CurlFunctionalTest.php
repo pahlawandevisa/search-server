@@ -596,7 +596,6 @@ abstract class CurlFunctionalTest extends ApisearchServerBundleFunctionalTest
         }
 
         unlink($tmpFile);
-
         self::throwTransportableExceptionIfNeeded($result);
 
         return $result;

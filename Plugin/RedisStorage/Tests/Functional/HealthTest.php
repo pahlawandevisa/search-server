@@ -18,8 +18,8 @@ namespace Apisearch\Plugin\RedisStorage\Tests\Functional;
 use Apisearch\Http\Http;
 use Apisearch\Plugin\RedisStorage\RedisStoragePluginBundle;
 use Apisearch\Server\Tests\Functional\HttpFunctionalTest;
-use Symfony\Component\HttpFoundation\Request;
 use Clue\React\Block;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class HealthTest.
@@ -61,7 +61,7 @@ class HealthTest extends HttpFunctionalTest
         $request->headers->set(Http::TOKEN_ID_HEADER, self::$godToken);
         $promise = static::$kernel
             ->handleAsync($request)
-            ->then(function($response) {
+            ->then(function ($response) {
                 $content = json_decode($response->getContent(), true);
                 $this->assertTrue($content['status']['redis']);
             });

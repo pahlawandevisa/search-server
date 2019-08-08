@@ -16,10 +16,12 @@ declare(strict_types=1);
 namespace Apisearch\Server\Controller\Listener;
 
 use Apisearch\Model\Token;
+use React\Promise\FulfilledPromise;
+use React\Promise\PromiseInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\FilterResponsePromiseEvent;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
 /**
  * Class RouterRedirectionToJsonResponse.
@@ -29,13 +31,15 @@ class RouterRedirectionToJsonResponse
     /**
      * Intercepting redirects.
      *
-     * @param FilterResponsePromiseEvent $event
+     * @param FilterResponseEvent $event
+     *
+     * @return PromiseInterface
      */
-    public function onKernelAsyncResponse(FilterResponsePromiseEvent $event)
+    public function onKernelResponse(FilterResponseEvent $event): PromiseInterface
     {
-        $event
-            ->getPromise()
-            ->then(function (Response $response) use ($event) {
+        return (new FulfilledPromise($event))
+            ->then(function (FilterResponseEvent $event) {
+                $response = $event->getResponse();
                 if ($response instanceof RedirectResponse) {
                     if (Response::HTTP_MOVED_PERMANENTLY === $response->getStatusCode()) {
                         $queryAll = $event

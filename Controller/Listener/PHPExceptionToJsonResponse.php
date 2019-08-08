@@ -19,8 +19,9 @@ use Apisearch\Exception\ResourceNotAvailableException;
 use Apisearch\Exception\TransportableException;
 use Exception;
 use React\Promise\FulfilledPromise;
+use React\Promise\PromiseInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpKernel\Event\GetResponsePromiseForExceptionEvent;
+use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -31,31 +32,30 @@ class PHPExceptionToJsonResponse
     /**
      * When controller gets exception.
      *
-     * @param GetResponsePromiseForExceptionEvent $event
+     * @param GetResponseForExceptionEvent $event
+     *
+     * @return PromiseInterface
      */
-    public function onKernelAsyncException(GetResponsePromiseForExceptionEvent $event)
+    public function onKernelException(GetResponseForExceptionEvent $event): PromiseInterface
     {
-        $exception = $event->getException();
+        return (new FulfilledPromise($event))
+            ->then(function (GetResponseForExceptionEvent $event) {
+                $exception = $event->getException();
 
-        if ($exception instanceof Exception) {
-            $exception = $this->toOwnException($exception);
-        }
+                if ($exception instanceof Exception) {
+                    $exception = $this->toOwnException($exception);
+                }
 
-        $event->setPromise(
-            (new FulfilledPromise())
-            ->then(function () use ($exception) {
                 $exceptionErrorCode = $exception instanceof TransportableException
                     ? $exception::getTransportableHTTPError()
                     : 500;
 
-                return new JsonResponse([
+                $event->stopPropagation();
+                $event->setResponse(new JsonResponse([
                     'message' => $exception->getMessage(),
                     'code' => $exceptionErrorCode,
-                ], $exceptionErrorCode);
-            })
-        );
-
-        $event->stopPropagation();
+                ], $exceptionErrorCode));
+            });
     }
 
     /**

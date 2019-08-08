@@ -28,7 +28,7 @@ use React\EventLoop\LoopInterface;
 use React\Promise\FulfilledPromise;
 use React\Promise\PromiseInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\GetResponsePromiseEvent;
+use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 
 /**
  * Class TokenCheckOverHTTP.
@@ -66,16 +66,16 @@ class TokenCheckOverHTTP
     /**
      * Validate token given a Request.
      *
-     * @param GetResponsePromiseEvent $event
+     * @param GetResponseEvent $event
      *
      * @return PromiseInterface
      */
-    public function checkTokenOnKernelAsyncRequestPromise(GetResponsePromiseEvent $event): PromiseInterface
+    public function checkTokenOnKernelRequest(GetResponseEvent $event): PromiseInterface
     {
         $request = $event->getRequest();
 
         return (new FulfilledPromise())
-            ->then(function() use ($request) {
+            ->then(function () use ($request) {
                 $query = $request->query;
                 $headers = $request->headers;
                 $token = $headers->get(
@@ -129,6 +129,8 @@ class TokenCheckOverHTTP
                         ->attributes
                         ->set('index_id', implode(',', $indicesAsString));
                 }
+
+                return $token;
             })
             ->then(function (Token $token) use ($request) {
                 $request

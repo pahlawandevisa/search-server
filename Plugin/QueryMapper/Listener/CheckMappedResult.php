@@ -22,7 +22,7 @@ use Apisearch\Result\Result;
 use React\Promise\FulfilledPromise;
 use React\Promise\PromiseInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpKernel\Event\FilterResponsePromiseEvent;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
 /**
  * Class CheckMappedResult.
@@ -49,14 +49,14 @@ class CheckMappedResult
     /**
      * On kernel async response.
      *
-     * @param FilterResponsePromiseEvent $event
+     * @param FilterResponseEvent $event
      *
      * @return PromiseInterface
      */
-    public function onKernelAsyncResponse(FilterResponsePromiseEvent $event): PromiseInterface
+    public function onKernelAsyncResponse(FilterResponseEvent $event): PromiseInterface
     {
-        return $event
-            ->getPromise()
+        return
+            (new FulfilledPromise())
             ->then(function () use ($event) {
                 $request = $event->getRequest();
                 $route = $request->get('_route');
@@ -80,15 +80,13 @@ class CheckMappedResult
                     );
 
                 if (is_array($response)) {
-                    $event->setPromise(
-                        new FulfilledPromise(
-                            new JsonResponse(
-                                $response,
-                                200,
-                                [
-                                    'Access-Control-Allow-Origin' => '*',
-                                ]
-                            )
+                    $event->setResponse(
+                        new JsonResponse(
+                            $response,
+                            200,
+                            [
+                                'Access-Control-Allow-Origin' => '*',
+                            ]
                         )
                     );
                 }

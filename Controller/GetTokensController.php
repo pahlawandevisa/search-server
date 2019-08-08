@@ -36,7 +36,7 @@ class GetTokensController extends ControllerWithBus
      */
     public function __invoke(Request $request): PromiseInterface
     {
-        return $tokens = $this
+        return $this
             ->commandBus
             ->handle(new GetTokens(
                 RepositoryReference::create(

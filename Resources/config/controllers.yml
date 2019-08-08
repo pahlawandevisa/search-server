@@ -140,12 +140,12 @@ services:
     apisearch_server.php_exception_to_json_response:
         class: Apisearch\Server\Controller\Listener\PHPExceptionToJsonResponse
         tags:
-            - { name: kernel.event_listener, event: kernel.async_exception, method: onKernelAsyncException }
+            - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
 
     apisearch_server.content_type_validation_over_http:
         class: Apisearch\Server\Controller\Listener\ContentTypeValidationOverHTTP
         tags:
-            - { name: kernel.event_listener, event: kernel.async_request, method: validateContentTypeOnKernelAsyncRequest, priority: 16 }
+            - { name: kernel.event_listener, event: kernel.request, method: validateContentTypeOnKernelRequest, priority: 16 }
 
     apisearch_server.token_check_over_http:
         class: Apisearch\Server\Controller\Listener\TokenCheckOverHTTP
@@ -153,14 +153,14 @@ services:
             - "@apisearch_server.token_manager"
             - "@reactphp.event_loop"
         tags:
-            - { name: kernel.event_listener, event: kernel.async_request, method: checkTokenOnKernelAsyncRequestPromise, priority: 8 }
+            - { name: kernel.event_listener, event: kernel.request, method: checkTokenOnKernelRequest, priority: 8 }
 
     apisearch_server.router_redirection_to_json_response:
         class: Apisearch\Server\Controller\Listener\RouterRedirectionToJsonResponse
         tags:
-            - { name: kernel.event_listener, event: kernel.async_response, method: onKernelAsyncResponse }
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
 
     apisearch_server.token_cache_over_http:
         class: Apisearch\Server\Controller\Listener\TokenCacheOverHTTP
         tags:
-            - { name: kernel.event_listener, event: kernel.async_response, method: addCacheControlOnKernelAsyncResponse }
+            - { name: kernel.event_listener, event: kernel.response, method: addCacheControlOnKernelResponse }

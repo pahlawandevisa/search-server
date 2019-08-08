@@ -18,7 +18,7 @@ namespace Apisearch\Plugin\QueryMapper\Listener;
 use Apisearch\Plugin\QueryMapper\Domain\QueryMapperLoader;
 use React\Promise\FulfilledPromise;
 use React\Promise\PromiseInterface;
-use Symfony\Component\HttpKernel\Event\GetResponsePromiseEvent;
+use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 
 /**
  * Class CheckMappedQuery.
@@ -45,11 +45,11 @@ class CheckMappedQuery
     /**
      * On kernel async request.
      *
-     * @param GetResponsePromiseEvent $event
+     * @param GetResponseEvent $event
      *
      * @return PromiseInterface
      */
-    public function onKernelAsyncRequest(GetResponsePromiseEvent $event): PromiseInterface
+    public function onKernelAsyncRequest(GetResponseEvent $event): PromiseInterface
     {
         $request = $event->getRequest();
         $route = $request->get('_route');
