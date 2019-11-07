@@ -15,6 +15,7 @@ declare(strict_types=1);
 
 namespace Apisearch\Server\Tests\Functional;
 
+use Apisearch\ApisearchBundle;
 use Apisearch\Config\Config;
 use Apisearch\Exception\ResourceNotAvailableException;
 use Apisearch\Model\AppUUID;
@@ -32,7 +33,7 @@ use Apisearch\Server\ApisearchServerBundle;
 use Apisearch\Server\Exception\ErrorException;
 use Apisearch\User\Interaction;
 use Mmoreram\BaseBundle\BaseBundle;
-use Mmoreram\BaseBundle\Kernel\BaseKernel;
+use Mmoreram\BaseBundle\Kernel\AsyncBaseKernel;
 use Mmoreram\BaseBundle\Tests\BaseFunctionalTest;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Yaml\Yaml;
@@ -110,6 +111,7 @@ abstract class ApisearchServerBundleFunctionalTest extends BaseFunctionalTest
                 'ignore_errors' => true,
             ],
             ['resource' => '@ApisearchServerBundle/Resources/test/subscribers.yml'],
+            ['resource' => '@ApisearchServerBundle/Resources/test/reactphp.yml'],
         ];
 
         if (!static::logDomainEvents()) {
@@ -119,6 +121,7 @@ abstract class ApisearchServerBundleFunctionalTest extends BaseFunctionalTest
         $bundles = [
             BaseBundle::class,
             ApisearchServerBundle::class,
+            ApisearchBundle::class,
             ElasticaPluginBundle::class,
             ApisearchPluginsBundle::class,
         ];
@@ -162,29 +165,6 @@ abstract class ApisearchServerBundleFunctionalTest extends BaseFunctionalTest
             ],
             'apisearch' => [
                 'repositories' => [
-                    'main' => [
-                        'adapter' => 'service',
-                        'endpoint' => '~',
-                        'app_id' => self::$appId,
-                        'token' => '~',
-                        'test' => true,
-                        'search' => [
-                            'repository_service' => 'apisearch_server.items_repository',
-                        ],
-                        'app' => [
-                            'repository_service' => 'apisearch_server.app_repository',
-                        ],
-                        'user' => [
-                            'repository_service' => 'apisearch.user_repository_mock',
-                        ],
-                        'indices' => [
-                            self::$index => self::$index,
-                            self::$anotherIndex => self::$anotherIndex,
-                            $composedIndex => $composedIndex,
-                            '*' => '*',
-                            self::$yetAnotherIndex => self::$yetAnotherIndex,
-                        ],
-                    ],
                     'search_http' => [
                         'adapter' => 'http_test',
                         'endpoint' => '~',
@@ -231,7 +211,7 @@ abstract class ApisearchServerBundleFunctionalTest extends BaseFunctionalTest
             ],
         ];
 
-        return new BaseKernel(
+        return new AsyncBaseKernel(
             static::decorateBundles($bundles),
             static::decorateConfiguration($configuration),
             static::decorateRoutes([

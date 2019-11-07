@@ -27,6 +27,12 @@ config:
             autoconfigure: false
             public: true
 
+        react_client:
+            synthetic: true
+
+        react_redis_factory:
+            synthetic: true
+
     #
     # Elastica plugin for Apisearch
     #
@@ -38,29 +44,3 @@ config:
             docker_elasticsearch_service:
                 host: "%env(ELASTICSEARCH_HOST)%"
                 port: "%env(ELASTICSEARCH_PORT)%"
-
-    apisearch:
-        load_commands: false
-        repositories:
-            main:
-                adapter: service
-                search:
-                    repository_service: "apisearch_server.items_repository"
-                app:
-                    repository_service: "apisearch_server.app_repository"
-                user:
-                    repository_service: "apisearch.user_repository_mock"
-                indices:
-                    default: default
-
-            #
-            # Enable for custom HTTP endpoint
-            #
-            # remote:
-            #     adapter: http
-            #     endpoint: __endpoint__
-            #     app_id: __app_id__
-            #     token: __token__
-            #     indices:
-            #         default: __default_index__
-            #

@@ -29,7 +29,7 @@ class DomainEventsSubscribersCompilerPass extends TagCompilerPass
      */
     public function getCollectorServiceName(): string
     {
-        return 'apisearch_server.event_publisher';
+        return 'apisearch_server.inline_event_publisher';
     }
 
     /**

@@ -34,9 +34,7 @@ class CleanEnvironmentCommand extends CommandWithBusAndGodToken
      */
     protected function runCommand(InputInterface $input, OutputInterface $output)
     {
-        $this
-            ->commandBus
-            ->handle(new CleanEnvironment());
+        $this->handleSynchronously(new CleanEnvironment());
     }
 
     /**
