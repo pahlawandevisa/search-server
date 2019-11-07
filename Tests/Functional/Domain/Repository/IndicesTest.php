@@ -13,14 +13,12 @@
 
 declare(strict_types=1);
 
-namespace Apisearch\Server\Tests\Functional\Http;
-
-use Apisearch\Server\Tests\Functional\HttpFunctionalTest;
+namespace Apisearch\Server\Tests\Functional\Domain\Repository;
 
 /**
  * Class IndicesTest.
  */
-class IndicesTest extends HttpFunctionalTest
+trait IndicesTest
 {
     /**
      * Test indices fields.

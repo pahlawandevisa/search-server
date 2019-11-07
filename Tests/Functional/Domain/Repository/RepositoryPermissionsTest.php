@@ -58,11 +58,11 @@ trait RepositoryPermissionsTest
         $query = Query::createMatchAll();
 
         return [
-            [self::$anotherAppId, self::$anotherIndex, 'deleteIndex'],
             [self::$anotherAppId, self::$anotherIndex, 'resetIndex'],
+            [self::$anotherAppId, self::$anotherIndex, 'deleteItems', [$itemUUID]],
             [self::$anotherAppId, self::$anotherIndex, 'query', $query],
             [self::$anotherAppId, self::$anotherIndex, 'indexItems', [$item]],
-            [self::$anotherAppId, self::$anotherIndex, 'deleteItems', [$itemUUID]],
+            [self::$anotherAppId, self::$anotherIndex, 'deleteIndex'],
 
             [self::$anotherInexistentAppId, self::$index, 'deleteIndex'],
             [self::$anotherInexistentAppId, self::$index, 'resetIndex'],

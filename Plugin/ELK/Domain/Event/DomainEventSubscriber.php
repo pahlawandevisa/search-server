@@ -20,7 +20,6 @@ use Apisearch\Server\Domain\Event\DomainEventWithRepositoryReference;
 use Apisearch\Server\Domain\Event\EventSubscriber;
 use Apisearch\Server\Domain\Event\ExceptionWasCached;
 use Apisearch\Server\Domain\Formatter\TimeFormatBuilder;
-use Monolog\Logger;
 use React\Promise\PromiseInterface;
 
 /**
@@ -109,8 +108,8 @@ class DomainEventSubscriber implements EventSubscriber
     {
         $event = $domainEventWithRepositoryReference->getDomainEvent();
         $level = $event instanceof ExceptionWasCached
-            ? Logger::ERROR
-            : Logger::INFO;
+            ? 400
+            : 200;
         $reducedArray = $event->toLogger();
         $reducedArray['occurred_on'] = $this
             ->timeFormatBuilder

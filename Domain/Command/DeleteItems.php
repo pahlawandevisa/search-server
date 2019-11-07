@@ -46,7 +46,7 @@ class DeleteItems extends CommandWithRepositoryReferenceAndToken implements With
      */
     public function __construct(
         RepositoryReference $repositoryReference,
-        Token              $token,
+        Token $token,
         array $itemsUUID
     ) {
         parent::__construct(

@@ -46,7 +46,7 @@ class RabbitMQDomainEventsConsumer extends RabbitMQConsumer
      * @param EventConsumer   $eventConsumer
      */
     public function __construct(
-        RabbitMQChannel        $channel,
+        RabbitMQChannel $channel,
         ConsumerManager $consumerManager,
         LoopInterface $loop,
         int $secondsToWaitOnBusy,

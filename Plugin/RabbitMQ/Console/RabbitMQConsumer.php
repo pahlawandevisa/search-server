@@ -77,7 +77,7 @@ abstract class RabbitMQConsumer extends ApisearchCommand
      * @param int             $secondsToWaitOnBusy
      */
     public function __construct(
-        RabbitMQChannel        $channel,
+        RabbitMQChannel $channel,
         ConsumerManager $consumerManager,
         LoopInterface $loop,
         int $secondsToWaitOnBusy

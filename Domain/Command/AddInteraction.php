@@ -38,14 +38,13 @@ class AddInteraction extends CommandWithRepositoryReferenceAndToken implements L
     /**
      * AddInteraction constructor.
      *
-     *
      * @param RepositoryReference $repositoryReference
      * @param Token               $token
      * @param Interaction         $interaction
      */
     public function __construct(
         RepositoryReference $repositoryReference,
-        Token              $token,
+        Token $token,
         Interaction $interaction
     ) {
         parent::__construct(

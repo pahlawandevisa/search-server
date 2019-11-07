@@ -84,7 +84,6 @@ class AsyncClient extends Client implements AsyncRequestAccessor
             $data = json_encode($data);
         }
 
-        $elasticRequest = new Request($path, $method, $data, $query);
         $connection = $this->getConnection();
         $fullPath = sprintf('http://%s:%s/%s?%s',
             $connection->getHost(),
@@ -112,13 +111,17 @@ class AsyncClient extends Client implements AsyncRequestAccessor
                     $exception->getCode()
                 );
             })
-            ->then(function (Response $elasticaResponse) use ($elasticRequest) {
-                if ($elasticaResponse->hasError()) {
-                    throw new ResponseException($elasticRequest, $elasticaResponse);
-                }
+            ->then(function (Response $elasticaResponse) {
 
-                if ($elasticaResponse->hasFailedShards()) {
-                    throw new PartialShardFailureException($elasticRequest, $elasticaResponse);
+                $data = $elasticaResponse->getData();
+                if (
+                    isset($data['errors']) &&
+                    $data['errors'] === true
+                ) {
+                    throw new ResponseException(
+                        $elasticaResponse->getErrorMessage(),
+                        $elasticaResponse->getStatus()
+                    );
                 }
 
                 return $elasticaResponse;

@@ -18,9 +18,9 @@ namespace Apisearch\Plugin\Elastica;
 use Apisearch\Server\Tests\Functional\Domain\Repository\ServiceRepositoryTest;
 
 /**
- * Class Elasticsearch61Test.
+ * Class Elasticsearch70Test.
  */
-class Elasticsearch61Test extends ServiceRepositoryTest
+class Elasticsearch70Test extends ServiceRepositoryTest
 {
     /**
      * Get elasticsearch endpoint.
@@ -30,7 +30,7 @@ class Elasticsearch61Test extends ServiceRepositoryTest
     protected static function getElasticsearchEndpoint(): array
     {
         return [
-            'host' => 'apisearch.elasticsearch.6.1',
+            'host' => 'apisearch.elasticsearch.7.0',
             'port' => '9200',
         ];
     }
@@ -42,6 +42,6 @@ class Elasticsearch61Test extends ServiceRepositoryTest
      */
     protected static function getElasticsearchVersion(): string
     {
-        return '6';
+        return '7';
     }
 }

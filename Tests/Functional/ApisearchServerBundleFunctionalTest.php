@@ -32,8 +32,7 @@ use Apisearch\Server\ApisearchPluginsBundle;
 use Apisearch\Server\ApisearchServerBundle;
 use Apisearch\Server\Exception\ErrorException;
 use Apisearch\User\Interaction;
-use Mmoreram\BaseBundle\BaseBundle;
-use Mmoreram\BaseBundle\Kernel\AsyncBaseKernel;
+use Mmoreram\BaseBundle\Kernel\DriftBaseKernel;
 use Mmoreram\BaseBundle\Tests\BaseFunctionalTest;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Yaml\Yaml;
@@ -119,7 +118,6 @@ abstract class ApisearchServerBundleFunctionalTest extends BaseFunctionalTest
         }
 
         $bundles = [
-            BaseBundle::class,
             ApisearchServerBundle::class,
             ApisearchBundle::class,
             ElasticaPluginBundle::class,
@@ -131,6 +129,7 @@ abstract class ApisearchServerBundleFunctionalTest extends BaseFunctionalTest
             'imports' => $imports,
             'parameters' => [
                 'kernel.secret' => 'sdhjshjkds',
+                'apisearch_plugin.elastica.version' => static::getElasticsearchVersion()
             ],
             'framework' => [
                 'test' => true,
@@ -161,6 +160,7 @@ abstract class ApisearchServerBundleFunctionalTest extends BaseFunctionalTest
                 'cluster' => [
                     'localhost' => static::getElasticsearchEndpoint(),
                 ],
+                'version' => static::getElasticsearchVersion(),
                 'refresh_on_write' => true,
             ],
             'apisearch' => [
@@ -211,7 +211,7 @@ abstract class ApisearchServerBundleFunctionalTest extends BaseFunctionalTest
             ],
         ];
 
-        return new AsyncBaseKernel(
+        return new DriftBaseKernel(
             static::decorateBundles($bundles),
             static::decorateConfiguration($configuration),
             static::decorateRoutes([
@@ -325,6 +325,16 @@ abstract class ApisearchServerBundleFunctionalTest extends BaseFunctionalTest
             'host' => $_ENV['ELASTICSEARCH_HOST'],
             'port' => $_ENV['ELASTICSEARCH_PORT'],
         ];
+    }
+
+    /**
+     * Get elasticsearch version.
+     *
+     * @return string
+     */
+    protected static function getElasticsearchVersion(): string
+    {
+        return '7';
     }
 
     /**
@@ -697,7 +707,7 @@ abstract class ApisearchServerBundleFunctionalTest extends BaseFunctionalTest
      */
     abstract public static function deleteTokens(
         string $appId,
-        Token  $token = null
+        Token $token = null
     );
 
     /**

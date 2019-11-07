@@ -32,9 +32,9 @@ class QueryBadFormatTest extends HttpFunctionalTest
      */
     public function testQueryBadFormat()
     {
-        $context = stream_context_create(array(
-            'http' => array('ignore_errors' => true),
-        ));
+        $context = stream_context_create([
+            'http' => ['ignore_errors' => true],
+        ]);
 
         $result = file_get_contents(sprintf('http://localhost:%d/v1/%s/indices/%s?token=%s&query=%s',
             self::HTTP_TEST_SERVICE_PORT,
