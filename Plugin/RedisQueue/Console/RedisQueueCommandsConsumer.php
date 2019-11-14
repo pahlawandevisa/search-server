@@ -47,9 +47,9 @@ class RedisQueueCommandsConsumer extends RedisQueueConsumer
      */
     public function __construct(
         RedisQueueConsumerManager $consumerManager,
-        LoopInterface   $loop,
+        LoopInterface $loop,
         int $secondsToWaitOnBusy,
-        CommandConsumer  $commandConsumer
+        CommandConsumer $commandConsumer
     ) {
         parent::__construct(
             $consumerManager,

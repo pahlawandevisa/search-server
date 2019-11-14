@@ -48,6 +48,7 @@ trait AllAsynchronousTests
     use TokenQueriesTest;
     use MultiqueryTest;
     use InteractionsTest;
+    use IndicesTest;
 
     /**
      * Assert IDS sequence.

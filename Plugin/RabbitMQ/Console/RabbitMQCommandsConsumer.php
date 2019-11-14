@@ -49,7 +49,7 @@ class RabbitMQCommandsConsumer extends RabbitMQConsumer
      * @param CommandConsumer $commandConsumer
      */
     public function __construct(
-        RabbitMQChannel        $channel,
+        RabbitMQChannel $channel,
         ConsumerManager $consumerManager,
         LoopInterface $loop,
         int $secondsToWaitOnBusy,

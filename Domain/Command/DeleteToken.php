@@ -38,14 +38,13 @@ class DeleteToken extends CommandWithRepositoryReferenceAndToken implements Logg
     /**
      * AddToken constructor.
      *
-     *
      * @param RepositoryReference $repositoryReference
      * @param Token               $token
      * @param TokenUUID           $tokenUUIDToDelete
      */
     public function __construct(
         RepositoryReference $repositoryReference,
-        Token              $token,
+        Token $token,
         TokenUUID $tokenUUIDToDelete
     ) {
         parent::__construct(

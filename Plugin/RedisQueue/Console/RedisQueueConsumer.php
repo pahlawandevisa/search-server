@@ -66,7 +66,7 @@ abstract class RedisQueueConsumer extends ApisearchCommand
      */
     public function __construct(
         RedisQueueConsumerManager $consumerManager,
-        LoopInterface   $loop,
+        LoopInterface $loop,
         int $secondsToWaitOnBusy
     ) {
         parent::__construct();

@@ -21,6 +21,7 @@ use Apisearch\Model\ItemUUID;
 use Apisearch\Plugin\Elastica\Domain\Builder\QueryBuilder;
 use Apisearch\Plugin\Elastica\Domain\Builder\ResultBuilder;
 use Apisearch\Plugin\Elastica\Domain\ElasticaWrapper;
+use Apisearch\Plugin\Elastica\Domain\Polyfill;
 use Apisearch\Plugin\Elastica\Domain\Search;
 use Apisearch\Plugin\Elastica\Domain\WithElasticaWrapper;
 use Apisearch\Query\Query;
@@ -205,7 +206,7 @@ class QueryRepository extends WithElasticaWrapper implements QueryRepositoryInte
         $result = new Result(
             $query->getUUID(),
             $resultsCount,
-            $resultSet->getTotalHits()
+            Polyfill\ResultSet::getTotalHits($resultSet)
         );
 
         /*

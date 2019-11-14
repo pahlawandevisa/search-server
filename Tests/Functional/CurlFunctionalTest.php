@@ -574,7 +574,6 @@ abstract class CurlFunctionalTest extends ApisearchServerBundleFunctionalTest
         );
 
         $command = str_replace("-d'[]'", '', $command);
-
         $responseCode = exec($command);
         list($httpCode, $contentLength) = explode('-', $responseCode, 2);
         $content = file_get_contents($tmpFile);

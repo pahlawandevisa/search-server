@@ -71,7 +71,6 @@ class ApisearchServerBundle extends BaseBundle
         return [
             FrameworkBundle::class,
             ApisearchBundle::class,
-            BaseBundle::class,
             new TacticianBundle(),
         ];
     }

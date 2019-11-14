@@ -44,9 +44,9 @@ class RedisQueueDomainEventsConsumer extends RedisQueueConsumer
      */
     public function __construct(
         RedisQueueConsumerManager $consumerManager,
-        LoopInterface   $loop,
+        LoopInterface $loop,
         int $secondsToWaitOnBusy,
-        EventConsumer  $eventConsumer
+        EventConsumer $eventConsumer
     ) {
         parent::__construct(
             $consumerManager,

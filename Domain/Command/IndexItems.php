@@ -46,7 +46,7 @@ class IndexItems extends CommandWithRepositoryReferenceAndToken implements WithR
      */
     public function __construct(
         RepositoryReference $repositoryReference,
-        Token              $token,
+        Token $token,
         array $items
     ) {
         parent::__construct(

@@ -28,18 +28,8 @@ class EnvTest extends TestCase
      */
     public function testDefaultBehavior()
     {
-        $_ENV['AAA'] = 'A1';
-        $_ENV['BBB'] = 'B1';
-        $_ENV['EEE'] = '';
-        $_SERVER['AAA'] = 'A2';
-        $_SERVER['CCC'] = 'C2';
-        $_SERVER['FFF'] = '';
-        $this->assertEquals('A1', Env::get('AAA', 'A3'));
-        $this->assertEquals('B1', Env::get('BBB', 'B3'));
-        $this->assertEquals('C2', Env::get('CCC', 'C3'));
-        $this->assertEquals('D3', Env::get('DDD', 'D3'));
-        $this->assertEquals('', Env::get('EEE', 'E3'));
-        $this->assertEquals('', Env::get('FFF', 'E3'));
-        $this->assertEquals('', Env::get('HHH', ''));
+        $_SERVER['A'] = 'A1';
+        $this->assertEquals('A1', Env::get('A', 'A2'));
+        $this->assertEquals('B2', Env::get('B', 'B2'));
     }
 }

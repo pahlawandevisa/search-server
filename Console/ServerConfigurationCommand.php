@@ -69,9 +69,6 @@ class ServerConfigurationCommand extends ApisearchFormattedCommand
         self::printInfoMessage($output, '##', ' ~~ with');
         self::printInfoMessage($output, '##', sprintf(' ~~ --env = %s', $this->kernel->getEnvironment()));
         self::printInfoMessage($output, '##', '');
-        self::printInfoMessage($output, '##', '$_ENV values');
-        self::printStringsArray($output, $_ENV);
-        self::printInfoMessage($output, '##', '');
         self::printInfoMessage($output, '##', '$_SERVER values');
         self::printStringsArray($output, $_SERVER);
         self::printInfoMessage($output, '##', '');
@@ -145,6 +142,7 @@ class ServerConfigurationCommand extends ApisearchFormattedCommand
         OutputInterface $output,
         array $array
     ) {
+        ksort($array);
         foreach ($array as $item => $value) {
             if (!is_string($value)) {
                 continue;

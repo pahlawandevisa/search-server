@@ -37,7 +37,6 @@ class AddToken extends CommandWithRepositoryReferenceAndToken implements Loggabl
     /**
      * AddToken constructor.
      *
-     *
      * @param RepositoryReference $repositoryReference
      * @param Token               $token
      * @param Token               $newToken

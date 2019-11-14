@@ -42,7 +42,6 @@ class ConfigureIndexCommand extends CommandWithBusAndGodToken
     /**
      * CreateIndexCommand constructor.
      *
-     *
      * @param CommandBus    $commandBus
      * @param LoopInterface $loop
      * @param string        $godToken
@@ -51,7 +50,7 @@ class ConfigureIndexCommand extends CommandWithBusAndGodToken
     public function __construct(
         CommandBus $commandBus,
         LoopInterface $loop,
-        string     $godToken,
+        string $godToken,
         SynonymReader $synonymReader
     ) {
         parent::__construct(
