@@ -31,4 +31,4 @@ RUN cd /var/www/apisearch && \
 COPY docker/* /
 
 EXPOSE 8200
-CMD ["sh", "/server-pm-entrypoint.sh"]
+CMD ["sh", "/server-entrypoint.sh"]

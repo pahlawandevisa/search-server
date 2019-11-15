@@ -106,8 +106,7 @@ jobs:
                         -e "REDIS_STORAGE_PORT=6379" \
                         -e "REDIS_METADATA_FIELDS_HOST=apisearch.redis" \
                         -e "REDIS_METADATA_FIELDS_PORT=6379" \
-                        apisearch/server \
-                        sh /server-entrypoint.sh
+                        apisearch/server
 
             - run:
                 name: Run Apisearch in commands consumer with Redis as queue plugin
