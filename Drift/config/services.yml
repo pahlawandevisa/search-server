@@ -26,6 +26,9 @@ services:
     react_redis_factory:
         synthetic: true
 
+apisearch:
+    load_commands: false
+
 #
 # Elastica plugin for Apisearch
 #

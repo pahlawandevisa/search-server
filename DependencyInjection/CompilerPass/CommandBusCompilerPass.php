@@ -30,7 +30,7 @@ class CommandBusCompilerPass implements CompilerPassInterface
     {
         $container
             ->setAlias(
-                'apisearch_server.command_bus',
+                'apisearch_server.resolved_command_bus',
                 $container->getParameter('apisearch_server.command_bus_service')
             )
             ->setPublic(true);

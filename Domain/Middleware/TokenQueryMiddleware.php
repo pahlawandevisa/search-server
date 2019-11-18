@@ -23,7 +23,7 @@ use League\Tactician\Middleware;
 /**
  * Class TokenQueryMiddleware.
  */
-class TokenQueryMiddleware implements Middleware
+final class TokenQueryMiddleware implements Middleware
 {
     /**
      * @var int
@@ -50,9 +50,7 @@ class TokenQueryMiddleware implements Middleware
      */
     public function execute($command, callable $next)
     {
-        $isQuery = $command instanceof Query;
-
-        if ($isQuery) {
+        if ($command instanceof Query) {
             $token = $command->getToken();
             $parameters = $command->getParameters();
 

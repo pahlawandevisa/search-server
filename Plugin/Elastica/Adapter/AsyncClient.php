@@ -105,7 +105,7 @@ class AsyncClient extends Client implements AsyncRequestAccessor
                     (string) ($response->getBody()),
                     $response->getStatusCode()
                 );
-            }, function (ClueResponseException $exception) {
+            }, function (\Throwable $exception) {
                 throw new ResponseException(
                     $exception->getMessage(),
                     $exception->getCode()

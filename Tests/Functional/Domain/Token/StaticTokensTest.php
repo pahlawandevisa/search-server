@@ -24,8 +24,6 @@ class StaticTokensTest extends ServiceFunctionalTest
 {
     /**
      * Test readonly flag.
-     *
-     * @group lele
      */
     public function testReadOnlyFlag()
     {

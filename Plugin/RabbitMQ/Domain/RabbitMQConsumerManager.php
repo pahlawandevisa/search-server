@@ -15,12 +15,14 @@ declare(strict_types=1);
 
 namespace Apisearch\Plugin\RabbitMQ\Domain;
 
-use Apisearch\Reconnect\AMQPReconnect;
 use Apisearch\Server\Domain\Consumer\ConsumerManager;
-use PhpAmqpLib\Connection\AbstractConnection;
+use Bunny\Channel;
+use Bunny\Protocol\MethodQueueDeclareOkFrame;
+use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
 use React\Promise\FulfilledPromise;
 use React\Promise\PromiseInterface;
+use React\Promise;
 
 /**
  * Class RabbitMQConsumerManager.
@@ -28,36 +30,36 @@ use React\Promise\PromiseInterface;
 class RabbitMQConsumerManager extends ConsumerManager
 {
     /**
-     * @var RabbitMQChannel
+     * @var RabbitMQClient
      *
-     * Channel
+     * Client
      */
-    private $channel;
+    private $client;
 
     /**
      * RabbitMQConsumerManager constructor.
      *
      * @param array           $queues
-     * @param RabbitMQChannel $channel
+     * @param RabbitMQClient $client
      */
     public function __construct(
         array $queues,
-        RabbitMQChannel $channel
+        RabbitMQClient $client
     ) {
         parent::__construct($queues);
-        $this->channel = $channel;
+        $this->client = $client;
     }
 
     /**
-     * Get connection.
+     * Get client.
      *
-     * @return AbstractConnection
+     * @return PromiseInterface
      */
-    private function getConnection(): AbstractConnection
+    private function getChannel(): PromiseInterface
     {
         return $this
-            ->channel
-            ->getConnection();
+            ->client
+            ->getChannel();
     }
 
     /**
@@ -75,19 +77,11 @@ class RabbitMQConsumerManager extends ConsumerManager
             return new FulfilledPromise(false);
         }
 
-        return (new FulfilledPromise(
-            AMQPReconnect::tryOrReconnect(
-                function (AbstractConnection $connection) use ($queueName) {
-                    $connection
-                        ->channel()
-                        ->queue_declare($queueName, false, false, false, false);
-                },
-                $this->getConnection()
-            )
-        ))
-        ->then(function () {
-            return true;
-        });
+        return $this
+            ->getChannel()
+            ->then(function(Channel $channel) use ($queueName) {
+                return $channel->queueDeclare($queueName);
+            });
     }
 
     /**
@@ -104,19 +98,25 @@ class RabbitMQConsumerManager extends ConsumerManager
             return new FulfilledPromise(null);
         }
 
-        return new FulfilledPromise(
-            AMQPReconnect::tryOrReconnect(
-                function (AbstractConnection $connection) use ($busyQueueName) {
-                    $channel = $connection->channel();
-                    $channel->exchange_declare($busyQueueName, 'fanout', false, false, false);
-                    list($createdBusyQueueName) = $channel->queue_declare('', false, false, true, false);
-                    $channel->queue_bind($createdBusyQueueName, $busyQueueName);
+        return $this
+            ->getChannel()
+            ->then(function(Channel $channel) use ($busyQueueName) {
+                return $channel
+                    ->exchangeDeclare($busyQueueName, 'fanout')
+                    ->then(function() use ($channel) {
 
-                    return $createdBusyQueueName;
-                },
-                $this->getConnection()
-            )
-        );
+                        return $channel->queueDeclare('', false, false, true);
+                    })
+                    ->then(function(MethodQueueDeclareOkFrame $result) use ($channel, $busyQueueName) {
+                        $createdBusyQueueName = $result->queue;
+
+                        return $channel
+                            ->queueBind($createdBusyQueueName, $busyQueueName)
+                            ->then(function() use ($createdBusyQueueName) {
+                                return $createdBusyQueueName;
+                            });
+                    });
+            });
     }
 
     /**
@@ -135,17 +135,13 @@ class RabbitMQConsumerManager extends ConsumerManager
             return new FulfilledPromise(null);
         }
 
-        return new FulfilledPromise(
-            AMQPReconnect::tryOrReconnect(
-                function (AbstractConnection $connection) use ($type, $data) {
-                    $channel = $connection->channel();
-                    $channel->basic_publish(new AMQPMessage(json_encode($data), [
-                        'delivery_mode' => 2,
-                    ]), '', $this->queues['queues'][$type]);
-                },
-                $this->getConnection()
-            )
-        );
+        return $this
+            ->getChannel()
+            ->then(function(Channel $channel) use ($data, $type) {
+                return $channel->publish(json_encode($data), [
+                    'delivery_mode' => 2,
+                ], '', $this->queues['queues'][$type]);
+            });
     }
 
     /**
@@ -163,19 +159,14 @@ class RabbitMQConsumerManager extends ConsumerManager
             return new FulfilledPromise(null);
         }
 
-        return
-            (new FulfilledPromise(
-                AMQPReconnect::tryOrReconnect(
-                    function (AbstractConnection $connection) use ($queueName) {
-                        return $connection
-                            ->channel()
-                            ->queue_declare($queueName, true);
-                    },
-                    $this->getConnection()
-                )
-            ))
-            ->then(function ($data) {
-                return \intval($data[1]);
+        return $this
+            ->getChannel()
+            ->then(function(Channel $channel) use ($queueName) {
+                return $channel->queueDeclare($queueName, true);
+            })
+            ->then(function(MethodQueueDeclareOkFrame $response) {
+
+                return $response->messageCount;
             });
     }
 
@@ -191,17 +182,15 @@ class RabbitMQConsumerManager extends ConsumerManager
         array $queues,
         bool $value
     ): PromiseInterface {
-        return
-            new FulfilledPromise(
-                AMQPReconnect::tryOrReconnect(
-                    function (AbstractConnection $connection) use ($queues, $value) {
-                        $channel = $connection->channel();
-                        foreach ($queues as $queue) {
-                            $channel->basic_publish(new AMQPMessage($value), $queue);
-                        }
-                    },
-                    $this->getConnection()
-                )
-            );
+
+        $channelPromise = $this->getChannel();
+        $promises = [];
+        foreach ($queues as $queue) {
+            $promises[] = $channelPromise->then(function(Channel $channel) use ($value, $queue) {
+                return $channel->publish($value, [], $queue);
+            });
+        }
+
+        return Promise\all($promises);
     }
 }

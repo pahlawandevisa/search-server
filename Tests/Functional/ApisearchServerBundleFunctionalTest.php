@@ -111,6 +111,7 @@ abstract class ApisearchServerBundleFunctionalTest extends BaseFunctionalTest
             ],
             ['resource' => '@ApisearchServerBundle/Resources/test/subscribers.yml'],
             ['resource' => '@ApisearchServerBundle/Resources/test/reactphp.yml'],
+            ['resource' => '@ApisearchServerBundle/Resources/test/tactician.yml'],
         ];
 
         if (!static::logDomainEvents()) {
@@ -407,7 +408,7 @@ abstract class ApisearchServerBundleFunctionalTest extends BaseFunctionalTest
     public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
-        static::configureEnvironment();
+        //static::configureEnvironment();
         static::resetScenario();
     }
 
@@ -430,7 +431,6 @@ abstract class ApisearchServerBundleFunctionalTest extends BaseFunctionalTest
 
         static::createIndex(self::$appId);
         static::deleteTokens(self::$appId);
-
         static::createIndex(self::$anotherAppId);
         static::deleteTokens(self::$anotherAppId);
 

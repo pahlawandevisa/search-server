@@ -24,7 +24,7 @@ use League\Tactician\Middleware;
 /**
  * Class RepositoryReferenceMiddleware.
  */
-class RepositoryReferenceMiddleware implements Middleware
+final class RepositoryReferenceMiddleware implements Middleware
 {
     /**
      * @param object   $command
