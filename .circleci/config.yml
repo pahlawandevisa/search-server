@@ -95,7 +95,7 @@ jobs:
                         -e "APISEARCH_GOD_TOKEN=0e4d75ba-c640-44c1-a745-06ee51db4e93" \
                         -e "APISEARCH_READONLY_TOKEN=410806ed-f2c2-8d22-96ea-7fb68026df34" \
                         -e "APISEARCH_PING_TOKEN=6326d504-0a5f-f1ae-7344-8e70b75fcde9" \
-                        -e "APISEARCH_ENABLED_PLUGINS=redis_storage" \
+                        -e "APISEARCH_ENABLED_PLUGINS=disk_storage" \
                         -e "ELASTICSEARCH_HOST=apisearch.elasticsearch.7.4" \
                         -e "ELASTICSEARCH_PORT=9200" \
                         -e "ELASTICSEARCH_VERSION=7" \
@@ -106,6 +106,7 @@ jobs:
                         -e "REDIS_STORAGE_PORT=6379" \
                         -e "REDIS_METADATA_FIELDS_HOST=apisearch.redis" \
                         -e "REDIS_METADATA_FIELDS_PORT=6379" \
+                        -e "DISK_STORAGE_RELOAD_ON_READS=1" \
                         apisearch/server
 
             - run:
@@ -118,7 +119,7 @@ jobs:
                         -e "APISEARCH_GOD_TOKEN=0e4d75ba-c640-44c1-a745-06ee51db4e93" \
                         -e "APISEARCH_READONLY_TOKEN=410806ed-f2c2-8d22-96ea-7fb68026df34" \
                         -e "APISEARCH_PING_TOKEN=6326d504-0a5f-f1ae-7344-8e70b75fcde9" \
-                        -e "APISEARCH_ENABLED_PLUGINS=redis_queues,redis_storage" \
+                        -e "APISEARCH_ENABLED_PLUGINS=redis_queues,disk_storage" \
                         -e "APISEARCH_DOMAIN_EVENTS_ADAPTER=enqueue" \
                         -e "ELASTICSEARCH_HOST=apisearch.elasticsearch.7.4" \
                         -e "ELASTICSEARCH_PORT=9200" \
@@ -133,6 +134,7 @@ jobs:
                         -e "REDIS_ELK_PORT=6379" \
                         -e "REDIS_METADATA_FIELDS_HOST=apisearch.redis" \
                         -e "REDIS_METADATA_FIELDS_PORT=6379" \
+                        -e "DISK_STORAGE_RELOAD_ON_READS=1" \
                         apisearch/server \
                         sh /commands-consumer-entrypoint.sh
 
@@ -146,7 +148,7 @@ jobs:
                         -e "APISEARCH_GOD_TOKEN=0e4d75ba-c640-44c1-a745-06ee51db4e93" \
                         -e "APISEARCH_READONLY_TOKEN=410806ed-f2c2-8d22-96ea-7fb68026df34" \
                         -e "APISEARCH_PING_TOKEN=6326d504-0a5f-f1ae-7344-8e70b75fcde9" \
-                        -e "APISEARCH_ENABLED_PLUGINS=redis_queues,redis_storage" \
+                        -e "APISEARCH_ENABLED_PLUGINS=redis_queues,disk_storage" \
                         -e "ELASTICSEARCH_HOST=apisearch.elasticsearch.7.4" \
                         -e "ELASTICSEARCH_PORT=9200" \
                         -e "ELASTICSEARCH_VERSION=7" \
@@ -160,6 +162,7 @@ jobs:
                         -e "REDIS_ELK_PORT=6379" \
                         -e "REDIS_METADATA_FIELDS_HOST=apisearch.redis" \
                         -e "REDIS_METADATA_FIELDS_PORT=6379" \
+                        -e "DISK_STORAGE_RELOAD_ON_READS=1" \
                         apisearch/server \
                         sh /domain-events-consumer-entrypoint.sh
 
@@ -174,7 +177,7 @@ jobs:
                         -e "APISEARCH_GOD_TOKEN=0e4d75ba-c640-44c1-a745-06ee51db4e93" \
                         -e "APISEARCH_READONLY_TOKEN=410806ed-f2c2-8d22-96ea-7fb68026df34" \
                         -e "APISEARCH_PING_TOKEN=6326d504-0a5f-f1ae-7344-8e70b75fcde9" \
-                        -e "APISEARCH_ENABLED_PLUGINS=rabbitmq,redis_storage" \
+                        -e "APISEARCH_ENABLED_PLUGINS=rabbitmq,disk_storage" \
                         -e "APISEARCH_DOMAIN_EVENTS_ADAPTER=enqueue" \
                         -e "ELASTICSEARCH_HOST=apisearch.elasticsearch.7.4" \
                         -e "ELASTICSEARCH_PORT=9200" \
@@ -192,6 +195,7 @@ jobs:
                         -e "RABBITMQ_QUEUE_PASSWORD=guest" \
                         -e "RABBITMQ_QUEUE_VHOST=/" \
                         -e "RABBITMQ_QUEUE_SECONDS_TO_WAIT_ON_BUSY=1" \
+                        -e "DISK_STORAGE_RELOAD_ON_READS=1" \
                         apisearch/server \
                         sh /commands-consumer-entrypoint.sh
 
@@ -206,7 +210,7 @@ jobs:
                         -e "APISEARCH_GOD_TOKEN=0e4d75ba-c640-44c1-a745-06ee51db4e93" \
                         -e "APISEARCH_READONLY_TOKEN=410806ed-f2c2-8d22-96ea-7fb68026df34" \
                         -e "APISEARCH_PING_TOKEN=6326d504-0a5f-f1ae-7344-8e70b75fcde9" \
-                        -e "APISEARCH_ENABLED_PLUGINS=rabbitmq,redis_storage" \
+                        -e "APISEARCH_ENABLED_PLUGINS=rabbitmq,disk_storage" \
                         -e "ELASTICSEARCH_HOST=apisearch.elasticsearch.7.4" \
                         -e "ELASTICSEARCH_PORT=9200" \
                         -e "ELASTICSEARCH_VERSION=7" \
@@ -223,6 +227,7 @@ jobs:
                         -e "RABBITMQ_QUEUE_PASSWORD=guest" \
                         -e "RABBITMQ_QUEUE_VHOST=/" \
                         -e "RABBITMQ_QUEUE_SECONDS_TO_WAIT_ON_BUSY=1" \
+                        -e "DISK_STORAGE_RELOAD_ON_READS=1" \
                         apisearch/server \
                         sh /domain-events-consumer-entrypoint.sh
 

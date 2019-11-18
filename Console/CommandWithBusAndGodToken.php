@@ -198,9 +198,13 @@ abstract class CommandWithBusAndGodToken extends ApisearchFormattedCommand
     ): array {
         $appUUID = AppUUID::createById($input->getArgument('app-id'));
         $tokenUUID = TokenUUID::createById($input->getArgument('uuid'));
-        $indicesUUID = array_map(function (string $index) {
-            return IndexUUID::createById($index);
-        }, $input->getOption('index'));
+        $indicesUUID = [];
+
+        if ($input->hasOption('index')) {
+            $indicesUUID = array_map(function (string $index) {
+                return IndexUUID::createById($index);
+            }, $input->getOption('index'));
+        }
 
         self::printInfoMessage(
             $output,

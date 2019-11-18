@@ -17,10 +17,10 @@ namespace Apisearch\Plugin\RabbitMQ\Domain;
 
 use Bunny\Async\Client;
 use Bunny\Channel;
+use Clue\React\Block;
 use React\EventLoop\LoopInterface;
 use React\Promise\FulfilledPromise;
 use React\Promise\PromiseInterface;
-use Clue\React\Block;
 
 /**
  * Class RabbitMQClient.
@@ -87,11 +87,11 @@ class RabbitMQClient
      * RabbitMQChannel constructor.
      *
      * @param LoopInterface $loop
-     * @param string $host
-     * @param int    $port
-     * @param string $user
-     * @param string $password
-     * @param string $vhost
+     * @param string        $host
+     * @param int           $port
+     * @param string        $user
+     * @param string        $password
+     * @param string        $vhost
      */
     public function __construct(
         LoopInterface $loop,
@@ -110,7 +110,7 @@ class RabbitMQClient
     }
 
     /**
-     * Build the client and connect it synchronously
+     * Build the client and connect it synchronously.
      */
     private function buildAndSyncConnectClient()
     {
@@ -119,7 +119,7 @@ class RabbitMQClient
             'port' => $this->port,
             'user' => $this->user,
             'password' => $this->password,
-            'vhost' => $this->vhost
+            'vhost' => $this->vhost,
         ]);
 
         $this->client = Block\await($client->connect(), $this->loop);
@@ -127,11 +127,11 @@ class RabbitMQClient
     }
 
     /**
-     * Get channel
+     * Get channel.
      *
      * @return PromiseInterface
      */
-    public function getChannel() : PromiseInterface
+    public function getChannel(): PromiseInterface
     {
         if (!$this->channel instanceof Channel) {
             $this->buildAndSyncConnectClient();

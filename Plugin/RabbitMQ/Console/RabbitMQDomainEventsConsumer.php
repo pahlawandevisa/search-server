@@ -39,7 +39,7 @@ class RabbitMQDomainEventsConsumer extends RabbitMQConsumer
     /**
      * ConsumerCommand constructor.
      *
-     * @param RabbitMQClient $channel
+     * @param RabbitMQClient  $channel
      * @param ConsumerManager $consumerManager
      * @param LoopInterface   $loop
      * @param int             $secondsToWaitOnBusy
@@ -75,8 +75,8 @@ class RabbitMQDomainEventsConsumer extends RabbitMQConsumer
     /**
      * Consume message.
      *
-     * @param Message     $message
-     * @param Channel     $channel
+     * @param Message         $message
+     * @param Channel         $channel
      * @param OutputInterface $output
      *
      * @return PromiseInterface

@@ -15,7 +15,6 @@ declare(strict_types=1);
 
 namespace Apisearch\Plugin\RedisStorage\Tests\Functional;
 
-use Apisearch\Plugin\RedisStorage\RedisStoragePluginBundle;
 use Apisearch\Server\Tests\Functional\HttpFunctionalTest;
 
 /**
@@ -23,27 +22,5 @@ use Apisearch\Server\Tests\Functional\HttpFunctionalTest;
  */
 abstract class RedisFunctionalTest extends HttpFunctionalTest
 {
-    /**
-     * Decorate bundles.
-     *
-     * @param array $bundles
-     *
-     * @return array
-     */
-    protected static function decorateBundles(array $bundles): array
-    {
-        $bundles[] = RedisStoragePluginBundle::class;
-
-        return $bundles;
-    }
-
-    /**
-     * Save events.
-     *
-     * @return bool
-     */
-    protected static function saveEvents(): bool
-    {
-        return false;
-    }
+    use RedisStorageFunctionalTestTrait;
 }

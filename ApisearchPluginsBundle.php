@@ -15,6 +15,7 @@ declare(strict_types=1);
 
 namespace Apisearch\Server;
 
+use Apisearch\Plugin\DiskStorage\DiskStoragePluginBundle;
 use Apisearch\Plugin\Elastica\ElasticaPluginBundle;
 use Apisearch\Plugin\ELK\ELKPluginBundle;
 use Apisearch\Plugin\MostRelevantWords\MostRelevantWordsPluginBundle;
@@ -87,6 +88,7 @@ class ApisearchPluginsBundle extends BaseBundle
             'rabbitmq' => RabbitMQPluginBundle::class,
             'security' => SecurityPluginBundle::class,
             'query_mapper' => QueryMapperPluginBundle::class,
+            'disk_storage' => DiskStoragePluginBundle::class,
         ];
 
         $combined = array_combine(

@@ -13,14 +13,14 @@
 
 declare(strict_types=1);
 
-namespace Apisearch\Plugin\RedisStorage\Tests\Functional;
+namespace Apisearch\Plugin\DiskStorage\Tests\Functional;
 
-use Apisearch\Server\Tests\Functional\Console\GenerateBasicTokensCommandTest as BaseTest;
+use Apisearch\Server\Tests\Functional\Console\GetDeleteTokensCommandTest as BaseTest;
 
 /**
- * Class GenerateBasicTokensCommandTest.
+ * File header placeholder.
  */
-class GenerateBasicTokensCommandTest extends BaseTest
+class GetDeleteTokensCommandTest extends BaseTest
 {
-    use RedisStorageFunctionalTestTrait;
+    use DiskStorageFunctionalTestTrait;
 }

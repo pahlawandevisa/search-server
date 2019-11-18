@@ -18,11 +18,9 @@ namespace Apisearch\Plugin\RabbitMQ\Domain;
 use Apisearch\Server\Domain\Consumer\ConsumerManager;
 use Bunny\Channel;
 use Bunny\Protocol\MethodQueueDeclareOkFrame;
-use PhpAmqpLib\Channel\AMQPChannel;
-use PhpAmqpLib\Message\AMQPMessage;
+use React\Promise;
 use React\Promise\FulfilledPromise;
 use React\Promise\PromiseInterface;
-use React\Promise;
 
 /**
  * Class RabbitMQConsumerManager.
@@ -39,7 +37,7 @@ class RabbitMQConsumerManager extends ConsumerManager
     /**
      * RabbitMQConsumerManager constructor.
      *
-     * @param array           $queues
+     * @param array          $queues
      * @param RabbitMQClient $client
      */
     public function __construct(
@@ -79,7 +77,7 @@ class RabbitMQConsumerManager extends ConsumerManager
 
         return $this
             ->getChannel()
-            ->then(function(Channel $channel) use ($queueName) {
+            ->then(function (Channel $channel) use ($queueName) {
                 return $channel->queueDeclare($queueName);
             });
     }
@@ -100,19 +98,18 @@ class RabbitMQConsumerManager extends ConsumerManager
 
         return $this
             ->getChannel()
-            ->then(function(Channel $channel) use ($busyQueueName) {
+            ->then(function (Channel $channel) use ($busyQueueName) {
                 return $channel
                     ->exchangeDeclare($busyQueueName, 'fanout')
-                    ->then(function() use ($channel) {
-
+                    ->then(function () use ($channel) {
                         return $channel->queueDeclare('', false, false, true);
                     })
-                    ->then(function(MethodQueueDeclareOkFrame $result) use ($channel, $busyQueueName) {
+                    ->then(function (MethodQueueDeclareOkFrame $result) use ($channel, $busyQueueName) {
                         $createdBusyQueueName = $result->queue;
 
                         return $channel
                             ->queueBind($createdBusyQueueName, $busyQueueName)
-                            ->then(function() use ($createdBusyQueueName) {
+                            ->then(function () use ($createdBusyQueueName) {
                                 return $createdBusyQueueName;
                             });
                     });
@@ -137,7 +134,7 @@ class RabbitMQConsumerManager extends ConsumerManager
 
         return $this
             ->getChannel()
-            ->then(function(Channel $channel) use ($data, $type) {
+            ->then(function (Channel $channel) use ($data, $type) {
                 return $channel->publish(json_encode($data), [
                     'delivery_mode' => 2,
                 ], '', $this->queues['queues'][$type]);
@@ -161,11 +158,10 @@ class RabbitMQConsumerManager extends ConsumerManager
 
         return $this
             ->getChannel()
-            ->then(function(Channel $channel) use ($queueName) {
+            ->then(function (Channel $channel) use ($queueName) {
                 return $channel->queueDeclare($queueName, true);
             })
-            ->then(function(MethodQueueDeclareOkFrame $response) {
-
+            ->then(function (MethodQueueDeclareOkFrame $response) {
                 return $response->messageCount;
             });
     }
@@ -182,11 +178,10 @@ class RabbitMQConsumerManager extends ConsumerManager
         array $queues,
         bool $value
     ): PromiseInterface {
-
         $channelPromise = $this->getChannel();
         $promises = [];
         foreach ($queues as $queue) {
-            $promises[] = $channelPromise->then(function(Channel $channel) use ($value, $queue) {
+            $promises[] = $channelPromise->then(function (Channel $channel) use ($value, $queue) {
                 return $channel->publish($value, [], $queue);
             });
         }

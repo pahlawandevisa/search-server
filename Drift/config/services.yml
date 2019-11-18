@@ -1,6 +1,5 @@
 imports:
     - { resource: "@ApisearchServerBundle/Resources/config/tactician.yml"}
-    - { resource: "@ApisearchServerBundle/app_deploy.yml", ignore_errors: true }
 
 parameters:
     kernel.secret: nsdjkfhdsupoifjñksd

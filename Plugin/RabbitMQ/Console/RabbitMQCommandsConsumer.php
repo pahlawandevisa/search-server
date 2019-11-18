@@ -42,7 +42,7 @@ class RabbitMQCommandsConsumer extends RabbitMQConsumer
     /**
      * ConsumerCommand constructor.
      *
-     * @param RabbitMQClient $channel
+     * @param RabbitMQClient  $channel
      * @param ConsumerManager $consumerManager
      * @param LoopInterface   $loop
      * @param int             $secondsToWaitOnBusy
@@ -78,8 +78,8 @@ class RabbitMQCommandsConsumer extends RabbitMQConsumer
     /**
      * Consume message.
      *
-     * @param Message     $message
-     * @param Channel     $channel
+     * @param Message         $message
+     * @param Channel         $channel
      * @param OutputInterface $output
      *
      * @return PromiseInterface
@@ -111,7 +111,7 @@ class RabbitMQCommandsConsumer extends RabbitMQConsumer
                         $command
                     );
             })
-            ->then(function() use ($channel, $message) {
+            ->then(function () use ($channel, $message) {
                 return $channel->ack($message);
             });
 

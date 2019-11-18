@@ -25,6 +25,7 @@ use Apisearch\Model\Item;
 use Apisearch\Model\ItemUUID;
 use Apisearch\Model\Token;
 use Apisearch\Model\TokenUUID;
+use Apisearch\Plugin\DiskStorage\DiskStoragePluginBundle;
 use Apisearch\Plugin\Elastica\ElasticaPluginBundle;
 use Apisearch\Query\Query as QueryModel;
 use Apisearch\Result\Result;
@@ -123,6 +124,7 @@ abstract class ApisearchServerBundleFunctionalTest extends BaseFunctionalTest
             ApisearchBundle::class,
             ElasticaPluginBundle::class,
             ApisearchPluginsBundle::class,
+            DiskStoragePluginBundle::class
         ];
 
         $composedIndex = self::$index.','.self::$anotherIndex;
@@ -130,7 +132,7 @@ abstract class ApisearchServerBundleFunctionalTest extends BaseFunctionalTest
             'imports' => $imports,
             'parameters' => [
                 'kernel.secret' => 'sdhjshjkds',
-                'apisearch_plugin.elastica.version' => static::getElasticsearchVersion()
+                'apisearch_plugin.elastica.version' => static::getElasticsearchVersion(),
             ],
             'framework' => [
                 'test' => true,
