@@ -7,7 +7,7 @@ services:
         class: Apisearch\Plugin\RabbitMQ\Console\RabbitMQConsumer
         abstract: true
         arguments:
-            - "@apiserach_plugin.rabbitmq.channel"
+            - "@apiserach_plugin.rabbitmq.client"
             - "@apisearch_server.consumer_manager"
             - "@reactphp.event_loop"
             - "%apisearch_plugin.rabbitmq.seconds_to_wait_on_busy%"

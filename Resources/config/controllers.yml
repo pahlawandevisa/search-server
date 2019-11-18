@@ -6,7 +6,7 @@ services:
         class: Apisearch\Server\Controller\ControllerWithBus
         abstract: true
         arguments:
-            - "@apisearch_server.command_bus"
+            - "@apisearch_server.resolved_command_bus"
             - "%apisearch_server.commands_are_asynchronous%"
 
     apisearch_server.create_index_controller:

@@ -56,6 +56,7 @@ abstract class AsynchronousCommandsTest extends AsynchronousFunctionalTest
     {
         $this->dropConnections();
         sleep(5);
+
         static::indexItems([
             Item::create(new ItemUUID('888', 'item')),
         ]);

@@ -22,5 +22,13 @@ use Apisearch\Server\Tests\Functional\Domain\Repository\AsynchronousCommandsTest
  */
 class AsynchronousCommandsTest extends BaseAsynchronousCommandsTest
 {
+    /**
+     * Force all connections to be dropped.
+     */
+    protected function dropConnections()
+    {
+        $this->markTestSkipped('RabbitMQ implementation needs drop-connection implementation');
+    }
+
     use RabbitMQTestTrait;
 }

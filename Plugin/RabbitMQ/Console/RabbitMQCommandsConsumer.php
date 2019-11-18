@@ -15,12 +15,12 @@ declare(strict_types=1);
 
 namespace Apisearch\Plugin\RabbitMQ\Console;
 
-use Apisearch\Plugin\RabbitMQ\Domain\RabbitMQChannel;
+use Apisearch\Plugin\RabbitMQ\Domain\RabbitMQClient;
 use Apisearch\Server\Domain\CommandConsumer\CommandConsumer;
 use Apisearch\Server\Domain\Consumer\ConsumerManager;
 use Apisearch\Server\Domain\ExclusiveCommand;
-use PhpAmqpLib\Channel\AMQPChannel;
-use PhpAmqpLib\Message\AMQPMessage;
+use Bunny\Channel;
+use Bunny\Message;
 use React\EventLoop\LoopInterface;
 use React\Promise\FulfilledPromise;
 use React\Promise\PromiseInterface;
@@ -42,14 +42,14 @@ class RabbitMQCommandsConsumer extends RabbitMQConsumer
     /**
      * ConsumerCommand constructor.
      *
-     * @param RabbitMQChannel $channel
+     * @param RabbitMQClient $channel
      * @param ConsumerManager $consumerManager
      * @param LoopInterface   $loop
      * @param int             $secondsToWaitOnBusy
      * @param CommandConsumer $commandConsumer
      */
     public function __construct(
-        RabbitMQChannel $channel,
+        RabbitMQClient $channel,
         ConsumerManager $consumerManager,
         LoopInterface $loop,
         int $secondsToWaitOnBusy,
@@ -78,19 +78,19 @@ class RabbitMQCommandsConsumer extends RabbitMQConsumer
     /**
      * Consume message.
      *
-     * @param AMQPMessage     $message
-     * @param AMQPChannel     $channel
+     * @param Message     $message
+     * @param Channel     $channel
      * @param OutputInterface $output
      *
      * @return PromiseInterface
      */
     protected function consumeMessage(
-        AMQPMessage $message,
-        AMQPChannel $channel,
+        Message $message,
+        Channel $channel,
         OutputInterface $output
     ): PromiseInterface {
         $consumerManager = $this->consumerManager;
-        $command = json_decode($message->body, true);
+        $command = json_decode($message->content, true);
         $commandNamespace = 'Apisearch\Server\Domain\Command\\'.$command['class'];
         $reflectionCommand = new ReflectionClass($commandNamespace);
         $isExclusiveCommand = $reflectionCommand->implementsInterface(ExclusiveCommand::class);
@@ -98,24 +98,26 @@ class RabbitMQCommandsConsumer extends RabbitMQConsumer
 
         if ($isExclusiveCommand) {
             $promise = $promise->then(function () use ($consumerManager) {
-                $consumerManager->pauseConsumers([ConsumerManager::COMMAND_CONSUMER_TYPE]);
+                return $consumerManager->pauseConsumers([ConsumerManager::COMMAND_CONSUMER_TYPE]);
             });
         }
 
-        $promise = $promise->then(function () use ($output, $command) {
-            return $this
-                ->commandConsumer
-                ->consumeCommand(
-                    $output,
-                    $command
-                );
-        });
-
-        $channel->basic_ack($message->delivery_info['delivery_tag']);
+        $promise = $promise
+            ->then(function () use ($output, $command) {
+                return $this
+                    ->commandConsumer
+                    ->consumeCommand(
+                        $output,
+                        $command
+                    );
+            })
+            ->then(function() use ($channel, $message) {
+                return $channel->ack($message);
+            });
 
         if ($isExclusiveCommand) {
             $promise = $promise->then(function () use ($consumerManager) {
-                $consumerManager->resumeConsumers([ConsumerManager::COMMAND_CONSUMER_TYPE]);
+                return $consumerManager->resumeConsumers([ConsumerManager::COMMAND_CONSUMER_TYPE]);
             });
         }
 

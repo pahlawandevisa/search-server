@@ -1,8 +1,9 @@
 services:
 
-    apiserach_plugin.rabbitmq.channel:
-        class: Apisearch\Plugin\RabbitMQ\Domain\RabbitMQChannel
+    apiserach_plugin.rabbitmq.client:
+        class: Apisearch\Plugin\RabbitMQ\Domain\RabbitMQClient
         arguments:
+            - "@reactphp.event_loop"
             - "%apisearch_plugin.rabbitmq.host%"
             - "%apisearch_plugin.rabbitmq.port%"
             - "%apisearch_plugin.rabbitmq.user%"
@@ -23,4 +24,4 @@ services:
         class: Apisearch\Plugin\RabbitMQ\Domain\RabbitMQConsumerManager
         arguments:
             - "%apisearch_plugin.rabbitmq.queues%"
-            - "@apiserach_plugin.rabbitmq.channel"
+            - "@apiserach_plugin.rabbitmq.client"

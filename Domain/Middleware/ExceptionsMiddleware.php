@@ -27,7 +27,7 @@ use League\Tactician\Middleware;
 /**
  * Class ExceptionsMiddleware.
  */
-class ExceptionsMiddleware implements Middleware
+final class ExceptionsMiddleware implements Middleware
 {
     /**
      * @var EventPublisher

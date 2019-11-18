@@ -37,14 +37,13 @@
 
     "apisearch-io/apisearch-bundle": "dev-master@dev",
     "apisearch-io/php-client": "dev-master@dev",
-    "apisearch-io/php-reconnect": "dev-master@dev",
 
     "ruflin/elastica": "7.0.0-beta1",
     "league/tactician-bundle": "^1.1",
     "nesbot/carbon": "^2.0",
     "ramsey/uuid": "^3.7.1",
     "ekino/newrelic-bundle": "^2.0",
-    "php-amqplib/php-amqplib": ">=2.6.1"
+    "bunny/bunny": "0.4.1"
   },
   "require-dev": {
     "symfony/browser-kit": "^4.3"

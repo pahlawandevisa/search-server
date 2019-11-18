@@ -15,11 +15,11 @@ declare(strict_types=1);
 
 namespace Apisearch\Plugin\RabbitMQ\Console;
 
-use Apisearch\Plugin\RabbitMQ\Domain\RabbitMQChannel;
+use Apisearch\Plugin\RabbitMQ\Domain\RabbitMQClient;
 use Apisearch\Server\Domain\Consumer\ConsumerManager;
 use Apisearch\Server\Domain\EventConsumer\EventConsumer;
-use PhpAmqpLib\Channel\AMQPChannel;
-use PhpAmqpLib\Message\AMQPMessage;
+use Bunny\Channel;
+use Bunny\Message;
 use React\EventLoop\LoopInterface;
 use React\Promise\PromiseInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -39,14 +39,14 @@ class RabbitMQDomainEventsConsumer extends RabbitMQConsumer
     /**
      * ConsumerCommand constructor.
      *
-     * @param RabbitMQChannel $channel
+     * @param RabbitMQClient $channel
      * @param ConsumerManager $consumerManager
      * @param LoopInterface   $loop
      * @param int             $secondsToWaitOnBusy
      * @param EventConsumer   $eventConsumer
      */
     public function __construct(
-        RabbitMQChannel $channel,
+        RabbitMQClient $channel,
         ConsumerManager $consumerManager,
         LoopInterface $loop,
         int $secondsToWaitOnBusy,
@@ -75,25 +75,25 @@ class RabbitMQDomainEventsConsumer extends RabbitMQConsumer
     /**
      * Consume message.
      *
-     * @param AMQPMessage     $message
-     * @param AMQPChannel     $channel
+     * @param Message     $message
+     * @param Channel     $channel
      * @param OutputInterface $output
      *
      * @return PromiseInterface
      */
     protected function consumeMessage(
-        AMQPMessage $message,
-        AMQPChannel $channel,
+        Message $message,
+        Channel $channel,
         OutputInterface $output
     ): PromiseInterface {
         return $this
             ->eventConsumer
             ->consumeDomainEvent(
                 $output,
-                json_decode($message->body, true)
+                json_decode($message->content, true)
             )
             ->then(function () use ($channel, $message) {
-                $channel->basic_ack($message->delivery_info['delivery_tag']);
+                return $channel->ack($message);
             });
     }
 }

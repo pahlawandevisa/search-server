@@ -15,14 +15,25 @@ declare(strict_types=1);
 
 namespace Apisearch\Plugin\RabbitMQ\Domain;
 
-use PhpAmqpLib\Connection\AbstractConnection;
-use PhpAmqpLib\Connection\AMQPStreamConnection;
+use Bunny\Async\Client;
+use Bunny\Channel;
+use React\EventLoop\LoopInterface;
+use React\Promise\FulfilledPromise;
+use React\Promise\PromiseInterface;
+use Clue\React\Block;
 
 /**
- * Class RabbitMQChannel.
+ * Class RabbitMQClient.
  */
-class RabbitMQChannel
+class RabbitMQClient
 {
+    /**
+     * @var LoopInterface
+     *
+     * Loop
+     */
+    private $loop;
+
     /**
      * @var string
      *
@@ -59,15 +70,23 @@ class RabbitMQChannel
     private $vhost;
 
     /**
-     * @var AbstractConnection
+     * @var Client
      *
      * Channel
      */
-    private $connection;
+    private $client;
+
+    /**
+     * @var Channel
+     *
+     * Channel
+     */
+    private $channel;
 
     /**
      * RabbitMQChannel constructor.
      *
+     * @param LoopInterface $loop
      * @param string $host
      * @param int    $port
      * @param string $user
@@ -75,12 +94,14 @@ class RabbitMQChannel
      * @param string $vhost
      */
     public function __construct(
+        LoopInterface $loop,
         string $host,
         int $port,
         string $user,
         string $password,
         string $vhost
     ) {
+        $this->loop = $loop;
         $this->host = $host;
         $this->port = $port;
         $this->user = $user;
@@ -89,24 +110,33 @@ class RabbitMQChannel
     }
 
     /**
-     * Get connection.
-     *
-     * @return AbstractConnection
+     * Build the client and connect it synchronously
      */
-    public function getConnection(): AbstractConnection
+    private function buildAndSyncConnectClient()
     {
-        if ($this->connection instanceof AbstractConnection) {
-            return $this->connection;
+        $client = new Client($this->loop, [
+            'host' => $this->host,
+            'port' => $this->port,
+            'user' => $this->user,
+            'password' => $this->password,
+            'vhost' => $this->vhost
+        ]);
+
+        $this->client = Block\await($client->connect(), $this->loop);
+        $this->channel = Block\await($client->channel(), $this->loop);
+    }
+
+    /**
+     * Get channel
+     *
+     * @return PromiseInterface
+     */
+    public function getChannel() : PromiseInterface
+    {
+        if (!$this->channel instanceof Channel) {
+            $this->buildAndSyncConnectClient();
         }
 
-        $this->connection = new AMQPStreamConnection(
-            $this->host,
-            $this->port,
-            $this->user,
-            $this->password,
-            $this->vhost
-        );
-
-        return $this->connection;
+        return new FulfilledPromise($this->channel);
     }
 }

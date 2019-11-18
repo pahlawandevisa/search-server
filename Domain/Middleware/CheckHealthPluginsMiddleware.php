@@ -22,7 +22,7 @@ use React\Promise\PromiseInterface;
 /**
  * Class CheckHealthPluginsMiddleware.
  */
-class CheckHealthPluginsMiddleware implements PluginMiddleware
+final class CheckHealthPluginsMiddleware implements PluginMiddleware
 {
     /**
      * @var string[]

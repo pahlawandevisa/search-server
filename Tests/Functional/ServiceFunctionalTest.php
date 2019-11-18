@@ -586,7 +586,7 @@ abstract class ServiceFunctionalTest extends ApisearchServerBundleFunctionalTest
      */
     protected static function handleCommandAsynchronously($command)
     {
-        $promise = self::getStatic('apisearch_server.command_bus')->handle($command);
+        $promise = self::getStatic('apisearch_server.resolved_command_bus')->handle($command);
 
         Block\await($promise, self::getStatic('reactphp.event_loop'));
     }

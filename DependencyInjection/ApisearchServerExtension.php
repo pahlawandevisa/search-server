@@ -101,9 +101,10 @@ class ApisearchServerExtension extends BaseExtension
                 'enqueue' => 'apisearch_server.enqueue_event_publisher',
                 'ignore' => 'apisearch_server.ignore_event_publisher',
             ][$domainEventsAdapter],
+
             'apisearch_server.command_bus_service' => [
-                'inline' => 'apisearch_server.command_bus.inline',
-                'enqueue' => 'apisearch_server.command_bus.asynchronous',
+                'inline' => 'apisearch_server.command_bus',
+                'enqueue' => 'apisearch_server.async_command_bus',
             ][$commandsAdapter],
 
             'apisearch_server.god_token' => Env::get('APISEARCH_GOD_TOKEN', $config['god_token']),

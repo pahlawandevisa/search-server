@@ -20,7 +20,7 @@ use League\Tactician\Middleware;
 /**
  * Class EmptyMiddleware.
  */
-class EmptyMiddleware implements Middleware
+final class EmptyMiddleware implements Middleware
 {
     /**
      * @param object   $command
