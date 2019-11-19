@@ -49,7 +49,10 @@ class QueuesPluginCheckerCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if ('apisearch_server.command_bus.asynchronous' != $container->getParameter('apisearch_server.command_bus_service')) {
+        if (
+            'apisearch_server.async_command_bus' != $container->getParameter('apisearch_server.command_bus_service') &&
+            'apisearch_server.enqueue_event_publisher' != $container->getParameter('apisearch_server.event_publisher_service')
+        ) {
             return;
         }
 
