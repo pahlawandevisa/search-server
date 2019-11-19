@@ -20,12 +20,11 @@ use Apisearch\Plugin\RabbitMQ\Domain\RabbitMQClient;
 use Apisearch\Server\Domain\Consumer\ConsumerManager;
 use Bunny\Channel;
 use Bunny\Message;
-use PhpAmqpLib\Channel\AMQPChannel;
+use Mmoreram\React;
 use React\EventLoop\LoopInterface;
 use React\Promise\PromiseInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Mmoreram\React;
 
 /**
  * Class RabbitMQConsumer.
@@ -70,7 +69,7 @@ abstract class RabbitMQConsumer extends ApisearchCommand
     /**
      * ConsumerCommand constructor.
      *
-     * @param RabbitMQClient $client
+     * @param RabbitMQClient  $client
      * @param ConsumerManager $consumerManager
      * @param LoopInterface   $loop
      * @param int             $secondsToWaitOnBusy
@@ -125,7 +124,7 @@ abstract class RabbitMQConsumer extends ApisearchCommand
                 self::printInfoMessage($output, 'RabbitMQ', 'Connecting...');
                 $this
                     ->getChannel()
-                    ->then(function(Channel $channel) use ($output) {
+                    ->then(function (Channel $channel) use ($output) {
                         return $this->bindCallbacksToChannel($channel, $output);
                     });
             });
@@ -140,7 +139,7 @@ abstract class RabbitMQConsumer extends ApisearchCommand
     /**
      * Bind all callbacks to channel.
      *
-     * @param Channel     $channel
+     * @param Channel         $channel
      * @param OutputInterface $output
      *
      * @return PromiseInterface
@@ -155,16 +154,15 @@ abstract class RabbitMQConsumer extends ApisearchCommand
 
         return $channel
             ->qos(0, 1, false)
-            ->then(function() use ($consumerQueueName, $output, $channel) {
+            ->then(function () use ($consumerQueueName, $output, $channel) {
                 return $channel
-                    ->consume(function(Message $message, Channel $channel) use ($output) {
-
+                    ->consume(function (Message $message, Channel $channel) use ($output) {
                         if ($this->busy) {
                             self::printInfoMessage($output, 'RabbitMQ', 'Busy channel. Rejecting and waiting '.$this->secondsToWaitOnBusy.' seconds');
 
                             return $channel
                                 ->reject($message)
-                                ->then(function() {
+                                ->then(function () {
                                     return React\sleep(
                                         $this->secondsToWaitOnBusy,
                                         $this->loop
@@ -179,13 +177,12 @@ abstract class RabbitMQConsumer extends ApisearchCommand
                         );
                     }, $consumerQueueName);
             })
-            ->then(function() use ($queueType, $output, $channel) {
+            ->then(function () use ($queueType, $output, $channel) {
                 return $this
                     ->consumerManager
                     ->declareBusyChannel($queueType)
                     ->then(function ($busyGeneratedQueue) use ($output, $channel) {
-
-                        return $channel->consume(function(Message $message) use ($output) {
+                        return $channel->consume(function (Message $message) use ($output) {
                             $this->busy = boolval($message->content);
                             self::printInfoMessage($output, 'RabbitMQ', ($this->busy ? 'Paused' : 'Resumed').' consumer');
                         }, $busyGeneratedQueue, '', false, true);
@@ -203,8 +200,8 @@ abstract class RabbitMQConsumer extends ApisearchCommand
     /**
      * Consume message.
      *
-     * @param Message     $message
-     * @param Channel     $channel
+     * @param Message         $message
+     * @param Channel         $channel
      * @param OutputInterface $output
      *
      * @return PromiseInterface

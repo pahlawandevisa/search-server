@@ -19,10 +19,8 @@ use Apisearch\Exception\ConnectionException;
 use Apisearch\Plugin\Elastica\Domain\AsyncRequestAccessor;
 use Apisearch\Server\Exception\ResponseException;
 use Clue\React\Buzz\Browser;
-use Clue\React\Buzz\Message\ResponseException as ClueResponseException;
 use Elastica\Client;
 use Elastica\Exception\ClientException;
-use Elastica\Exception\PartialShardFailureException;
 use Elastica\Index;
 use Elastica\Request;
 use Elastica\Response;
@@ -112,11 +110,10 @@ class AsyncClient extends Client implements AsyncRequestAccessor
                 );
             })
             ->then(function (Response $elasticaResponse) {
-
                 $data = $elasticaResponse->getData();
                 if (
                     isset($data['errors']) &&
-                    $data['errors'] === true
+                    true === $data['errors']
                 ) {
                     throw new ResponseException(
                         $elasticaResponse->getErrorMessage(),

@@ -19,8 +19,8 @@ use Apisearch\Exception\TransportableException;
 use Apisearch\Model\AppUUID;
 use Apisearch\Model\Token;
 use Apisearch\Model\TokenUUID;
+use Apisearch\Plugin\DiskStorage\DiskStoragePluginBundle;
 use Apisearch\Plugin\Elastica\ElasticaPluginBundle;
-use Apisearch\Plugin\RedisStorage\RedisStoragePluginBundle;
 use Apisearch\Server\Tests\Functional\CurlFunctionalTest;
 
 /**
@@ -75,7 +75,7 @@ class HealthTest extends CurlFunctionalTest
             $this->assertEquals(
                 [
                     'elastica' => ElasticaPluginBundle::class,
-                    'redis_storage' => RedisStoragePluginBundle::class,
+                    'disk_storage' => DiskStoragePluginBundle::class,
                 ],
                 $content['info']['plugins']
             );

@@ -26,6 +26,7 @@
     "php-http/react-adapter": "*",
     "guzzlehttp/psr7": "*",
     "react/promise": "*",
+    "react/filesystem": "*",
     "php-http/message": "*",
     "clue/redis-react": "*",
     "clue/block-react": "*",

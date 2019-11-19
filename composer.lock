@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "615a25863f9673fb40aba2e12128fb4b",
+    "content-hash": "7d691bd3d0f341e7855bfe41ee98057f",
     "packages": [
         {
             "name": "apisearch-io/apisearch-bundle",
@@ -655,16 +655,17 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/driftphp/http-kernel.git",
-                "reference": "08c1ccce6d0ad85dc600d39b48df4d05d284682a"
+                "reference": "503afe8689f51a5367be010ff9d29d72ad8752ff"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/driftphp/http-kernel/zipball/08c1ccce6d0ad85dc600d39b48df4d05d284682a",
-                "reference": "08c1ccce6d0ad85dc600d39b48df4d05d284682a",
+                "url": "https://api.github.com/repos/driftphp/http-kernel/zipball/503afe8689f51a5367be010ff9d29d72ad8752ff",
+                "reference": "503afe8689f51a5367be010ff9d29d72ad8752ff",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.2.9",
+                "react/filesystem": "*",
                 "react/promise": "*",
                 "symfony/dependency-injection": "^4.3 || ^5.0",
                 "symfony/http-kernel": "^4.3 || ^5.0"
@@ -697,7 +698,7 @@
                 }
             ],
             "description": "Http Kernel component for Drift, based on Symfony Http Kernel component",
-            "time": "2019-11-12T22:28:03+00:00"
+            "time": "2019-11-18T18:02:47+00:00"
         },
         {
             "name": "drift/server",
@@ -1383,16 +1384,16 @@
         },
         {
             "name": "mmoreram/base-bundle",
-            "version": "2.0.0",
+            "version": "2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mmoreram/BaseBundle.git",
-                "reference": "d316d5f1875e381d7c29caeefbe93088d022f28c"
+                "reference": "5f25713ce3dc7d30fe3fb48b2f28cb540e6765a3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mmoreram/BaseBundle/zipball/d316d5f1875e381d7c29caeefbe93088d022f28c",
-                "reference": "d316d5f1875e381d7c29caeefbe93088d022f28c",
+                "url": "https://api.github.com/repos/mmoreram/BaseBundle/zipball/5f25713ce3dc7d30fe3fb48b2f28cb540e6765a3",
+                "reference": "5f25713ce3dc7d30fe3fb48b2f28cb540e6765a3",
                 "shasum": ""
             },
             "require": {
@@ -1435,7 +1436,7 @@
             "keywords": [
                 "bundle"
             ],
-            "time": "2019-11-12T21:47:28+00:00"
+            "time": "2019-11-18T18:16:11+00:00"
         },
         {
             "name": "mmoreram/react-functions",
