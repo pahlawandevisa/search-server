@@ -70,13 +70,6 @@ class RabbitMQClient
     private $vhost;
 
     /**
-     * @var Client
-     *
-     * Channel
-     */
-    private $client;
-
-    /**
      * @var Channel
      *
      * Channel
@@ -122,8 +115,17 @@ class RabbitMQClient
             'vhost' => $this->vhost,
         ]);
 
-        $this->client = Block\await($client->connect(), $this->loop);
-        $this->channel = Block\await($client->channel(), $this->loop);
+        return $client
+            ->connect()
+            ->then(function(Client $client) {
+                return $client
+                    ->channel()
+                    ->then(function(Channel $channel) {
+                        $this->channel = $channel;
+
+                        return $channel;
+                    });
+            });
     }
 
     /**
@@ -134,7 +136,7 @@ class RabbitMQClient
     public function getChannel(): PromiseInterface
     {
         if (!$this->channel instanceof Channel) {
-            $this->buildAndSyncConnectClient();
+            return $this->buildAndSyncConnectClient();
         }
 
         return new FulfilledPromise($this->channel);

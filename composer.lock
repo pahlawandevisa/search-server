@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7d691bd3d0f341e7855bfe41ee98057f",
+    "content-hash": "548a56f1f423983bf7a4216f9fdea967",
     "packages": [
         {
             "name": "apisearch-io/apisearch-bundle",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/apisearch-io/apisearch-bundle.git",
-                "reference": "9671d23f0ea2f8c091a7cc8fea39252567b289c6"
+                "reference": "9da3326172b6a4b6e683b247e48debbde93b42eb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/apisearch-io/apisearch-bundle/zipball/9671d23f0ea2f8c091a7cc8fea39252567b289c6",
-                "reference": "9671d23f0ea2f8c091a7cc8fea39252567b289c6",
+                "url": "https://api.github.com/repos/apisearch-io/apisearch-bundle/zipball/9da3326172b6a4b6e683b247e48debbde93b42eb",
+                "reference": "9da3326172b6a4b6e683b247e48debbde93b42eb",
                 "shasum": ""
             },
             "require": {
@@ -25,15 +25,15 @@
                 "mmoreram/base-bundle": "^2.0.0",
                 "php": ">=7.1",
                 "ramsey/uuid": "^3.7.1",
-                "symfony/console": "^3.0|^4.0|^5.0",
-                "symfony/framework-bundle": "^3.0|^4.0|^5.0",
-                "symfony/http-kernel": "^3.0|^4.0|^5.0",
-                "symfony/stopwatch": "^3.0|^4.0|^5.0"
+                "symfony/console": "^3.0 || ^4.0 || ^5.0",
+                "symfony/framework-bundle": "^3.0 || ^4.0 || ^5.0",
+                "symfony/http-kernel": "^3.0 || ^4.0 || ^5.0",
+                "symfony/stopwatch": "^3.0 || ^4.0 || ^5.0"
             },
             "require-dev": {
                 "drift/http-kernel": "dev-master@dev",
                 "mmoreram/symfony-bundle-dependencies": "^2.1",
-                "symfony/browser-kit": "^3.4|^4.0|^5.0"
+                "symfony/browser-kit": "^3.4 || ^4.0 || ^5.0"
             },
             "type": "symfony-bundle",
             "autoload": {
@@ -55,7 +55,7 @@
                     "email": "hello@puntmig.com"
                 }
             ],
-            "time": "2019-11-14T10:27:29+00:00"
+            "time": "2019-11-19T12:50:42+00:00"
         },
         {
             "name": "apisearch-io/php-client",
@@ -63,27 +63,20 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/apisearch-io/php-client.git",
-                "reference": "41c00814d64a847806631812d3fc58335356b3d6"
+                "reference": "e7cb42301447b3f20381399c332631f50458e20f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/apisearch-io/php-client/zipball/41c00814d64a847806631812d3fc58335356b3d6",
-                "reference": "41c00814d64a847806631812d3fc58335356b3d6",
+                "url": "https://api.github.com/repos/apisearch-io/php-client/zipball/e7cb42301447b3f20381399c332631f50458e20f",
+                "reference": "e7cb42301447b3f20381399c332631f50458e20f",
                 "shasum": ""
             },
             "require": {
                 "ext-curl": "*",
-                "nesbot/carbon": "^1.22|^2.0",
+                "nesbot/carbon": "^1.22 || ^2.0",
                 "php": ">=7.1",
-                "symfony/event-dispatcher": "^3.4|^4.0"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^2.5.0",
-                "mmoreram/php-formatter": "^1.3.1",
-                "phpunit/phpunit": "^7.0.0"
-            },
-            "suggest": {
-                "symfony/yaml": "Install for Yaml import/export"
+                "symfony/event-dispatcher": "^3.4 || ^4.0 || ^5.0",
+                "symfony/yaml": "^3.4 || ^4.0 || ^5.0"
             },
             "type": "library",
             "autoload": {
@@ -101,7 +94,8 @@
                     "email": "yuhu@mmoreram.com"
                 }
             ],
-            "time": "2019-08-09T17:21:34+00:00"
+            "description": "PHP Library for Apisearch",
+            "time": "2019-11-19T12:58:58+00:00"
         },
         {
             "name": "bunny/bunny",

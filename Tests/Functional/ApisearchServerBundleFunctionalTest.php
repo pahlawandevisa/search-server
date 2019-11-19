@@ -410,7 +410,6 @@ abstract class ApisearchServerBundleFunctionalTest extends BaseFunctionalTest
     public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
-        //static::configureEnvironment();
         static::resetScenario();
     }
 
@@ -421,7 +420,6 @@ abstract class ApisearchServerBundleFunctionalTest extends BaseFunctionalTest
     public static function tearDownAfterClass()
     {
         static::deleteEverything();
-        static::cleanEnvironment();
     }
 
     /**
